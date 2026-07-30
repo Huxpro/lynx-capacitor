@@ -1,0 +1,69 @@
+require 'json'
+require 'fileutils'
+
+source 'https://cdn.cocoapods.org/'
+platform :ios, '15.0'
+project 'LynxCapacitorDemo.xcodeproj'
+
+repository_root = File.expand_path('../..', __dir__)
+lynx_root = ENV.fetch('LYNX_ROOT', File.expand_path('../lynx', repository_root))
+
+install! 'cocoapods',
+         :deterministic_uuids => false,
+         :generate_multiple_pod_projects => true,
+         :incremental_installation => true
+
+target 'LynxCapacitorDemo' do
+  use_frameworks! :linkage => :static
+  socket_rocket_source = File.join(
+    lynx_root,
+    'explorer/darwin/ios/lynx_explorer/Pods/SocketRocket'
+  )
+  socket_rocket_spec = File.join(__dir__, 'Config/SocketRocket.podspec')
+  FileUtils.cp(socket_rocket_spec, File.join(socket_rocket_source, 'SocketRocket.podspec'))
+  pod 'SocketRocket', :path => socket_rocket_source
+
+  capacitor_ios = File.join(repository_root, 'node_modules/@capacitor/ios')
+  cordova_spec = File.join(capacitor_ios, 'CapacitorCordova.podspec')
+  cordova_spec_content = File.read(cordova_spec)
+  if cordova_spec_content.include?('Classes/Public/AppDelegate.{h,m}')
+    cordova_spec_content = cordova_spec_content.gsub(
+      's.exclude_files = "#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.{h,m}"',
+      's.exclude_files = ["#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h", ' \
+      '"#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.m"]'
+    )
+    File.write(cordova_spec, cordova_spec_content)
+  elsif !cordova_spec_content.include?('s.exclude_files')
+    cordova_spec_content = cordova_spec_content.sub(
+      "  s.source_files = \"\#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m}\"\n",
+      "  s.source_files = \"\#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m}\"\n" \
+      "  s.exclude_files = [\"\#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h\", " \
+      "\"\#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.m\"]\n"
+    )
+    File.write(cordova_spec, cordova_spec_content)
+  end
+
+  pod 'Capacitor', :path => capacitor_ios
+  JSON.parse(File.read(File.join(repository_root, 'plugins.json'))).each do |plugin|
+    pod plugin['pod'], :path => File.join(repository_root, 'demo/node_modules/@capacitor', plugin['package'])
+  end
+  pod 'LynxCapacitorRuntime', :path => File.join(repository_root, 'ios/official')
+
+  pod 'Lynx', :path => lynx_root, :subspecs => ['Framework']
+  pod 'LynxBase', :path => lynx_root, :subspecs => ['Framework']
+  pod 'LynxDevtool', :path => lynx_root, :subspecs => ['Framework']
+  pod 'BaseDevtool', :path => lynx_root
+  pod 'LynxService', :path => lynx_root, :subspecs => ['Log', 'Devtool', 'Http']
+  pod 'LynxServiceAPI', :path => lynx_root, :subspecs => ['Core']
+  pod 'PrimJS', '4.0.1-alpha.4', :subspecs => ['quickjs', 'napi']
+  pod 'DebugRouter', '5.0.15'
+  pod 'DebugRouter/MessageTransceiverEnable', '5.0.15'
+end
+
+post_install do |installer|
+  installer.pod_target_subprojects.flat_map(&:targets).each do |target|
+    target.build_configurations.each do |configuration|
+      configuration.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+    end
+  end
+end

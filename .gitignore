@@ -1,0 +1,13 @@
+node_modules/
+packages/*/node_modules/
+packages/*/dist/
+demo/node_modules/
+demo/dist/
+ios/Demo/Pods/
+ios/Demo/build/
+ios/Demo/LynxCapacitorDemo.xcodeproj/
+ios/Demo/LynxCapacitorDemo.xcworkspace/
+ios/Demo/Podfile.lock
+ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
+*.xcuserstate
+.DS_Store

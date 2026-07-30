@@ -1,0 +1,59 @@
+{
+  "name": "@lynx-capacitor/demo",
+  "version": "0.1.0",
+  "description": "Capacitor plugin gallery running on Lynx via the @lynx-capacitor adapter.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rspeedy build",
+    "dev": "rspeedy dev",
+    "preview": "rspeedy preview"
+  },
+  "dependencies": {
+    "@capacitor/action-sheet": "^8.1.1",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/background-runner": "^3.0.0",
+    "@capacitor/barcode-scanner": "^3.1.0",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/camera": "^8.2.1",
+    "@capacitor/clipboard": "^8.0.1",
+    "@capacitor/device": "^8.0.3",
+    "@capacitor/dialog": "^8.0.1",
+    "@capacitor/file-transfer": "^2.0.4",
+    "@capacitor/file-viewer": "^2.0.1",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/geolocation": "^8.2.0",
+    "@capacitor/google-maps": "^8.0.1",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/inappbrowser": "^4.0.1",
+    "@capacitor/keyboard": "^8.0.5",
+    "@capacitor/local-llm": "^1.0.0",
+    "@capacitor/local-notifications": "^8.2.1",
+    "@capacitor/motion": "^8.0.1",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/privacy-screen": "^2.0.1",
+    "@capacitor/push-notifications": "^8.1.2",
+    "@capacitor/screen-orientation": "^8.0.1",
+    "@capacitor/screen-reader": "^8.0.1",
+    "@capacitor/share": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.3",
+    "@capacitor/text-zoom": "^8.0.1",
+    "@capacitor/toast": "^8.0.1",
+    "@lynx-capacitor/core": "workspace:*",
+    "@lynx-js/react": "0.121.0"
+  },
+  "devDependencies": {
+    "@lynx-js/qrcode-rsbuild-plugin": "0.4.7",
+    "@lynx-js/react-rsbuild-plugin": "0.16.2",
+    "@lynx-js/rspeedy": "0.14.4",
+    "@lynx-js/types": "3.9.0",
+    "@types/react": "^18.3.28",
+    "typescript": "~5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,83 @@
+name: LynxCapacitorDemo
+options:
+  bundleIdPrefix: com.lynx
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+targets:
+  LynxCapacitorDemo:
+    type: application
+    platform: iOS
+    configFiles:
+      Debug: Pods/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo.debug.xcconfig
+      Release: Pods/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo.release.xcconfig
+    sources:
+      - path: LynxCapacitorDemo
+        excludes:
+          - Resource
+      - path: LynxCapacitorDemo/Resource/main.lynxbin
+        buildPhase: resources
+      - path: ../official/LynxCapacitorBridge.h
+      - path: ../official/LynxCapacitorBridge.m
+    info:
+      path: LynxCapacitorDemo/Info.plist
+      properties:
+        CFBundleDisplayName: Lynx Capacitor
+        UILaunchStoryboardName: LaunchScreen
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        NSCameraUsageDescription: Test the Capacitor Camera and Barcode Scanner plugins.
+        NSPhotoLibraryUsageDescription: Test the Capacitor Camera plugin.
+        NSPhotoLibraryAddUsageDescription: Save photos created by the Capacitor Camera plugin.
+        NSLocationWhenInUseUsageDescription: Test the Capacitor Geolocation and Google Maps plugins.
+        NSMotionUsageDescription: Test the Capacitor Motion plugin.
+        UIBackgroundModes:
+          - fetch
+          - remote-notification
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lynx.capacitordemo
+        PRODUCT_NAME: LynxCapacitorDemo
+        HEADER_SEARCH_PATHS:
+          - "$(inherited)"
+          - "$(SRCROOT)/../official"
+    dependencies:
+      - sdk: UIKit.framework
+      - sdk: WebKit.framework
+    preBuildScripts:
+      - name: Build Lynx bundle
+        script: |
+          set -e
+          cd "$SRCROOT/../.."
+          pnpm build:core
+          pnpm build:demo
+          mkdir -p "$SRCROOT/LynxCapacitorDemo/Resource"
+          cp demo/dist/main.lynx.bundle "$SRCROOT/LynxCapacitorDemo/Resource/main.lynxbin"
+        basedOnDependencyAnalysis: false
+    postBuildScripts:
+      - name: Copy Lynx Assets
+        script: |
+          set -e
+          ASSET_DIR="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lynx-assets"
+          rm -rf "$ASSET_DIR"
+          mkdir -p "$ASSET_DIR"
+          cp "$SRCROOT/../../demo/dist/main.lynx.bundle" "$ASSET_DIR/main.lynx.bundle"
+          cp -R "$SRCROOT/../../demo/dist/async" "$ASSET_DIR/async"
+        basedOnDependencyAnalysis: false
+      - name: Embed Pods Frameworks
+        script: |
+          "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks.sh"
+        inputFileLists:
+          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist"
+        outputFileLists:
+          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist"
+      - name: Copy Pods Resources
+        script: |
+          "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources.sh"
+        inputFileLists:
+          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources-${CONFIGURATION}-input-files.xcfilelist"
+        outputFileLists:
+          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources-${CONFIGURATION}-output-files.xcfilelist"
