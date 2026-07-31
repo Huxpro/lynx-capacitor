@@ -1,0 +1,42 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "SSG Dev",
+      "args": [
+        "${workspaceFolder}/node_modules/@stencil/core/bin/stencil",
+        "build",
+        "--dev",
+        "--watch",
+        "--serve",
+        "--ssr",
+        "--debug",
+        "--no-open",
+        "--max-workers=0",
+        "--config",
+        "${workspaceFolder}/stencil.config.ts"
+      ],
+      "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Prerender",
+      "args": [
+        "${workspaceFolder}/node_modules/@stencil/core/bin/stencil",
+        "build",
+        "--dev",
+        "--prerender",
+        "--max-workers=0",
+        "--config",
+        "${workspaceFolder}/stencil.config.ts"
+      ],
+      "protocol": "inspector"
+    }
+  ]
+}

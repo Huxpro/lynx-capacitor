@@ -1,0 +1,11 @@
+:host {
+  display: block;
+
+  a {
+    line-height: 100%;
+    padding: 21px 24px;
+
+    background: var(--c-indigo-10);
+    border-radius: 16px;
+  }
+}

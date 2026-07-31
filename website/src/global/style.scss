@@ -1,0 +1,76 @@
+@use 'vars';
+@use 'prism' as *;
+
+span,
+a,
+sup,
+svg {
+  display: inline-block;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1,
+h1,
+h3,
+h4,
+h5,
+h6 {
+  a {
+    color: inherit;
+  }
+}
+
+body {
+  font-family: var(--f-family-text);
+  margin: 0;
+}
+
+html,
+body {
+  scroll-padding-top: 80px;
+}
+
+img {
+  display: block;
+  object-fit: contain;
+  height: auto;
+}
+
+button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+em {
+  font-style: italic;
+}
+
+code {
+  font-family: 'Roboto Mono', 'Source Code Pro', monospace;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.arrow {
+  letter-spacing: 0;
+  white-space: pre;
+  display: inline-flex;
+}
+
+a.link,
+p a,
+li a {
+  color: var(--c-capacitor-blue);
+  transition: opacity 0.2s ease-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}

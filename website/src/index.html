@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Capacitor - build cross platform apps with the web</title>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-TKMGCBC');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"
+    />
+    <meta
+      name="description"
+      content="Build iOS, Android, and Progressive Web Apps with HTML, CSS, and JavaScript"
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Capacitor: Cross-platform native runtime for web apps"
+    />
+    <meta
+      property="og:description"
+      content="Build iOS, Android, and Progressive Web Apps with HTML, CSS, and JavaScript"
+    />
+    <meta
+      property="og:image"
+      content="https://capacitorjs.com/assets/img/og.png"
+    />
+    <meta property="og:url" content="https://capacitorjs.com" />
+    <meta
+      name="twitter:title"
+      content="Capacitor: Cross-platform native runtime for web apps"
+    />
+    <meta
+      name="twitter:description"
+      content="Build iOS, Android, and Progressive Web Apps with HTML, CSS, and JavaScript"
+    />
+    <meta
+      name="twitter:image"
+      content="https://capacitorjs.com/assets/img/og.png"
+    />
+    <meta name="twitter:creator" content="@capacitorjs" />
+
+    <!-- These tags shoudln't chagne. If they do, add to meta-tags.tsx -->
+    <meta
+      property="og:site_name"
+      content="Capacitor: Cross-platform native runtime for web apps"
+    />
+    <meta name="twitter:site" content="@capacitorjs" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="theme-color" content="#16161d" />
+
+    <script>
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    </script>
+    <script type="module" src="/build/site.esm.js"></script>
+    <script nomodule src="/build/site.js"></script>
+
+    <link
+      rel="preload"
+      href="/assets/fonts/inter/Inter-variable-ASCII-subset.woff2"
+      as="font"
+      type="font/woff2"
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/eina/eina-01-bold.woff2"
+      as="font"
+      type="font/woff2"
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/eina/eina-01-semibold.woff2"
+      as="font"
+      type="font/woff2"
+    />
+
+    <link rel="stylesheet" href="/build/site.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-TKMGCBC"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <capacitor-site></capacitor-site>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <!-- Start of HubSpot Embed Code -->
+    <script
+      type="text/javascript"
+      id="hs-script-loader"
+      async
+      defer
+      src="//js.hs-scripts.com/3776657.js"
+    ></script>
+    <!-- End of HubSpot Embed Code -->
+  </body>
+</html>

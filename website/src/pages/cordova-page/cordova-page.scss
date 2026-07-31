@@ -1,0 +1,10 @@
+@use '../solution-page/solution-page' as *;
+
+#more-resources {
+  margin-block-start: 160px;
+  margin-block-end: 160px;
+
+  .heading-group {
+    margin-block-end: var(--space-6);
+  }
+}
