@@ -1,4 +1,0 @@
-src/components.d.ts
-pages/docs/apis/*/index.md
-pages/docs/v3/apis/*.md
-!pages/docs/v3/apis/index.md

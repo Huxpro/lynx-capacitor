@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /docs/v3
-
-Sitemap: https://capacitorjs.com/sitemap.xml
