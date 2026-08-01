@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  self.view.backgroundColor = UIColor.blackColor;
+  self.view.backgroundColor = UIColor.whiteColor;
 
   [[DevToolSettings sharedInstance].bootstrap applyDevelopmentDefaultsIfUnset];
   [LynxService(LynxServiceDevToolProtocol) enableAllSessions];
@@ -45,6 +45,16 @@
 
   LynxTemplateData *data = [[LynxTemplateData alloc] initWithDictionary:@{}];
   [self.lynxView loadTemplateFromURL:@"main.lynx.bundle" initData:data];
+  [self.lynxView triggerLayout];
+}
+
+- (void)viewSafeAreaInsetsDidChange {
+  [super viewSafeAreaInsetsDidChange];
+  UIEdgeInsets insets = self.view.safeAreaInsets;
+  CGRect safeFrame = UIEdgeInsetsInsetRect(self.view.bounds, insets);
+  self.lynxView.frame = safeFrame;
+  self.lynxView.preferredLayoutWidth = safeFrame.size.width;
+  self.lynxView.preferredLayoutHeight = safeFrame.size.height;
   [self.lynxView triggerLayout];
 }
 

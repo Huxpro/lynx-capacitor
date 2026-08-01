@@ -52,7 +52,7 @@ import { Toast } from '@capacitor/toast';
 import { CapacitorGoogleMaps as GoogleMaps } from '@capacitor/google-maps/dist/esm/implementation.js';
 
 import { KeepAwake } from '@capacitor-community/keep-awake';
-import { SafeArea } from '@capacitor-community/safe-area';
+import { SafeArea, SystemBarsStyle as SafeAreaStyle, SystemBarsType as SafeAreaBarType } from '@capacitor-community/safe-area';
 import { CapacitorSQLite } from '@capacitor-community/sqlite';
 
 export type PluginCategory =
@@ -678,17 +678,25 @@ export const PLUGINS: PluginEntry[] = [
     name: 'Safe Area',
     pkg: '@capacitor-community/safe-area',
     category: 'Community',
-    description: 'Read safe area insets, style system bars.',
+    description: 'Style and toggle system bars visibility.',
     supportStatus: 'full',
     actions: [
       {
-        label: 'getInsets',
-        run: () => (SafeArea as any).getInsets(),
+        label: 'setStyle (Light)',
+        run: () => SafeArea.setSystemBarsStyle({ style: SafeAreaStyle.Light }),
         smoke: true,
       },
       {
-        label: 'getStatusBarHeight',
-        run: () => (SafeArea as any).getStatusBarHeight(),
+        label: 'setStyle (Dark)',
+        run: () => SafeArea.setSystemBarsStyle({ style: SafeAreaStyle.Dark }),
+      },
+      {
+        label: 'hide StatusBar',
+        run: () => SafeArea.hideSystemBars({ type: SafeAreaBarType.StatusBar }),
+      },
+      {
+        label: 'show StatusBar',
+        run: () => SafeArea.showSystemBars({ type: SafeAreaBarType.StatusBar }),
       },
     ],
   },
