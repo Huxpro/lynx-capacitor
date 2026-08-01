@@ -3,7 +3,7 @@ require "xcodeproj"
 REPO_ROOT = File.expand_path("..", __dir__)
 LYNX_ROOT = ENV.fetch("LYNX_ROOT", File.expand_path("../lynx", REPO_ROOT))
 PROJECT = File.join(LYNX_ROOT, "explorer/darwin/ios/lynx_explorer/LynxExplorer.xcodeproj")
-CAP_IOS = File.join(REPO_ROOT, "ios/official")
+CAP_IOS = File.join(REPO_ROOT, "packages/runtime/ios/src")
 TARGET_NAME = "LynxExplorer"
 
 proj = Xcodeproj::Project.open(PROJECT)

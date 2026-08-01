@@ -46,6 +46,7 @@
     "@capacitor/text-zoom": "^8.0.1",
     "@capacitor/toast": "^8.0.1",
     "@lynx-capacitor/core": "workspace:*",
+    "@lynx-capacitor/runtime": "workspace:*",
     "@lynx-js/react": "0.121.0"
   },
   "devDependencies": {

@@ -17,4 +17,7 @@ cp demo/dist/main.lynx.bundle ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
 
 cd "$IOS_DIR"
 xcodegen generate
-pod install
+# The Podfile requires the cocoapods-lynx-library plugin; run CocoaPods through
+# Bundler so the Gemfile pins it.
+bundle check >/dev/null 2>&1 || bundle install
+bundle exec pod install

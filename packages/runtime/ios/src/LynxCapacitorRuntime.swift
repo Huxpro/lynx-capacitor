@@ -86,58 +86,114 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
         super.init()
 
         UNUserNotificationCenter.current().delegate = notificationRouter
-        registerOfficialPlugins()
+        registerDiscoveredPlugins()
     }
 
     func getPlatform() -> String {
         "ios"
     }
 
-    private func registerOfficialPlugins() {
-        let classNames = [
-            "ActionSheetPlugin",
-            "AppPlugin",
-            "AppLauncherPlugin",
-            "BackgroundRunnerPlugin",
-            "CapacitorBarcodeScannerPlugin",
-            "CAPBrowserPlugin",
-            "CAPCameraPlugin",
-            "ClipboardPlugin",
-            "DevicePlugin",
-            "DialogPlugin",
-            "FileTransferPlugin",
-            "FileViewerPlugin",
-            "FilesystemPlugin",
-            "GeolocationPlugin",
-            "HapticsPlugin",
-            "InAppBrowserPlugin",
-            "KeyboardPlugin",
-            "LocalLLMPlugin",
-            "LocalNotificationsPlugin",
-            "CAPNetworkPlugin",
-            "PreferencesPlugin",
-            "PrivacyScreenPlugin",
-            "PushNotificationsPlugin",
-            "ScreenOrientationPlugin",
-            "ScreenReaderPlugin",
-            "SharePlugin",
-            "SplashScreenPlugin",
-            "StatusBarPlugin",
-            "TextZoomPlugin",
-            "ToastPlugin",
-            "CapacitorGoogleMapsPlugin",
-            "LynxMotionPlugin",
-            "CAPHttpPlugin",
-            "CAPCookiesPlugin",
-            "CAPSystemBarsPlugin"
-        ]
+    /// Capacitor core plugins that only make sense with a WKWebView host.
+    /// Capacitor's own bridge registers these unconditionally; we have no
+    /// web view, so they would register a JS surface that can never work.
+    private static let excludedPluginClassNames: Set<String> = [
+        "CAPConsolePlugin",
+        "CAPWebViewPlugin"
+    ]
 
-        for className in classNames {
-            guard let pluginType = NSClassFromString(className) as? CAPPlugin.Type else {
+    /// Registers every Capacitor plugin linked into the app, with no build-time
+    /// manifest to keep in sync.
+    ///
+    /// Two sources are unioned:
+    ///
+    /// 1. An Objective-C runtime sweep for `CAPPlugin` subclasses. This is what
+    ///    makes `pod install` the only step a consumer needs -- linking a plugin
+    ///    pod is enough to expose it to JS. It also picks up plugins written
+    ///    directly in the host app, which Capacitor itself cannot do without a
+    ///    manual `capacitor.config.json` edit.
+    /// 2. `packageClassList` from a bundled `capacitor.config.json`, the file
+    ///    `npx cap sync` generates. Honouring it keeps existing Capacitor
+    ///    projects working and gives an escape hatch when a class is stripped
+    ///    from the binary (dead-stripping can drop classes the sweep would
+    ///    otherwise find, which is why Capacitor moved to this list in v6).
+    private func registerDiscoveredPlugins() {
+        var registered = Set<ObjectIdentifier>()
+        for pluginType in Self.linkedPluginTypes() + Self.declaredPluginTypes() {
+            guard registered.insert(ObjectIdentifier(pluginType)).inserted else {
                 continue
             }
             registerPluginType(pluginType)
         }
+    }
+
+    /// Every `CAPPlugin` subclass present in the loaded images.
+    private static func linkedPluginTypes() -> [CAPPlugin.Type] {
+        let count = objc_getClassList(nil, 0)
+        guard count > 0 else {
+            return []
+        }
+
+        let buffer = UnsafeMutablePointer<AnyClass>.allocate(capacity: Int(count))
+        defer { buffer.deallocate() }
+        let realCount = objc_getClassList(AutoreleasingUnsafeMutablePointer<AnyClass>(buffer), count)
+
+        var types: [CAPPlugin.Type] = []
+        for index in 0..<Int(realCount) {
+            let candidate: AnyClass = buffer[index]
+            // Walk the superclass chain instead of casting or messaging the
+            // class directly: the class list contains classes that crash or
+            // misbehave when sent arbitrary messages, and reading runtime
+            // metadata touches none of them.
+            guard inheritsFromCAPPlugin(candidate) else {
+                continue
+            }
+            guard let pluginType = pluginType(from: candidate) else {
+                continue
+            }
+            types.append(pluginType)
+        }
+        return types
+    }
+
+    /// Plugin classes named by `packageClassList` in a bundled `capacitor.config.json`.
+    private static func declaredPluginTypes() -> [CAPPlugin.Type] {
+        guard
+            let url = Bundle.main.url(forResource: "capacitor.config", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let classNames = root["packageClassList"] as? [String]
+        else {
+            return []
+        }
+        return classNames.compactMap { className in
+            NSClassFromString(className).flatMap { pluginType(from: $0) }
+        }
+    }
+
+    private static func inheritsFromCAPPlugin(_ candidate: AnyClass) -> Bool {
+        var superclass: AnyClass? = class_getSuperclass(candidate)
+        while let current = superclass {
+            if current == CAPPlugin.self {
+                return true
+            }
+            superclass = class_getSuperclass(current)
+        }
+        return false
+    }
+
+    /// Narrows a class to one this bridge can actually dispatch to.
+    private static func pluginType(from candidate: AnyClass) -> CAPPlugin.Type? {
+        // CAPInstancePlugin subclasses need an instance supplied by the host;
+        // Capacitor skips them during automatic registration too.
+        if candidate is CAPInstancePlugin.Type {
+            return nil
+        }
+        if excludedPluginClassNames.contains(NSStringFromClass(candidate)) {
+            return nil
+        }
+        // CAPBridgedPlugin carries jsName / pluginMethods, without which the
+        // plugin has no callable surface over the Lynx transport.
+        return candidate as? (CAPPlugin & CAPBridgedPlugin).Type
     }
 
     func getPluginHeaders() -> String {

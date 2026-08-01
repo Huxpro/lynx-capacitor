@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+gem 'cocoapods', '~> 1.16'
+
+# Podfile plugin that autolinks npm packages shipping lynx.lib.json. Provides
+# `use_lynx_library!`, without which `pod install` cannot resolve the Podfile.
+gem 'cocoapods-lynx-library', '~> 4.0'
+
+# XcodeGen consumes project.yml; installed separately (brew install xcodegen).

@@ -1,6 +1,6 @@
 #import "LynxDemoViewController.h"
 #import "LynxDemoTemplateProvider.h"
-#import "LynxCapacitorBridge.h"
+#import <LynxLibraryRegistry/LynxGeneratedLibraryRegistry.h>
 #import <Lynx/DevToolSettings.h>
 #import <Lynx/LynxConfig.h>
 #import <Lynx/LynxEnv.h>
@@ -24,7 +24,10 @@
 
   LynxConfig *globalConfig =
       [[LynxConfig alloc] initWithProvider:[LynxDemoTemplateProvider new]];
-  [globalConfig registerModule:LynxCapacitorBridge.class];
+  // Registers CapacitorBridge -- and any other autolinked Lynx library -- from
+  // the registry cocoapods-lynx-library generates at `pod install` time. The
+  // app never names LynxCapacitorBridge; adding the npm package is enough.
+  [[LynxGeneratedLibraryRegistry new] setup:globalConfig];
   [[LynxEnv sharedInstance] prepareConfig:globalConfig];
 
   CGSize screenSize = self.view.bounds.size;
