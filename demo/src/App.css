@@ -1,60 +1,85 @@
 :root {
   --cap-blue: #119eff;
-  --cap-blue-soft: rgba(17, 158, 255, 0.06);
-  --cap-blue-border: #bae0ff;
   --lynx-red: #ff4154;
   --surface: #ffffff;
-  --surface-raised: #f2f2f7;
-  --text-primary: #0f1720;
-  --text-secondary: #4a5568;
-  --text-tertiary: #8494a7;
-  --border: #e2e8f0;
-  --border-subtle: #edf2f7;
-  --success: #22c55e;
+  --surface-grouped: #f2f2f7;
+  --text-primary: #1c1c1e;
+  --text-secondary: #3c3c43;
+  --text-tertiary: #8e8e93;
+  --separator: rgba(60, 60, 67, 0.12);
+  --success: #34c759;
   --success-bg: #f0fdf4;
-  --success-border: #bbf7d0;
-  --error: #ef4444;
+  --error: #ff3b30;
   --error-bg: #fef2f2;
-  --error-border: #fecaca;
   --interactive-bg: #fffbeb;
-  --interactive-border: #fde68a;
   --partial-bg: #f5f3ff;
-  --partial-border: #ddd6fe;
 }
 
 .page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: var(--surface-raised);
+  background-color: var(--surface-grouped);
 }
 
+/* ── Top Bar with brand ── */
+.top-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: var(--surface);
+  border-bottom-width: 0.5px;
+  border-bottom-color: var(--separator);
+}
+
+.brand {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.brand-cap {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.brand-lynx {
+  font-size: 17px;
+  font-weight: 700;
+  color: linear-gradient(135deg, #ff4154, #119eff);
+}
+
+/* ── Scroll content ── */
 .scroll {
   flex: 1;
   width: 100%;
-  padding: 0 16px 0 16px;
+  padding: 0 16px;
 }
 
-.scroll-bottom-spacer {
-  height: 24px;
+.scroll-spacer {
+  height: 16px;
 }
 
+/* ── Sections ── */
 .section {
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .section-title {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-tertiary);
-  letter-spacing: 0.2px;
-  margin: 20px 0 8px 4px;
+  margin: 24px 0 6px 16px;
 }
 
+/* ── Plugin Cards ── */
 .card {
   background-color: var(--surface);
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: 10px;
+  padding: 12px 16px;
   margin-bottom: 8px;
 }
 
@@ -72,7 +97,7 @@
 
 .card-name {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 21px;
 }
@@ -82,8 +107,8 @@
   flex-direction: row;
   align-items: center;
   gap: 3px;
-  border-radius: 5px;
-  padding: 2px 7px;
+  border-radius: 4px;
+  padding: 2px 6px;
   flex-shrink: 0;
 }
 
@@ -109,8 +134,8 @@
 }
 
 .status-text {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text-secondary);
   line-height: 13px;
 }
@@ -127,7 +152,7 @@
   font-size: 14px;
   color: var(--text-secondary);
   margin-bottom: 10px;
-  line-height: 19px;
+  line-height: 18px;
 }
 
 .actions {
@@ -139,8 +164,8 @@
 
 .action-btn {
   background-color: var(--cap-blue);
-  border-radius: 7px;
-  padding: 7px 11px;
+  border-radius: 6px;
+  padding: 7px 10px;
 }
 
 .action-label {
@@ -153,7 +178,7 @@
 .result {
   border-radius: 8px;
   padding: 10px 12px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .result-ok {
@@ -168,20 +193,20 @@
   font-family: Menlo;
   font-size: 11px;
   color: var(--text-primary);
-  line-height: 17px;
+  line-height: 16px;
 }
 
-/* ── Tab Bar ── */
+/* ── Tab Bar (iOS style) ── */
 .tab-bar {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 48px;
-  padding: 8px 0 28px 0;
+  gap: 60px;
+  padding: 6px 0 34px 0;
   background-color: var(--surface);
-  border-top-width: 1px;
-  border-top-color: var(--border-subtle);
+  border-top-width: 0.5px;
+  border-top-color: var(--separator);
 }
 
 .tab {
@@ -189,12 +214,11 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 4px 16px;
 }
 
 .tab-icon {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 22px;
+  line-height: 28px;
 }
 
 .tab-label {
@@ -208,11 +232,10 @@
   font-weight: 600;
 }
 
-/* ── Info Page ── */
+/* ── Info Page (grouped table) ── */
 .info-card {
   background-color: var(--surface);
-  border-radius: 12px;
-  padding: 4px 0;
+  border-radius: 10px;
 }
 
 .info-row {
@@ -221,21 +244,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 11px 16px;
-  border-bottom-width: 1px;
-  border-bottom-color: var(--border-subtle);
+  border-bottom-width: 0.5px;
+  border-bottom-color: var(--separator);
 }
 
-.info-row:last-child {
+.info-row-last {
   border-bottom-width: 0;
 }
 
 .info-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-primary);
 }
 
 .info-value {
   font-family: Menlo;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }

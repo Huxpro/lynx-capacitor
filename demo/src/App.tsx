@@ -80,9 +80,9 @@ function PluginCard(props: {
 
 type Tab = 'plugins' | 'info';
 
-function InfoRow(props: { label: string; value: string }): JSX.Element {
+function InfoRow(props: { label: string; value: string; last?: boolean }): JSX.Element {
   return (
-    <view className="info-row">
+    <view className={props.last ? 'info-row info-row-last' : 'info-row'}>
       <text className="info-label">{props.label}</text>
       <text className="info-value">{props.value}</text>
     </view>
@@ -145,6 +145,13 @@ export function App(): JSX.Element {
 
   return (
     <view className="page">
+      <view className="top-bar">
+        <view className="brand">
+          <text className="brand-cap">Capacitor</text>
+          <text className="brand-lynx">Lynx</text>
+        </view>
+      </view>
+
       {tab === 'plugins' ? (
         <scroll-view scroll-orientation="vertical" className="scroll">
           {CATEGORY_ORDER.map(category => {
@@ -164,7 +171,7 @@ export function App(): JSX.Element {
               </view>
             );
           })}
-          <view className="scroll-bottom-spacer" />
+          <view className="scroll-spacer" />
         </scroll-view>
       ) : (
         <scroll-view scroll-orientation="vertical" className="scroll">
@@ -173,7 +180,7 @@ export function App(): JSX.Element {
             <view className="info-card">
               <InfoRow label="Platform" value={platform} />
               <InfoRow label="Native Bridge" value={Capacitor.isNativePlatform() ? 'Connected' : 'Unavailable'} />
-              <InfoRow label="Lynx SDK" value="1.4.0" />
+              <InfoRow label="Lynx SDK" value="1.4.0" last />
             </view>
           </view>
 
@@ -181,7 +188,7 @@ export function App(): JSX.Element {
             <text className="section-title">Adapter</text>
             <view className="info-card">
               <InfoRow label="@lynx-capacitor/core" value="1.0.0" />
-              <InfoRow label="@capacitor/core compat" value="8.x" />
+              <InfoRow label="@capacitor/core compat" value="8.x" last />
             </view>
           </view>
 
@@ -191,7 +198,7 @@ export function App(): JSX.Element {
               <InfoRow label="Total Plugins" value={String(total)} />
               <InfoRow label="Official" value={String(officialCount)} />
               <InfoRow label="Community" value={String(communityCount)} />
-              <InfoRow label="Auto-tested" value={`${okCount} passed · ${failCount} failed`} />
+              <InfoRow label="Auto-tested" value={`${okCount} passed · ${failCount} failed`} last />
             </view>
           </view>
 
@@ -204,19 +211,19 @@ export function App(): JSX.Element {
               <InfoRow label="@capacitor/geolocation" value="8.x" />
               <InfoRow label="@capacitor/network" value="8.x" />
               <InfoRow label="@capacitor-community/safe-area" value="8.x" />
-              <InfoRow label="@capacitor-community/sqlite" value="6.x" />
+              <InfoRow label="@capacitor-community/sqlite" value="6.x" last />
             </view>
           </view>
-          <view className="scroll-bottom-spacer" />
+          <view className="scroll-spacer" />
         </scroll-view>
       )}
 
       <view className="tab-bar">
-        <view className={tab === 'plugins' ? 'tab tab-active' : 'tab'} bindtap={() => setTab('plugins')}>
+        <view className="tab" bindtap={() => setTab('plugins')}>
           <text className={tab === 'plugins' ? 'tab-icon tab-icon-active' : 'tab-icon'}>⚡</text>
           <text className={tab === 'plugins' ? 'tab-label tab-label-active' : 'tab-label'}>Plugins</text>
         </view>
-        <view className={tab === 'info' ? 'tab tab-active' : 'tab'} bindtap={() => setTab('info')}>
+        <view className="tab" bindtap={() => setTab('info')}>
           <text className={tab === 'info' ? 'tab-icon tab-icon-active' : 'tab-icon'}>ℹ️</text>
           <text className={tab === 'info' ? 'tab-label tab-label-active' : 'tab-label'}>Info</text>
         </view>
