@@ -47,13 +47,14 @@ function PluginCard(props: {
   entry: PluginEntry;
   result?: RunResult;
   onRun: (entry: PluginEntry, action: PluginAction) => void;
+  dark?: boolean;
 }): JSX.Element {
-  const { entry, result, onRun } = props;
+  const { entry, result, onRun, dark } = props;
   return (
-    <view className="card">
+    <view className={dark ? 'card card-dark' : 'card'}>
       <view className="card-head">
         <view className="card-title-row">
-          <text className="card-name">{entry.name}</text>
+          <text className={dark ? 'card-name card-name-dark' : 'card-name'}>{entry.name}</text>
           <view className={`status-badge status-${entry.supportStatus}`}>
             <text className="status-emoji">{STATUS_EMOJI[entry.supportStatus]}</text>
             <text className="status-text">{STATUS_LABEL[entry.supportStatus]}</text>
@@ -61,7 +62,7 @@ function PluginCard(props: {
         </view>
         <text className="card-pkg">{entry.pkg}</text>
       </view>
-      <text className="card-desc">{entry.description}</text>
+      <text className={dark ? 'card-desc card-desc-dark' : 'card-desc'}>{entry.description}</text>
       <view className="actions">
         {entry.actions.map(action => (
           <view key={action.label} className="action-btn" bindtap={() => onRun(entry, action)}>
@@ -70,8 +71,8 @@ function PluginCard(props: {
         ))}
       </view>
       {result && (
-        <view className={result.ok ? 'result result-ok' : 'result result-err'}>
-          <text className="result-text">{result.text}</text>
+        <view className={result.ok ? (dark ? 'result result-ok-dark' : 'result result-ok') : (dark ? 'result result-err-dark' : 'result result-err')}>
+          <text className={dark ? 'result-text result-text-dark' : 'result-text'}>{result.text}</text>
         </view>
       )}
     </view>
@@ -80,10 +81,11 @@ function PluginCard(props: {
 
 type Tab = 'plugins' | 'info';
 
-function InfoRow(props: { label: string; value: string; last?: boolean }): JSX.Element {
+function InfoRow(props: { label: string; value: string; last?: boolean; dark?: boolean }): JSX.Element {
+  const rowClass = props.last ? 'info-row info-row-last' : (props.dark ? 'info-row info-row-dark' : 'info-row');
   return (
-    <view className={props.last ? 'info-row info-row-last' : 'info-row'}>
-      <text className="info-label">{props.label}</text>
+    <view className={props.last && props.dark ? 'info-row info-row-last info-row-dark' : rowClass}>
+      <text className={props.dark ? 'info-label info-label-dark' : 'info-label'}>{props.label}</text>
       <text className="info-value">{props.value}</text>
     </view>
   );
@@ -92,6 +94,7 @@ function InfoRow(props: { label: string; value: string; last?: boolean }): JSX.E
 export function App(): JSX.Element {
   const [results, setResults] = useState<Record<string, RunResult>>({});
   const [tab, setTab] = useState<Tab>('plugins');
+  const [dark, setDark] = useState(false);
   const platform = Capacitor.getPlatform();
 
   const runAction = useCallback((entry: PluginEntry, action: PluginAction) => {
@@ -144,10 +147,10 @@ export function App(): JSX.Element {
   const communityCount = PLUGINS.filter(p => p.category === 'Community').length;
 
   return (
-    <view className="page">
-      <view className="top-bar">
+    <view className={dark ? 'page page-dark' : 'page'}>
+      <view className={dark ? 'top-bar top-bar-dark' : 'top-bar'}>
         <view className="brand">
-          <text className="brand-cap">Capacitor</text>
+          <text className={dark ? 'brand-cap brand-cap-dark' : 'brand-cap'}>Capacitor</text>
           <text className="brand-lynx">Lynx</text>
         </view>
       </view>
@@ -159,13 +162,14 @@ export function App(): JSX.Element {
             if (entries.length === 0) return null;
             return (
               <view key={category} className="section">
-                <text className="section-title">{category}</text>
+                <text className={dark ? 'section-title section-title-dark' : 'section-title'}>{category}</text>
                 {entries.map(entry => (
                   <PluginCard
                     key={entry.name}
                     entry={entry}
                     result={results[entry.name]}
                     onRun={onRun}
+                    dark={dark}
                   />
                 ))}
               </view>
@@ -176,56 +180,68 @@ export function App(): JSX.Element {
       ) : (
         <scroll-view scroll-orientation="vertical" className="scroll">
           <view className="section">
-            <text className="section-title">System</text>
-            <view className="info-card">
-              <InfoRow label="Platform" value={platform} />
-              <InfoRow label="Native Bridge" value={Capacitor.isNativePlatform() ? 'Connected' : 'Unavailable'} />
-              <InfoRow label="Lynx SDK" value="1.4.0" last />
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>System</text>
+            <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
+              <InfoRow label="Platform" value={platform} dark={dark} />
+              <InfoRow label="Native Bridge" value={Capacitor.isNativePlatform() ? 'Connected' : 'Unavailable'} dark={dark} />
+              <InfoRow label="Lynx Engine" value="4.1" last dark={dark} />
             </view>
           </view>
 
           <view className="section">
-            <text className="section-title">Adapter</text>
-            <view className="info-card">
-              <InfoRow label="@lynx-capacitor/core" value="1.0.0" />
-              <InfoRow label="@capacitor/core compat" value="8.x" last />
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Appearance</text>
+            <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
+              <view className={dark ? 'toggle-row info-row-dark' : 'toggle-row'}>
+                <text className={dark ? 'info-label info-label-dark' : 'info-label'}>Dark Mode</text>
+                <view className="toggle-btn" bindtap={() => setDark(d => !d)}>
+                  <text className="toggle-btn-text">{dark ? 'On' : 'Off'}</text>
+                </view>
+              </view>
             </view>
           </view>
 
           <view className="section">
-            <text className="section-title">Coverage</text>
-            <view className="info-card">
-              <InfoRow label="Total Plugins" value={String(total)} />
-              <InfoRow label="Official" value={String(officialCount)} />
-              <InfoRow label="Community" value={String(communityCount)} />
-              <InfoRow label="Auto-tested" value={`${okCount} passed · ${failCount} failed`} last />
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Adapter</text>
+            <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
+              <InfoRow label="@lynx-capacitor/core" value="1.0.0" dark={dark} />
+              <InfoRow label="@capacitor/core compat" value="8.x" last dark={dark} />
             </view>
           </view>
 
           <view className="section">
-            <text className="section-title">Plugin Versions</text>
-            <view className="info-card">
-              <InfoRow label="@capacitor/device" value="8.x" />
-              <InfoRow label="@capacitor/camera" value="8.x" />
-              <InfoRow label="@capacitor/filesystem" value="8.x" />
-              <InfoRow label="@capacitor/geolocation" value="8.x" />
-              <InfoRow label="@capacitor/network" value="8.x" />
-              <InfoRow label="@capacitor-community/safe-area" value="8.x" />
-              <InfoRow label="@capacitor-community/sqlite" value="6.x" last />
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Coverage</text>
+            <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
+              <InfoRow label="Total Plugins" value={String(total)} dark={dark} />
+              <InfoRow label="Official" value={String(officialCount)} dark={dark} />
+              <InfoRow label="Community" value={String(communityCount)} dark={dark} />
+              <InfoRow label="Auto-tested" value={`${okCount} passed · ${failCount} failed`} last dark={dark} />
+            </view>
+          </view>
+
+          <view className="section">
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Plugin Versions</text>
+            <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
+              <InfoRow label="@capacitor/device" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor/camera" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor/filesystem" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor/geolocation" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor/network" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor-community/safe-area" value="8.x" dark={dark} />
+              <InfoRow label="@capacitor-community/sqlite" value="6.x" last dark={dark} />
             </view>
           </view>
           <view className="scroll-spacer" />
         </scroll-view>
       )}
 
-      <view className="tab-bar">
+      <view className={dark ? 'tab-bar tab-bar-dark' : 'tab-bar'}>
         <view className="tab" bindtap={() => setTab('plugins')}>
           <text className={tab === 'plugins' ? 'tab-icon tab-icon-active' : 'tab-icon'}>⚡</text>
-          <text className={tab === 'plugins' ? 'tab-label tab-label-active' : 'tab-label'}>Plugins</text>
+          <text className={tab === 'plugins' ? 'tab-label tab-label-active' : (dark ? 'tab-label tab-label-dark' : 'tab-label')}>Plugins</text>
         </view>
         <view className="tab" bindtap={() => setTab('info')}>
           <text className={tab === 'info' ? 'tab-icon tab-icon-active' : 'tab-icon'}>ℹ️</text>
-          <text className={tab === 'info' ? 'tab-label tab-label-active' : 'tab-label'}>Info</text>
+          <text className={tab === 'info' ? 'tab-label tab-label-active' : (dark ? 'tab-label tab-label-dark' : 'tab-label')}>Info</text>
         </view>
       </view>
     </view>
