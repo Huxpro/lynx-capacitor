@@ -143,7 +143,7 @@ export function App(): JSX.Element {
         <view className="header">
           <text className="title">Capacitor on Lynx</text>
           <text className="subtitle">
-            All {total} official Capacitor plugins, bridged via @lynx-capacitor/core
+            {total} Capacitor plugins (official + community), bridged via @lynx-capacitor/core
           </text>
           <view className="badges">
             <view className={isNative ? 'badge badge-on' : 'badge badge-off'}>

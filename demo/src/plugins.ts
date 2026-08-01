@@ -51,6 +51,10 @@ import { TextZoom } from '@capacitor/text-zoom';
 import { Toast } from '@capacitor/toast';
 import { CapacitorGoogleMaps as GoogleMaps } from '@capacitor/google-maps/dist/esm/implementation.js';
 
+import { KeepAwake } from '@capacitor-community/keep-awake';
+import { SafeArea } from '@capacitor-community/safe-area';
+import { CapacitorSQLite } from '@capacitor-community/sqlite';
+
 export type PluginCategory =
   | 'Device & App'
   | 'UI & Feedback'
@@ -58,6 +62,7 @@ export type PluginCategory =
   | 'Networking'
   | 'System & Sensors'
   | 'Notifications'
+  | 'Community'
   | 'Requires SDK';
 
 export type SupportStatus = 'full' | 'interactive' | 'partial' | 'unsupported';
@@ -654,6 +659,81 @@ export const PLUGINS: PluginEntry[] = [
       { label: 'warmup', run: () => LocalLLM.warmup({ sessionId: 'demo' }) },
     ],
   },
+
+  // ---------------------------------------------------------------- Community
+  {
+    name: 'Keep Awake',
+    pkg: '@capacitor-community/keep-awake',
+    category: 'Community',
+    description: 'Prevent the screen from dimming.',
+    supportStatus: 'full',
+    actions: [
+      { label: 'isSupported', run: () => KeepAwake.isSupported(), smoke: true },
+      { label: 'isKeptAwake', run: () => KeepAwake.isKeptAwake(), smoke: true },
+      { label: 'keepAwake', run: () => KeepAwake.keepAwake() },
+      { label: 'allowSleep', run: () => KeepAwake.allowSleep() },
+    ],
+  },
+  {
+    name: 'Safe Area',
+    pkg: '@capacitor-community/safe-area',
+    category: 'Community',
+    description: 'Read safe area insets, style system bars.',
+    supportStatus: 'full',
+    actions: [
+      {
+        label: 'getInsets',
+        run: () => (SafeArea as any).getInsets(),
+        smoke: true,
+      },
+      {
+        label: 'getStatusBarHeight',
+        run: () => (SafeArea as any).getStatusBarHeight(),
+      },
+    ],
+  },
+  {
+    name: 'SQLite',
+    pkg: '@capacitor-community/sqlite',
+    category: 'Community',
+    description: 'Native SQLite database operations.',
+    supportStatus: 'full',
+    actions: [
+      {
+        label: 'echo',
+        run: () => CapacitorSQLite.echo({ value: 'lynx-capacitor' }),
+        smoke: true,
+      },
+      {
+        label: 'create + query',
+        run: async () => {
+          await CapacitorSQLite.createConnection({
+            database: 'demo',
+            version: 1,
+            encrypted: false,
+            mode: 'no-encryption',
+          });
+          await CapacitorSQLite.open({ database: 'demo' });
+          await CapacitorSQLite.execute({
+            database: 'demo',
+            statements: 'CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT); INSERT OR REPLACE INTO test VALUES (1, "lynx-capacitor");',
+          });
+          const result = await CapacitorSQLite.query({
+            database: 'demo',
+            statement: 'SELECT * FROM test',
+            values: [],
+          });
+          await CapacitorSQLite.close({ database: 'demo' });
+          return result;
+        },
+      },
+      {
+        label: 'isAvailable',
+        run: () => CapacitorSQLite.isAvailable(),
+        smoke: true,
+      },
+    ],
+  },
 ];
 
 export const CATEGORY_ORDER: PluginCategory[] = [
@@ -663,6 +743,7 @@ export const CATEGORY_ORDER: PluginCategory[] = [
   'Networking',
   'System & Sensors',
   'Notifications',
+  'Community',
   'Requires SDK',
 ];
 

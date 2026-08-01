@@ -49,6 +49,11 @@ target 'LynxCapacitorDemo' do
   end
   pod 'LynxCapacitorRuntime', :path => File.join(repository_root, 'ios/official')
 
+  # Community plugins
+  pod 'CapacitorCommunityKeepAwake', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/keep-awake')
+  pod 'CapacitorCommunitySafeArea', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/safe-area')
+  pod 'CapacitorCommunitySqlite', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/sqlite')
+
   pod 'Lynx', :path => lynx_root, :subspecs => ['Framework']
   pod 'LynxBase', :path => lynx_root, :subspecs => ['Framework']
   pod 'LynxDevtool', :path => lynx_root, :subspecs => ['Framework']
@@ -65,5 +70,22 @@ post_install do |installer|
     target.build_configurations.each do |configuration|
       configuration.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
     end
+  end
+
+  # Fix "Multiple commands produce" for vendored xcframeworks.
+  # Some Capacitor plugins (geolocation, barcode-scanner, etc.) declare
+  # vendored_frameworks that get embedded by BOTH the pod target's own
+  # embed phase AND the aggregate Pods-* frameworks script. Remove the
+  # duplicate entries from xcfilelist files.
+  support_dir = File.join(__dir__, 'Pods/Target Support Files/Pods-LynxCapacitorDemo')
+  Dir.glob(File.join(support_dir, '*-output-files.xcfilelist')).each do |path|
+    lines = File.readlines(path)
+    deduped = lines.uniq
+    File.write(path, deduped.join) if lines.size != deduped.size
+  end
+  Dir.glob(File.join(support_dir, '*-input-files.xcfilelist')).each do |path|
+    lines = File.readlines(path)
+    deduped = lines.uniq
+    File.write(path, deduped.join) if lines.size != deduped.size
   end
 end

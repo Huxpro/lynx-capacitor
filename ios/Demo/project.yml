@@ -70,14 +70,8 @@ targets:
       - name: Embed Pods Frameworks
         script: |
           "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks.sh"
-        inputFileLists:
-          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist"
-        outputFileLists:
-          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist"
+        basedOnDependencyAnalysis: false
       - name: Copy Pods Resources
         script: |
           "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources.sh"
-        inputFileLists:
-          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources-${CONFIGURATION}-input-files.xcfilelist"
-        outputFileLists:
-          - "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources-${CONFIGURATION}-output-files.xcfilelist"
+        basedOnDependencyAnalysis: false
