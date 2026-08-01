@@ -57,7 +57,7 @@ function PluginCard(props: {
           <text className={dark ? 'card-name card-name-dark' : 'card-name'}>{entry.name}</text>
           <view className={dark ? `status-badge status-${entry.supportStatus}-dark` : `status-badge status-${entry.supportStatus}`}>
             <text className="status-emoji">{STATUS_EMOJI[entry.supportStatus]}</text>
-            <text className="status-text">{STATUS_LABEL[entry.supportStatus]}</text>
+            <text className={dark ? 'status-text status-text-dark' : 'status-text'}>{STATUS_LABEL[entry.supportStatus]}</text>
           </view>
         </view>
         <text className="card-pkg">{entry.pkg}</text>
