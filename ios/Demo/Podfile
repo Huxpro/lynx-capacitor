@@ -1,4 +1,3 @@
-require 'json'
 require 'fileutils'
 
 source 'https://cdn.cocoapods.org/'
@@ -6,13 +5,14 @@ platform :ios, '15.0'
 project 'LynxCapacitorDemo.xcodeproj'
 
 plugin 'cocoapods-lynx-library'
+plugin 'cocoapods-lynx-capacitor'
 
 repository_root = File.expand_path('../..', __dir__)
 lynx_root = ENV.fetch('LYNX_ROOT', File.expand_path('../lynx', repository_root))
 
-# Autolink scans node_modules for packages shipping lynx.lib.json. `pod install`
-# runs from ios/Demo, whose ancestors do not include demo/node_modules, so point
-# it at the app package explicitly.
+# Both autolink plugins scan node_modules by walking up from a starting
+# directory. `pod install` runs in ios/Demo, whose ancestors do not include
+# demo/node_modules, so point them at the app package explicitly.
 app_package_root = File.join(repository_root, 'demo')
 
 install! 'cocoapods',
@@ -56,17 +56,14 @@ target 'LynxCapacitorDemo' do
     File.write(cordova_spec, cordova_spec_content)
   end
 
-  pod 'Capacitor', :path => capacitor_ios
-  JSON.parse(File.read(File.join(repository_root, 'plugins.json'))).each do |plugin|
-    pod plugin['pod'], :path => File.join(repository_root, 'demo/node_modules/@capacitor', plugin['package'])
-  end
-  # LynxCapacitorRuntime is not listed here: use_lynx_library! above adds it
+  # Links Capacitor + CapacitorCordova and every @capacitor/* and
+  # @capacitor-community/* plugin the demo depends on, straight from
+  # node_modules. Official and community plugins are not distinguished --
+  # anything with a `capacitor` key in package.json is linked.
+  #
+  # LynxCapacitorRuntime is not listed either: use_lynx_library! above adds it
   # from node_modules/@lynx-capacitor/runtime.
-
-  # Community plugins
-  pod 'CapacitorCommunityKeepAwake', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/keep-awake')
-  pod 'CapacitorCommunitySafeArea', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/safe-area')
-  pod 'CapacitorCommunitySqlite', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/sqlite')
+  use_capacitor_plugins! :root => app_package_root
 
   pod 'Lynx', :path => lynx_root, :subspecs => ['Framework']
   pod 'LynxBase', :path => lynx_root, :subspecs => ['Framework']

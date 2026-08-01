@@ -662,13 +662,15 @@ npm install @lynx-capacitor/core @capacitor/device</pre>
       </div>
       <div class="step">
         <div>
-          <h4>Autolink the native runtime (iOS)</h4>
-          <p>Lynx Autolink finds <code>@lynx-capacitor/runtime</code> in node_modules and registers the bridge for you.</p>
+          <h4>Autolink the native side (iOS)</h4>
+          <p>Two Podfile lines. No plugin is named anywhere &mdash; both are resolved from node_modules at <code>pod install</code>.</p>
           <pre><span class="comment"># Podfile</span>
 plugin <span class="string">'cocoapods-lynx-library'</span>
+plugin <span class="string">'cocoapods-lynx-capacitor'</span>
 
 target <span class="string">'YourApp'</span> <span class="keyword">do</span>
   use_lynx_library!
+  use_capacitor_plugins!
 <span class="keyword">end</span>
 
 <span class="comment">// In your view controller</span>
