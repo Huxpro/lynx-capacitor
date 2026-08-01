@@ -65,7 +65,7 @@ targets:
           rm -rf "$ASSET_DIR"
           mkdir -p "$ASSET_DIR"
           cp "$SRCROOT/../../demo/dist/main.lynx.bundle" "$ASSET_DIR/main.lynx.bundle"
-          cp -R "$SRCROOT/../../demo/dist/async" "$ASSET_DIR/async"
+          if [ -d "$SRCROOT/../../demo/dist/async" ]; then cp -R "$SRCROOT/../../demo/dist/async" "$ASSET_DIR/async"; fi
         basedOnDependencyAnalysis: false
       - name: Embed Pods Frameworks
         script: |

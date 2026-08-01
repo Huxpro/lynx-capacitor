@@ -1,9 +1,8 @@
 :root {
   --cap-blue: #119eff;
-  --cap-blue-soft: rgba(17, 158, 255, 0.08);
+  --cap-blue-soft: rgba(17, 158, 255, 0.06);
   --cap-blue-border: #bae0ff;
   --lynx-red: #ff4154;
-  --lynx-gradient: linear-gradient(135deg, #ff4154 0%, #119eff 100%);
   --surface: #ffffff;
   --surface-raised: #f8fafb;
   --surface-dim: #f1f4f7;
@@ -22,55 +21,51 @@
   --interactive-border: #fde68a;
   --partial-bg: #f5f3ff;
   --partial-border: #ddd6fe;
-  --radius: 12px;
-  --radius-sm: 8px;
 }
 
 .page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: var(--surface-raised);
+  background-color: var(--surface);
 }
 
 .scroll {
   flex: 1;
   width: 100%;
-  padding: 20px 16px 60px 16px;
+  padding: 0 20px 80px 20px;
 }
 
 .header {
-  padding: 12px 0 24px 0;
-  border-bottom-width: 1px;
-  border-bottom-color: var(--border-subtle);
-  margin-bottom: 8px;
+  padding: 48px 0 32px 0;
 }
 
 .title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.5px;
+  line-height: 34px;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
-  margin-top: 6px;
-  line-height: 20px;
+  margin-top: 8px;
+  line-height: 22px;
 }
 
 .badges {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 14px;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .badge {
-  border-radius: 6px;
-  padding: 5px 10px;
+  border-radius: 20px;
+  padding: 6px 12px;
   background-color: var(--surface-dim);
   border-width: 1px;
   border-color: var(--border);
@@ -89,9 +84,10 @@
 }
 
 .badge-text {
+  font-family: Menlo;
   font-size: 12px;
   color: var(--cap-blue);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .badge-off .badge-text {
@@ -103,12 +99,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 16px;
-  margin-top: 14px;
-  padding: 10px 12px;
-  background-color: var(--surface);
-  border-radius: var(--radius-sm);
-  border-width: 1px;
-  border-color: var(--border-subtle);
+  margin-top: 16px;
 }
 
 .legend-item {
@@ -119,39 +110,39 @@
 }
 
 .legend-emoji {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
 }
 
 .legend-text {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
   font-weight: 500;
 }
 
 .section {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .section-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--cap-blue);
-  letter-spacing: 0.8px;
-  margin: 20px 0 10px 2px;
+  letter-spacing: 0.5px;
+  margin: 28px 0 12px 0;
 }
 
 .card {
   background-color: var(--surface);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 10px;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
   border-width: 1px;
   border-color: var(--border);
 }
 
 .card-head {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .card-title-row {
@@ -163,10 +154,10 @@
 }
 
 .card-name {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 22px;
+  line-height: 24px;
 }
 
 .status-badge {
@@ -217,41 +208,44 @@
 }
 
 .card-pkg {
-  font-size: 11px;
+  font-family: Menlo;
+  font-size: 12px;
   color: var(--text-tertiary);
-  margin-top: 3px;
+  margin-top: 4px;
+  line-height: 16px;
 }
 
 .card-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 12px;
-  line-height: 18px;
+  margin-bottom: 14px;
+  line-height: 20px;
 }
 
 .actions {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .action-btn {
-  background-color: var(--cap-blue);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  background-color: var(--text-primary);
+  border-radius: 8px;
+  padding: 9px 14px;
 }
 
 .action-label {
+  font-family: Menlo;
   font-size: 12px;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .result {
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  margin-top: 10px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 12px;
 }
 
 .result-ok {
@@ -267,20 +261,19 @@
 }
 
 .result-text {
+  font-family: Menlo;
   font-size: 11px;
   color: var(--text-primary);
-  line-height: 16px;
+  line-height: 17px;
 }
 
 .footer {
-  padding: 16px 0 40px 0;
-  border-top-width: 1px;
-  border-top-color: var(--border-subtle);
-  margin-top: 12px;
+  padding: 24px 0 40px 0;
+  margin-top: 20px;
 }
 
 .footer-text {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-tertiary);
-  line-height: 18px;
+  line-height: 20px;
 }

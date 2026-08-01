@@ -5,10 +5,6 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-// The heart of the adapter: every unmodified @capacitor/* plugin imports
-// `@capacitor/core`. We alias that to @lynx-capacitor/core, which reimplements
-// Capacitor's bridge over the Lynx NativeModule API. The plugins are none the
-// wiser — they call registerPlugin / Capacitor exactly as on a real device.
 export default defineConfig({
   plugins: [pluginQRCode(), pluginReactLynx()],
   resolve: {
@@ -18,5 +14,13 @@ export default defineConfig({
   },
   output: {
     filename: '[name].[platform].bundle',
+  },
+  tools: {
+    rspack: (config) => {
+      config.module ??= {};
+      config.module.parser ??= {};
+      config.module.parser.javascript ??= {};
+      config.module.parser.javascript.dynamicImportMode = 'eager';
+    },
   },
 });
