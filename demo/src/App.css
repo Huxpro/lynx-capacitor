@@ -4,8 +4,7 @@
   --cap-blue-border: #bae0ff;
   --lynx-red: #ff4154;
   --surface: #ffffff;
-  --surface-raised: #f8fafb;
-  --surface-dim: #f1f4f7;
+  --surface-raised: #f6f8fa;
   --text-primary: #0f1720;
   --text-secondary: #4a5568;
   --text-tertiary: #8494a7;
@@ -27,97 +26,45 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: var(--surface-raised);
+}
+
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
   background-color: var(--surface);
+  border-bottom-width: 1px;
+  border-bottom-color: var(--border-subtle);
+}
+
+.nav-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.nav-stat {
+  background-color: var(--success-bg);
+  border-radius: 12px;
+  padding: 4px 10px;
+  border-width: 1px;
+  border-color: var(--success-border);
+}
+
+.nav-stat-text {
+  font-family: Menlo;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
 }
 
 .scroll {
   flex: 1;
   width: 100%;
-  padding: 0 20px 80px 20px;
-}
-
-.header {
-  padding: 48px 0 32px 0;
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.5px;
-  line-height: 34px;
-}
-
-.subtitle {
-  font-size: 15px;
-  color: var(--text-secondary);
-  margin-top: 8px;
-  line-height: 22px;
-}
-
-.badges {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.badge {
-  border-radius: 20px;
-  padding: 6px 12px;
-  background-color: var(--surface-dim);
-  border-width: 1px;
-  border-color: var(--border);
-}
-
-.badge-on {
-  background-color: var(--cap-blue-soft);
-  border-width: 1px;
-  border-color: var(--cap-blue-border);
-}
-
-.badge-off {
-  background-color: var(--surface-dim);
-  border-width: 1px;
-  border-color: var(--border);
-}
-
-.badge-text {
-  font-family: Menlo;
-  font-size: 12px;
-  color: var(--cap-blue);
-  font-weight: 500;
-}
-
-.badge-off .badge-text {
-  color: var(--text-tertiary);
-}
-
-.legend {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.legend-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-}
-
-.legend-emoji {
-  font-size: 13px;
-  line-height: 16px;
-}
-
-.legend-text {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  font-weight: 500;
+  padding: 0 16px 80px 16px;
 }
 
 .section {
@@ -127,22 +74,22 @@
 .section-title {
   font-size: 13px;
   font-weight: 700;
-  color: var(--cap-blue);
-  letter-spacing: 0.5px;
-  margin: 28px 0 12px 0;
+  color: var(--text-tertiary);
+  letter-spacing: 0.3px;
+  margin: 20px 0 10px 4px;
 }
 
 .card {
   background-color: var(--surface);
   border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
   border-width: 1px;
   border-color: var(--border);
 }
 
 .card-head {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .card-title-row {
@@ -154,10 +101,10 @@
 }
 
 .card-name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 24px;
+  line-height: 22px;
 }
 
 .status-badge {
@@ -209,30 +156,30 @@
 
 .card-pkg {
   font-family: Menlo;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-tertiary);
-  margin-top: 4px;
-  line-height: 16px;
+  margin-top: 3px;
+  line-height: 15px;
 }
 
 .card-desc {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 14px;
-  line-height: 20px;
+  margin-bottom: 12px;
+  line-height: 19px;
 }
 
 .actions {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .action-btn {
-  background-color: var(--text-primary);
+  background-color: var(--cap-blue);
   border-radius: 8px;
-  padding: 9px 14px;
+  padding: 8px 12px;
 }
 
 .action-label {
@@ -244,8 +191,8 @@
 
 .result {
   border-radius: 10px;
-  padding: 12px 14px;
-  margin-top: 12px;
+  padding: 10px 12px;
+  margin-top: 10px;
 }
 
 .result-ok {
@@ -268,12 +215,12 @@
 }
 
 .footer {
-  padding: 24px 0 40px 0;
-  margin-top: 20px;
+  padding: 20px 4px 40px 4px;
 }
 
 .footer-text {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-tertiary);
-  line-height: 20px;
+  line-height: 18px;
+  text-align: center;
 }

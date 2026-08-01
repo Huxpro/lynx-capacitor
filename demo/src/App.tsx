@@ -139,45 +139,13 @@ export function App(): JSX.Element {
 
   return (
     <view className="page">
-      <scroll-view scroll-orientation="vertical" className="scroll">
-        <view className="header">
-          <text className="title">Capacitor on Lynx</text>
-          <text className="subtitle">
-            {total} Capacitor plugins (official + community), bridged via @lynx-capacitor/core
-          </text>
-          <view className="badges">
-            <view className={isNative ? 'badge badge-on' : 'badge badge-off'}>
-              <text className="badge-text">platform: {platform}</text>
-            </view>
-            <view className={isNative ? 'badge badge-on' : 'badge badge-off'}>
-              <text className="badge-text">native: {isNative ? 'yes' : 'no'}</text>
-            </view>
-            <view className={okCount > 0 ? 'badge badge-on' : 'badge badge-off'}>
-              <text className="badge-text">
-                auto: {ranCount}/{smokeTotal} · ok: {okCount}
-              </text>
-            </view>
-            <view className="badge badge-on">
-              <text className="badge-text">interactive: {interactiveTotal}</text>
-            </view>
-          </view>
-
-          <view className="legend">
-            <view className="legend-item">
-              <text className="legend-emoji">✅</text>
-              <text className="legend-text">Full — Auto-test passes</text>
-            </view>
-            <view className="legend-item">
-              <text className="legend-emoji">🖱</text>
-              <text className="legend-text">Interactive — Tap to test</text>
-            </view>
-            <view className="legend-item">
-              <text className="legend-emoji">🔑</text>
-              <text className="legend-text">Partial — Needs config</text>
-            </view>
-          </view>
+      <view className="nav-bar">
+        <text className="nav-title">Plugins</text>
+        <view className="nav-stat">
+          <text className="nav-stat-text">{okCount}/{smokeTotal}</text>
         </view>
-
+      </view>
+      <scroll-view scroll-orientation="vertical" className="scroll">
         {CATEGORY_ORDER.map(category => {
           const entries = PLUGINS.filter(p => p.category === category);
           if (entries.length === 0) return null;
@@ -198,9 +166,7 @@ export function App(): JSX.Element {
 
         <view className="footer">
           <text className="footer-text">
-            Tap any method to invoke the real @capacitor plugin through the Lynx
-            NativeModule bridge. Errors shown in red are honest structured
-            failures (e.g. hardware unavailable on the Simulator).
+            {total} plugins · {platform} · @lynx-capacitor/core
           </text>
         </view>
       </scroll-view>
