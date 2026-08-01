@@ -78,15 +78,24 @@ function PluginCard(props: {
   );
 }
 
+type Tab = 'plugins' | 'info';
+
+function InfoRow(props: { label: string; value: string }): JSX.Element {
+  return (
+    <view className="info-row">
+      <text className="info-label">{props.label}</text>
+      <text className="info-value">{props.value}</text>
+    </view>
+  );
+}
+
 export function App(): JSX.Element {
   const [results, setResults] = useState<Record<string, RunResult>>({});
+  const [tab, setTab] = useState<Tab>('plugins');
   const platform = Capacitor.getPlatform();
-  const isNative = Capacitor.isNativePlatform();
 
   const runAction = useCallback((entry: PluginEntry, action: PluginAction) => {
     const key = entry.name;
-    // Native module calls run on the background thread; invoking from an event
-    // handler or effect (not render) follows ReactLynx best practices.
     return action
       .run()
       .then(value => {
@@ -114,11 +123,6 @@ export function App(): JSX.Element {
     [runAction],
   );
 
-  // Smoke test: on mount, invoke every plugin's designated read-only / non-modal
-  // action so the gallery immediately shows live native results without any user
-  // interaction. Modal actions (Dialog, Share, Camera) run on tap only.
-  // Each call is independent (not chained) so one slow/async plugin can't stall
-  // the rest — the native bridge guarantees every call settles.
   useEffect(() => {
     const smokeActions = PLUGINS.flatMap(entry =>
       entry.actions.filter(a => a.smoke).map(action => ({ entry, action })),
@@ -133,43 +137,90 @@ export function App(): JSX.Element {
     (count, plugin) => count + plugin.actions.filter(action => action.smoke).length,
     0,
   );
-  const interactiveTotal = total - smokeTotal;
   const okCount = Object.values(results).filter(r => r.ok).length;
-  const ranCount = Object.keys(results).length;
+  const failCount = Object.values(results).filter(r => !r.ok).length;
+
+  const officialCount = PLUGINS.filter(p => p.category !== 'Community').length;
+  const communityCount = PLUGINS.filter(p => p.category === 'Community').length;
 
   return (
     <view className="page">
-      <view className="nav-bar">
-        <text className="nav-title">Plugins</text>
-        <view className="nav-stat">
-          <text className="nav-stat-text">{okCount}/{smokeTotal}</text>
+      {tab === 'plugins' ? (
+        <scroll-view scroll-orientation="vertical" className="scroll">
+          {CATEGORY_ORDER.map(category => {
+            const entries = PLUGINS.filter(p => p.category === category);
+            if (entries.length === 0) return null;
+            return (
+              <view key={category} className="section">
+                <text className="section-title">{category}</text>
+                {entries.map(entry => (
+                  <PluginCard
+                    key={entry.name}
+                    entry={entry}
+                    result={results[entry.name]}
+                    onRun={onRun}
+                  />
+                ))}
+              </view>
+            );
+          })}
+          <view className="scroll-bottom-spacer" />
+        </scroll-view>
+      ) : (
+        <scroll-view scroll-orientation="vertical" className="scroll">
+          <view className="section">
+            <text className="section-title">System</text>
+            <view className="info-card">
+              <InfoRow label="Platform" value={platform} />
+              <InfoRow label="Native Bridge" value={Capacitor.isNativePlatform() ? 'Connected' : 'Unavailable'} />
+              <InfoRow label="Lynx SDK" value="1.4.0" />
+            </view>
+          </view>
+
+          <view className="section">
+            <text className="section-title">Adapter</text>
+            <view className="info-card">
+              <InfoRow label="@lynx-capacitor/core" value="1.0.0" />
+              <InfoRow label="@capacitor/core compat" value="8.x" />
+            </view>
+          </view>
+
+          <view className="section">
+            <text className="section-title">Coverage</text>
+            <view className="info-card">
+              <InfoRow label="Total Plugins" value={String(total)} />
+              <InfoRow label="Official" value={String(officialCount)} />
+              <InfoRow label="Community" value={String(communityCount)} />
+              <InfoRow label="Auto-tested" value={`${okCount} passed · ${failCount} failed`} />
+            </view>
+          </view>
+
+          <view className="section">
+            <text className="section-title">Plugin Versions</text>
+            <view className="info-card">
+              <InfoRow label="@capacitor/device" value="8.x" />
+              <InfoRow label="@capacitor/camera" value="8.x" />
+              <InfoRow label="@capacitor/filesystem" value="8.x" />
+              <InfoRow label="@capacitor/geolocation" value="8.x" />
+              <InfoRow label="@capacitor/network" value="8.x" />
+              <InfoRow label="@capacitor-community/safe-area" value="8.x" />
+              <InfoRow label="@capacitor-community/sqlite" value="6.x" />
+            </view>
+          </view>
+          <view className="scroll-bottom-spacer" />
+        </scroll-view>
+      )}
+
+      <view className="tab-bar">
+        <view className={tab === 'plugins' ? 'tab tab-active' : 'tab'} bindtap={() => setTab('plugins')}>
+          <text className={tab === 'plugins' ? 'tab-icon tab-icon-active' : 'tab-icon'}>⚡</text>
+          <text className={tab === 'plugins' ? 'tab-label tab-label-active' : 'tab-label'}>Plugins</text>
+        </view>
+        <view className={tab === 'info' ? 'tab tab-active' : 'tab'} bindtap={() => setTab('info')}>
+          <text className={tab === 'info' ? 'tab-icon tab-icon-active' : 'tab-icon'}>ℹ️</text>
+          <text className={tab === 'info' ? 'tab-label tab-label-active' : 'tab-label'}>Info</text>
         </view>
       </view>
-      <scroll-view scroll-orientation="vertical" className="scroll">
-        {CATEGORY_ORDER.map(category => {
-          const entries = PLUGINS.filter(p => p.category === category);
-          if (entries.length === 0) return null;
-          return (
-            <view key={category} className="section">
-              <text className="section-title">{category}</text>
-              {entries.map(entry => (
-                <PluginCard
-                  key={entry.name}
-                  entry={entry}
-                  result={results[entry.name]}
-                  onRun={onRun}
-                />
-              ))}
-            </view>
-          );
-        })}
-
-        <view className="footer">
-          <text className="footer-text">
-            {total} plugins · {platform} · @lynx-capacitor/core
-          </text>
-        </view>
-      </scroll-view>
     </view>
   );
 }
