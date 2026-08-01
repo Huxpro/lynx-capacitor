@@ -38,23 +38,32 @@ target 'LynxCapacitorDemo' do
 
   capacitor_ios = File.join(repository_root, 'node_modules/@capacitor/ios')
   cordova_spec = File.join(capacitor_ios, 'CapacitorCordova.podspec')
+  # @capacitor/ios ships `s.exclude_files = "...AppDelegate.{h,m}"`, written for
+  # a stock `npx cap add ios` app whose own delegate is also named AppDelegate.
+  # Neither half of that pattern works here:
+  #
+  #   * CocoaPods does not expand `{h,m}` in exclude_files, so as shipped the
+  #     pattern matches nothing.
+  #   * Excluding the *header* breaks the module. Under `use_frameworks!`
+  #     CocoaPods adopts the pod's own CapacitorCordova.h as the umbrella
+  #     header, and that file does `#import <Cordova/AppDelegate.h>`. Drop the
+  #     header and the modulemap fails to compile with
+  #     "'Cordova/AppDelegate.h' file not found", taking the Capacitor module
+  #     down with it.
+  #
+  # So exclude only the implementation. AppDelegate.h is a bare
+  # `@interface AppDelegate : NSObject` that nothing links against, and our app
+  # delegate is LynxCapacitorAppDelegate, so there is no class to collide with.
   cordova_spec_content = File.read(cordova_spec)
-  if cordova_spec_content.include?('Classes/Public/AppDelegate.{h,m}')
-    cordova_spec_content = cordova_spec_content.gsub(
-      's.exclude_files = "#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.{h,m}"',
-      's.exclude_files = ["#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h", ' \
-      '"#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.m"]'
-    )
-    File.write(cordova_spec, cordova_spec_content)
-  elsif !cordova_spec_content.include?('s.exclude_files')
-    cordova_spec_content = cordova_spec_content.sub(
-      "  s.source_files = \"\#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m}\"\n",
-      "  s.source_files = \"\#{prefix}CapacitorCordova/CapacitorCordova/**/*.{h,m}\"\n" \
-      "  s.exclude_files = [\"\#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h\", " \
-      "\"\#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.m\"]\n"
-    )
-    File.write(cordova_spec, cordova_spec_content)
-  end
+  cordova_exclude =
+    '  s.exclude_files = "#{prefix}CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.m"'
+  updated_cordova_spec =
+    if cordova_spec_content =~ /^\s*s\.exclude_files\s*=.*$/
+      cordova_spec_content.sub(/^\s*s\.exclude_files\s*=.*$/, cordova_exclude)
+    else
+      cordova_spec_content.sub(/^(\s*s\.source_files\s*=.*)$/, "\\1\n#{cordova_exclude}")
+    end
+  File.write(cordova_spec, updated_cordova_spec) if updated_cordova_spec != cordova_spec_content
 
   # Links Capacitor + CapacitorCordova and every @capacitor/* and
   # @capacitor-community/* plugin the demo depends on, straight from
