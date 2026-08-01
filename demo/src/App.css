@@ -349,6 +349,22 @@
   background-color: #1c1c1e;
 }
 
+.status-full-dark {
+  background-color: rgba(52, 199, 89, 0.15);
+}
+
+.status-interactive-dark {
+  background-color: rgba(255, 159, 10, 0.15);
+}
+
+.status-partial-dark {
+  background-color: rgba(175, 82, 222, 0.15);
+}
+
+.status-unsupported-dark {
+  background-color: rgba(255, 59, 48, 0.15);
+}
+
 .info-row-dark {
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
