@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from '@lynx-js/react';
+import { useCallback, useEffect, useState, useInitData } from '@lynx-js/react';
 import { Capacitor } from '@capacitor/core';
 import {
   PLUGINS,
@@ -96,6 +96,9 @@ export function App(): JSX.Element {
   const [tab, setTab] = useState<Tab>('plugins');
   const [dark, setDark] = useState(false);
   const platform = Capacitor.getPlatform();
+  const initData = useInitData<{ safeArea?: { top: number; bottom: number } }>();
+  const safeTop = initData?.safeArea?.top ?? 59;
+  const safeBottom = initData?.safeArea?.bottom ?? 34;
 
   const runAction = useCallback((entry: PluginEntry, action: PluginAction) => {
     const key = entry.name;
@@ -148,7 +151,7 @@ export function App(): JSX.Element {
 
   return (
     <view className={dark ? 'page page-dark' : 'page'}>
-      <view className={dark ? 'top-bar top-bar-dark' : 'top-bar'}>
+      <view className={dark ? 'top-bar top-bar-dark' : 'top-bar'} style={{ paddingTop: `${safeTop}px` }}>
         <view className="brand">
           <text className={dark ? 'brand-cap brand-cap-dark' : 'brand-cap'}>Capacitor</text>
           <text className="brand-lynx">Lynx</text>
@@ -193,8 +196,8 @@ export function App(): JSX.Element {
             <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
               <view className={dark ? 'toggle-row info-row-dark' : 'toggle-row'}>
                 <text className={dark ? 'info-label info-label-dark' : 'info-label'}>Dark Mode</text>
-                <view className="toggle-btn" bindtap={() => setDark(d => !d)}>
-                  <text className="toggle-btn-text">{dark ? 'On' : 'Off'}</text>
+                <view className={dark ? 'toggle-track toggle-track-on' : 'toggle-track'} bindtap={() => setDark(d => !d)}>
+                  <view className={dark ? 'toggle-thumb toggle-thumb-on' : 'toggle-thumb'} />
                 </view>
               </view>
             </view>
@@ -234,7 +237,7 @@ export function App(): JSX.Element {
         </scroll-view>
       )}
 
-      <view className={dark ? 'tab-bar tab-bar-dark' : 'tab-bar'}>
+      <view className={dark ? 'tab-bar tab-bar-dark' : 'tab-bar'} style={{ paddingBottom: `${safeBottom}px` }}>
         <view className="tab" bindtap={() => setTab('plugins')}>
           <text className={tab === 'plugins' ? 'tab-icon tab-icon-active' : 'tab-icon'}>⚡</text>
           <text className={tab === 'plugins' ? 'tab-label tab-label-active' : (dark ? 'tab-label tab-label-dark' : 'tab-label')}>Plugins</text>

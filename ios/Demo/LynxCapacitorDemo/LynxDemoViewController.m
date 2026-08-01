@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  self.view.backgroundColor = UIColor.whiteColor;
+  self.view.backgroundColor = UIColor.systemBackgroundColor;
 
   [[DevToolSettings sharedInstance].bootstrap applyDevelopmentDefaultsIfUnset];
   [LynxService(LynxServiceDevToolProtocol) enableAllSessions];
@@ -41,9 +41,18 @@
   self.lynxView.preferredLayoutHeight = screenSize.height;
   self.lynxView.layoutWidthMode = LynxViewSizeModeExact;
   self.lynxView.layoutHeightMode = LynxViewSizeModeExact;
+  self.lynxView.backgroundColor = UIColor.clearColor;
   [self.view addSubview:self.lynxView];
 
-  LynxTemplateData *data = [[LynxTemplateData alloc] initWithDictionary:@{}];
+  UIEdgeInsets insets = self.view.safeAreaInsets;
+  LynxTemplateData *data = [[LynxTemplateData alloc] initWithDictionary:@{
+    @"safeArea": @{
+      @"top": @(insets.top),
+      @"bottom": @(insets.bottom),
+      @"left": @(insets.left),
+      @"right": @(insets.right),
+    }
+  }];
   [self.lynxView loadTemplateFromURL:@"main.lynx.bundle" initData:data];
   [self.lynxView triggerLayout];
 }
@@ -51,11 +60,15 @@
 - (void)viewSafeAreaInsetsDidChange {
   [super viewSafeAreaInsetsDidChange];
   UIEdgeInsets insets = self.view.safeAreaInsets;
-  CGRect safeFrame = UIEdgeInsetsInsetRect(self.view.bounds, insets);
-  self.lynxView.frame = safeFrame;
-  self.lynxView.preferredLayoutWidth = safeFrame.size.width;
-  self.lynxView.preferredLayoutHeight = safeFrame.size.height;
-  [self.lynxView triggerLayout];
+  LynxTemplateData *data = [[LynxTemplateData alloc] initWithDictionary:@{
+    @"safeArea": @{
+      @"top": @(insets.top),
+      @"bottom": @(insets.bottom),
+      @"left": @(insets.left),
+      @"right": @(insets.right),
+    }
+  }];
+  [self.lynxView updateDataWithTemplateData:data];
 }
 
 @end

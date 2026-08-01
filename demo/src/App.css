@@ -202,7 +202,7 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-around;
-  padding: 8px 0 20px 0;
+  padding: 8px 0 8px 0;
   background-color: var(--surface);
   border-top-width: 0.5px;
   border-top-color: var(--separator);
@@ -272,16 +272,30 @@
   padding: 11px 16px;
 }
 
-.toggle-btn {
-  padding: 6px 14px;
-  border-radius: 6px;
-  background-color: var(--cap-blue);
+.toggle-track {
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  background-color: #e9e9ea;
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.toggle-btn-text {
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
+.toggle-track-on {
+  background-color: #34c759;
+}
+
+.toggle-thumb {
+  width: 27px;
+  height: 27px;
+  border-radius: 14px;
+  background-color: #ffffff;
+}
+
+.toggle-thumb-on {
+  margin-left: 20px;
 }
 
 /* ── Dark Theme (applied via className switching) ── */
