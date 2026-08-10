@@ -6,6 +6,7 @@ import {
   runSmokeMatrix,
   type PluginAction,
   type PluginEntry,
+  type SupportStatus,
 } from './plugins.js';
 import './App.css';
 
@@ -96,29 +97,41 @@ export function App(): JSX.Element {
   const [tab, setTab] = useState<Tab>('plugins');
   const [dark, setDark] = useState(false);
   const platform = Capacitor.getPlatform();
-  const initData = useInitData<{ safeArea?: { top: number; bottom: number } }>();
+  const initData = useInitData() as { safeArea?: { top: number; bottom: number } };
   const safeTop = initData?.safeArea?.top ?? 59;
   const safeBottom = initData?.safeArea?.bottom ?? 34;
 
   const runAction = useCallback((entry: PluginEntry, action: PluginAction) => {
     const key = entry.name;
-    return action
-      .run()
+    const timeoutMs = entry.supportStatus === 'interactive' ? 90000 : 12000;
+    return Promise.race([
+      action.run(),
+      new Promise<never>((_, reject) => {
+        setTimeout(
+          () => reject(new Error(`Timed out after ${timeoutMs / 1000} seconds`)),
+          timeoutMs,
+        );
+      }),
+    ])
       .then(value => {
+        console.info(`LC_SMOKE PASS ${entry.name}.${action.label}`);
         setResults(prev => ({
           ...prev,
           [key]: { key, ok: true, text: `${action.label} →\n${stringify(value)}` },
         }));
+        return true;
       })
       .catch((err: unknown) => {
         const message =
           err && typeof err === 'object' && 'message' in err
             ? String((err as { message: unknown }).message)
             : stringify(err);
+        console.error(`LC_SMOKE FAIL ${entry.name}.${action.label}: ${message}`);
         setResults(prev => ({
           ...prev,
           [key]: { key, ok: false, text: `${action.label} ✗\n${message}` },
         }));
+        return false;
       });
   }, []);
 
@@ -133,9 +146,12 @@ export function App(): JSX.Element {
     const smokeActions = PLUGINS.flatMap(entry =>
       entry.actions.filter(a => a.smoke).map(action => ({ entry, action })),
     );
-    for (const { entry, action } of smokeActions) {
-      void runAction(entry, action);
-    }
+    void Promise.all(
+      smokeActions.map(({ entry, action }) => runAction(entry, action)),
+    ).then(statuses => {
+      const passed = statuses.filter(Boolean).length;
+      console.info(`LC_SMOKE_DONE passed=${passed} failed=${statuses.length - passed} total=${statuses.length}`);
+    });
   }, [runAction]);
 
   const total = PLUGINS.length;

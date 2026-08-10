@@ -1,0 +1,193 @@
+diff --git a/com/getcapacitor/Bridge.java b/com/getcapacitor/Bridge.java
+--- a/com/getcapacitor/Bridge.java
++++ b/com/getcapacitor/Bridge.java
+@@ -163,6 +163,8 @@ public class Bridge {
+     // A list of listeners that trigger when webView events occur
+     private List<WebViewListener> webViewListeners = new ArrayList<>();
+ 
++    private HeadlessResultListener headlessResultListener;
++
+     // An interface to manipulate route resolving
+     private RouteProcessor routeProcessor;
+ 
+@@ -189,6 +191,48 @@ public class Bridge {
+         this(context, null, null, webView, initialPlugins, new ArrayList<>(), cordovaInterface, pluginManager, preferences, config);
+     }
+ 
++    /**
++     * Creates a Capacitor plugin host without constructing or loading a WebView.
++     * Activity Result launchers and permission dispatch remain backed by the
++     * supplied AppCompatActivity.
++     */
++    public Bridge(
++        AppCompatActivity context,
++        List<Class<? extends Plugin>> initialPlugins,
++        CapConfig config,
++        HeadlessResultListener resultListener
++    ) {
++        this.app = new App();
++        this.serverPath = null;
++        this.context = context;
++        this.fragment = null;
++        this.webView = null;
++        this.webViewClient = null;
++        this.initialPlugins = initialPlugins != null ? initialPlugins : new ArrayList<>();
++        this.pluginInstances = new ArrayList<>();
++        this.cordovaInterface = null;
++        this.preferences = new CordovaPreferences();
++        this.headlessResultListener = resultListener;
++
++        handlerThread.start();
++        taskHandler = new Handler(handlerThread.getLooper());
++        this.config = config != null ? config : CapConfig.loadDefault(context);
++        Logger.init(this.config);
++        this.setAllowedOriginRules();
++        this.msgHandler = new MessageHandler(this, resultListener);
++        Intent intent = context.getIntent();
++        this.intentUri = intent != null ? intent.getData() : null;
++
++        // Core plugins that do not require a WebView remain available. The
++        // WebView plugin itself is deliberately omitted in headless mode.
++        this.registerPlugin(com.getcapacitor.plugin.CapacitorCookies.class);
++        this.registerPlugin(com.getcapacitor.plugin.CapacitorHttp.class);
++        this.registerPlugin(com.getcapacitor.plugin.SystemBars.class);
++        for (Class<? extends Plugin> pluginClass : this.initialPlugins) {
++            this.registerPlugin(pluginClass);
++        }
++    }
++
+     private Bridge(
+         AppCompatActivity context,
+         ServerPath serverPath,
+@@ -763,6 +802,11 @@ public class Bridge {
+         return this.plugins.get(pluginId);
+     }
+ 
++    /** Returns the plugin metadata used to expose native method headers to Lynx. */
++    public java.util.Collection<PluginHandle> getPlugins() {
++        return this.plugins.values();
++    }
++
+     /**
+      * Find the plugin handle that responds to the given request code. This will
+      * fire after certain Android OS intent results/permission checks/etc.
+@@ -858,6 +902,11 @@ public class Bridge {
+         }
+     }
+ 
++    /** Dispatches the same JSON envelope used by Capacitor's WebView transport. */
++    public void handleCall(String payload) {
++        msgHandler.postMessage(payload);
++    }
++
+     /**
+      * Evaluate JavaScript in the web view. This method
+      * executes on the main thread automatically.
+@@ -883,6 +932,10 @@ public class Bridge {
+     }
+ 
+     public void triggerJSEvent(final String eventName, final String target, final String data) {
++        if (headlessResultListener != null) {
++            headlessResultListener.onEvent(eventName, target, data);
++            return;
++        }
+         eval("window.Capacitor.triggerEvent(\"" + eventName + "\", \"" + target + "\", " + data + ")", (s) -> {});
+     }
+ 
+@@ -1398,6 +1451,9 @@ public class Bridge {
+      * Handle onDetachedFromWindow lifecycle event
+      */
+     public void onDetachedFromWindow() {
++        if (webView == null) {
++            return;
++        }
+         webView.removeAllViews();
+         webView.destroy();
+     }
+diff --git a/com/getcapacitor/MessageHandler.java b/com/getcapacitor/MessageHandler.java
+--- a/com/getcapacitor/MessageHandler.java
++++ b/com/getcapacitor/MessageHandler.java
+@@ -17,6 +17,7 @@ public class MessageHandler {
+     private WebView webView;
+     private PluginManager cordovaPluginManager;
+     private JavaScriptReplyProxy javaScriptReplyProxy;
++    private HeadlessResultListener headlessResultListener;
+ 
+     public MessageHandler(Bridge bridge, WebView webView, PluginManager cordovaPluginManager) {
+         this.bridge = bridge;
+@@ -42,6 +43,11 @@ public class MessageHandler {
+         }
+     }
+ 
++    public MessageHandler(Bridge bridge, HeadlessResultListener resultListener) {
++        this.bridge = bridge;
++        this.headlessResultListener = resultListener;
++    }
++
+     /**
+      * The main message handler that will be called from JavaScript
+      * to send a message to the native bridge.
+@@ -120,7 +126,9 @@ public class MessageHandler {
+ 
+             boolean isValidCallbackId = !call.getCallbackId().equals(PluginCall.CALLBACK_ID_DANGLING);
+             if (isValidCallbackId) {
+-                if (bridge.getConfig().isUsingLegacyBridge()) {
++                if (headlessResultListener != null) {
++                    headlessResultListener.onResult(call.getCallbackId(), data.toString());
++                } else if (bridge.getConfig().isUsingLegacyBridge()) {
+                     legacySendResponseMessage(data);
+                 } else if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER) && javaScriptReplyProxy != null) {
+                     javaScriptReplyProxy.postMessage(data.toString());
+--- a/com/getcapacitor/plugin/CapacitorCookies.java
++++ b/com/getcapacitor/plugin/CapacitorCookies.java
+@@ -20,7 +20,9 @@
+ 
+     @Override
+     public void load() {
+-        this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
++        if (this.bridge.getWebView() != null) {
++            this.bridge.getWebView().addJavascriptInterface(this, "CapacitorCookiesAndroidInterface");
++        }
+         this.cookieManager = new CapacitorCookieManager(null, java.net.CookiePolicy.ACCEPT_ALL, this.bridge);
+         this.cookieManager.removeSessionCookies();
+         CookieHandler.setDefault(this.cookieManager);
+@@ -46,6 +48,14 @@
+ 
+     @PluginMethod
+     public void getCookies(PluginCall call) {
++        if (this.bridge.getWebView() == null) {
++            JSObject cookieMap = new JSObject();
++            for (HttpCookie cookie : cookieManager.getCookies(call.getString("url"))) {
++                cookieMap.put(cookie.getName(), cookie.getValue());
++            }
++            call.resolve(cookieMap);
++            return;
++        }
+         this.bridge.eval("document.cookie", (value) -> {
+             String cookies = value.substring(1, value.length() - 1);
+             String[] cookieArray = cookies.split(";");
+--- a/com/getcapacitor/plugin/CapacitorHttp.java
++++ b/com/getcapacitor/plugin/CapacitorHttp.java
+@@ -29,7 +29,9 @@
+ 
+     @Override
+     public void load() {
+-        this.bridge.getWebView().addJavascriptInterface(this, "CapacitorHttpAndroidInterface");
++        if (this.bridge.getWebView() != null) {
++            this.bridge.getWebView().addJavascriptInterface(this, "CapacitorHttpAndroidInterface");
++        }
+         super.load();
+     }
+ 
+--- a/com/getcapacitor/plugin/SystemBars.java
++++ b/com/getcapacitor/plugin/SystemBars.java
+@@ -63,6 +63,9 @@
+ 
+     @Override
+     public void load() {
++        if (getBridge().getWebView() == null) {
++            return;
++        }
+         getBridge().getWebView().addJavascriptInterface(this, "CapacitorSystemBarsAndroidInterface");
+         super.load();
+ 

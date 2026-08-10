@@ -2,7 +2,7 @@
   "name": "lynx-capacitor",
   "version": "0.1.0",
   "private": true,
-  "description": "Run Capacitor plugins on Lynx. An adapter reimplementing the Capacitor bridge over the Lynx NativeModule API, plus a demo plugin gallery for iOS.",
+  "description": "Run Capacitor plugins on Lynx through NativeModule bridges for Android and iOS.",
   "license": "MIT",
   "packageManager": "pnpm@10.30.3",
   "scripts": {
@@ -12,12 +12,16 @@
     "ios:generate": "bash scripts/ios-generate.sh",
     "ios:build": "bash scripts/ios-build.sh",
     "ios:run": "bash scripts/ios-run.sh",
+    "android:build": "bash scripts/android-build.sh",
+    "android:run": "bash scripts/android-run.sh",
+    "verify:android": "bash scripts/verify-android.sh",
     "verify": "bash scripts/verify.sh"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
+    "@capacitor/android": "8.4.2",
     "@capacitor/core": "^8.4.2",
     "@capacitor/ios": "^8.4.2"
   }

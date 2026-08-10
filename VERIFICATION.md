@@ -4,11 +4,26 @@
 
 Compared against the [official plugin list from capacitorjs.com](https://capacitorjs.com/docs/apis):
 
-✅ **All 35 official Capacitor plugins are covered**
+✅ **35 Capacitor v8 plugin APIs are integrated**
+
+The current official list contains 37 APIs. Calendar and Contacts were added to
+the documentation after this gallery baseline and are not integrated yet.
 
 - 35 plugin headers registered at runtime
 - 27 non-interactive smoke tests automatically pass on simulator
 - 8 interactive/hardware/credential plugins are available for manual testing
+
+## Android Cloud-device Matrix
+
+Environment and full evidence are recorded in
+[`docs/android-verification.md`](docs/android-verification.md).
+
+- 29/29 automatic actions passed across 28 gallery entries: 25 official and 3
+  Community plugins.
+- All 8 entries classified as interactive were manually exercised: Dialog,
+  Action Sheet, Share, Camera, File Viewer, Browser, InAppBrowser, and Motion.
+- Partial/config-gated entries are not claimed as end-to-end verified; Local LLM
+  and Push Notifications received only safe availability/permission probes.
 
 ## Automated iOS Simulator Matrix
 

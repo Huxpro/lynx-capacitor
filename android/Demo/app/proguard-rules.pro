@@ -1,0 +1,2 @@
+-keep class * extends com.lynx.jsbridge.LynxModule { *; }
+-keep class com.lynxcapacitor.generated.** { *; }

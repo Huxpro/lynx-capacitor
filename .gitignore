@@ -3,6 +3,13 @@ packages/*/node_modules/
 packages/*/dist/
 demo/node_modules/
 demo/dist/
+android/Demo/.gradle/
+android/Demo/build/
+android/Demo/app/build/
+android/Demo/local.properties
+packages/runtime/android/**/build/
+plugins/gradle-lynx-capacitor/.gradle/
+plugins/gradle-lynx-capacitor/build/
 ios/Demo/Pods/
 ios/Demo/build/
 ios/Demo/generated/

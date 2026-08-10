@@ -1,5 +1,9 @@
 {
   "platforms": {
+    "android": {
+      "packageName": "org.lynxcapacitor.runtime",
+      "sourceDir": "android"
+    },
     "ios": {
       "sourceDir": "ios",
       "podspecPath": "ios/LynxCapacitorRuntime.podspec"

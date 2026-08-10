@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Lynx Capacitor — Run Capacitor plugins on Lynx</title>
-  <meta name="description" content="A plugin-neutral adapter that reimplements the Capacitor bridge over Lynx's NativeModule API. All 35 official plugins work out of the box.">
+  <meta name="description" content="Run Capacitor v8 plugins on Lynx with a plugin-neutral adapter and native Autolink for Android and iOS.">
   <meta property="og:title" content="Lynx Capacitor">
-  <meta property="og:description" content="Run all 35 official Capacitor plugins on Lynx. A plugin-neutral adapter over Lynx NativeModule API.">
+  <meta property="og:description" content="Capacitor plugins, native on Lynx. Install from npm and connect Android or iOS with native Autolink.">
   <meta property="og:image" content="https://lynx-capacitor.vercel.app/og-image.png">
   <meta property="og:url" content="https://lynx-capacitor.vercel.app">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Lynx Capacitor">
-  <meta name="twitter:description" content="Run all 35 official Capacitor plugins on Lynx. A plugin-neutral adapter over Lynx NativeModule API.">
+  <meta name="twitter:description" content="Capacitor plugins, native on Lynx. Install from npm and connect Android or iOS with native Autolink.">
   <meta name="twitter:image" content="https://lynx-capacitor.vercel.app/og-image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +66,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
     }
 
     .nav-brand {
@@ -112,6 +113,43 @@
 
     .nav-links .btn-nav:hover { opacity: 0.85; }
 
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-toggle-line {
+      width: 18px;
+      height: 1.5px;
+      border-radius: 999px;
+      background: currentColor;
+      transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 120ms ease;
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-line:first-child {
+      transform: translateY(3.25px) rotate(45deg);
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-line:last-child {
+      transform: translateY(-3.25px) rotate(-45deg);
+    }
+
+    .nav-toggle:focus-visible,
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 3px;
+    }
+
     /* ── Hero ── */
     .hero {
       padding: clamp(80px, 12vw, 140px) 0 clamp(60px, 8vw, 100px);
@@ -150,7 +188,7 @@
       font-weight: 700;
       letter-spacing: -0.03em;
       line-height: 1.1;
-      margin-bottom: 20px;
+      margin-bottom: 32px;
     }
 
     .hero h1 .gradient {
@@ -158,14 +196,6 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-    }
-
-    .hero p {
-      font-size: clamp(16px, 2vw, 19px);
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 36px;
-      line-height: 1.6;
     }
 
     .hero-actions {
@@ -212,26 +242,7 @@
     /* ── Section ── */
     section {
       padding: clamp(60px, 8vw, 100px) 0;
-    }
-
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--cap-blue);
-      margin-bottom: 16px;
-    }
-
-    .section-label::before {
-      content: '';
-      width: 20px;
-      height: 2px;
-      background: var(--cap-blue);
-      border-radius: 2px;
+      scroll-margin-top: 80px;
     }
 
     section h2 {
@@ -266,16 +277,14 @@
       height: auto;
     }
 
+    .mobile-architecture { display: none; }
+
     /* ── API Cards ── */
     .api-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
       margin-top: 48px;
-    }
-
-    @media (max-width: 768px) {
-      .api-grid { grid-template-columns: 1fr; }
     }
 
     .api-card {
@@ -328,31 +337,6 @@
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .plugin-stats {
-      display: flex;
-      gap: 40px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-number {
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
     .plugin-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -385,9 +369,28 @@
       border-radius: 999px;
     }
 
-    .badge-full { background: #dcfce7; color: #166534; }
-    .badge-interactive { background: #fef3c7; color: #92400e; }
-    .badge-partial { background: #ede9fe; color: #5b21b6; }
+    .badge-official { background: #e0f2fe; color: #075985; }
+    .badge-community { background: #f3e8ff; color: #6b21a8; }
+
+    .plugin-more {
+      min-height: 46px;
+      justify-content: center;
+      border-style: dashed;
+      background: transparent;
+    }
+
+    .plugin-more .ellipsis {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .plugin-more .ellipsis-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
 
     /* ── Getting Started ── */
     .steps {
@@ -430,6 +433,48 @@
       margin-bottom: 12px;
     }
 
+    .platform-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin-top: 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-dim);
+    }
+
+    .platform-tab {
+      appearance: none;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+    }
+
+    .platform-tab[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(15, 23, 32, 0.12);
+    }
+
+    .platform-tab:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 2px;
+    }
+
+    .platform-panel[hidden] { display: none; }
+
+    .platform-panel > p:last-child {
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
     pre {
       background: var(--cap-dark);
       color: #e2e8f0;
@@ -439,6 +484,10 @@
       font-size: 13px;
       line-height: 1.7;
       overflow-x: auto;
+      max-width: 100%;
+      min-width: 0;
+      overscroll-behavior-inline: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     pre .comment { color: #64748b; }
@@ -466,9 +515,311 @@
 
     /* ── Responsive ── */
     @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
-      .plugin-grid { grid-template-columns: 1fr; }
-      .plugin-stats { gap: 24px; }
+      body {
+        overflow-x: hidden;
+        overflow-x: clip;
+      }
+
+      .container { padding-inline: 16px; }
+
+      nav {
+        padding-top: max(9px, env(safe-area-inset-top));
+        padding-bottom: 9px;
+      }
+
+      .nav-brand {
+        gap: 8px;
+        font-size: 16px;
+      }
+
+      .nav-toggle { display: flex; }
+
+      .nav-links {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2px;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        box-shadow: 0 18px 44px rgba(15, 23, 32, 0.14);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transform-origin: top center;
+        transition: opacity 160ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 200ms;
+      }
+
+      .nav-links.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition-delay: 0s;
+      }
+
+      .nav-links a,
+      .nav-links .btn-nav {
+        display: flex;
+        min-height: 44px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 15px;
+      }
+
+      .nav-links a:not(.btn-nav):active { background: var(--surface-dim); }
+
+      .nav-links .btn-nav {
+        margin-top: 4px;
+        justify-content: center;
+      }
+
+      .hero { padding: 64px 0 56px; }
+
+      section { padding: 56px 0; }
+
+      section .lead { margin-bottom: 32px; }
+
+      .diagram-wrapper {
+        padding: 12px;
+        margin-bottom: 32px;
+        overflow: hidden;
+      }
+
+      .diagram-desktop { display: none !important; }
+
+      .mobile-architecture {
+        display: block;
+        width: 100%;
+      }
+
+      .mobile-architecture-layer {
+        padding: 16px;
+        border: 1px dashed;
+        border-radius: 14px;
+      }
+
+      .mobile-architecture-layer.capacitor-layer {
+        border-color: var(--cap-blue);
+        background: #f0f7ff;
+      }
+
+      .mobile-architecture-layer.lynx-layer {
+        border-color: var(--lynx-red);
+        background: #fff5f5;
+      }
+
+      .mobile-architecture-label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .capacitor-layer .mobile-architecture-label { color: #0874bd; }
+      .lynx-layer .mobile-architecture-label { color: #c52639; }
+
+      .mobile-architecture-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mobile-architecture-card {
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid #c7dff7;
+        border-radius: 9px;
+        background: var(--surface);
+      }
+
+      .lynx-layer .mobile-architecture-card { border-color: #ffc7cd; }
+
+      .mobile-architecture-card code {
+        display: block;
+        overflow: hidden;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .mobile-architecture-card span {
+        display: block;
+        margin-top: 3px;
+        color: var(--text-tertiary);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .mobile-architecture-card .bridge-method {
+        margin-top: 5px;
+        color: var(--text-secondary);
+      }
+
+      .mobile-architecture-flow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        width: min(240px, 80%);
+        min-height: 72px;
+        margin: 0 auto;
+      }
+
+      .mobile-architecture-flow span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .mobile-architecture-flow span::after {
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .mobile-call { color: #0874bd; }
+      .mobile-call::after { content: '↓'; }
+      .mobile-result { color: #c52639; }
+      .mobile-result::after { content: '↑'; }
+
+      .api-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 32px;
+      }
+
+      .api-card {
+        min-width: 0;
+        padding: 14px;
+      }
+
+      .api-card h4 {
+        font-size: 11.5px;
+        letter-spacing: -0.02em;
+      }
+
+      .api-card p {
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+
+      .api-card .mapping {
+        margin-top: 10px;
+        padding-top: 10px;
+        font-size: 9.5px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+
+      .plugin-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .plugin-item {
+        min-width: 0;
+        min-height: 68px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px 11px;
+      }
+
+      .plugin-item span {
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
+      .plugin-item .badge {
+        font-size: 9px;
+        padding: 2px 6px;
+      }
+
+      .plugin-more {
+        align-items: center;
+        min-height: 68px;
+      }
+
+      .step {
+        grid-template-columns: 36px minmax(0, 1fr);
+        column-gap: 12px;
+        row-gap: 14px;
+        margin-bottom: 48px;
+      }
+
+      .step::before {
+        grid-column: 1;
+        grid-row: 1;
+        width: 36px;
+        height: 36px;
+      }
+
+      .step > div { display: contents; }
+
+      .step h4 {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        margin-bottom: 0;
+        font-size: 16px;
+        line-height: 1.35;
+      }
+
+      .step > div > p {
+        grid-column: 2;
+        grid-row: 2;
+        margin-bottom: 0;
+        font-size: 13px;
+      }
+
+      .step > div > pre,
+      .step > div > .platform-tabs,
+      .step > div > .platform-panel {
+        grid-column: 1 / -1;
+      }
+
+      .step > div > pre,
+      .platform-panel pre {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 11.5px;
+        line-height: 1.65;
+      }
+
+      .platform-tabs {
+        justify-self: start;
+        margin: 0;
+      }
+
+      .platform-panel { min-width: 0; }
+
+      .platform-panel > p:last-child {
+        margin-top: 10px;
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -480,7 +831,11 @@
       <span class="dot"></span>
       lynx-capacitor
     </a>
-    <div class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+      <span class="nav-toggle-line" aria-hidden="true"></span>
+      <span class="nav-toggle-line" aria-hidden="true"></span>
+    </button>
+    <div class="nav-links" id="primary-navigation">
       <a href="#adapter">Core Adapter</a>
       <a href="#plugins">Plugins</a>
       <a href="#start">Get Started</a>
@@ -493,12 +848,9 @@
   <div class="hero">
     <div class="hero-badge">
       <span class="indicator"></span>
-      35 official plugins supported
+      Capacitor v8 · Android + iOS
     </div>
     <h1>Capacitor plugins,<br><span class="gradient">native on Lynx</span></h1>
-    <p>
-      A plugin-neutral adapter that reimplements the Capacitor bridge over Lynx's NativeModule API. Install official plugins from npm, add one alias, done.
-    </p>
     <div class="hero-actions">
       <a href="#start" class="btn btn-primary">Get Started</a>
       <a href="https://github.com/huxpro/lynx-capacitor" class="btn btn-ghost">View Source</a>
@@ -506,17 +858,14 @@
   </div>
 </div>
 
-<!-- ═══════════════════ PART 1: Core Adapter ═══════════════════ -->
 <section id="adapter">
   <div class="container">
-    <div class="section-label">Part 1</div>
-    <h2>The Core Adapter</h2>
     <p class="lead">
       The adapter is <strong>plugin-neutral</strong> — it reimplements Capacitor's JavaScript bridge contract so that any conforming plugin works without modification. It maps four Capacitor bridge APIs to one Lynx NativeModule interface.
     </p>
 
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 840 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram showing how Capacitor bridge APIs map to Lynx NativeModule">
+      <svg class="diagram-desktop" viewBox="0 0 840 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram showing how Capacitor bridge APIs map to Lynx NativeModule">
         <!-- Background regions -->
         <rect x="20" y="20" width="360" height="300" rx="16" fill="#f0f7ff" stroke="#119eff" stroke-width="1.5" stroke-dasharray="4 3"/>
         <rect x="460" y="20" width="360" height="300" rx="16" fill="#fff5f5" stroke="#ff4154" stroke-width="1.5" stroke-dasharray="4 3"/>
@@ -527,27 +876,27 @@
 
         <!-- Capacitor APIs (left) -->
         <rect x="40" y="70" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="99" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">registerPlugin(name, impl?)</text>
+        <text x="60" y="99" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">registerPlugin(name, impl?)</text>
         <text x="60" y="108" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Creates a proxy that routes calls to native or web fallback</text>
 
         <rect x="40" y="130" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="159" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.toNative(plugin, method, opts)</text>
+        <text x="60" y="159" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.toNative(plugin, method, opts)</text>
         <text x="60" y="168" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Dispatches a call from JS to the native layer</text>
 
         <rect x="40" y="190" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="219" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.fromNative(result)</text>
+        <text x="60" y="219" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.fromNative(result)</text>
         <text x="60" y="228" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Receives results/events back from native</text>
 
         <rect x="40" y="250" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="279" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.addListener(plugin, event, cb)</text>
+        <text x="60" y="279" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.addListener(plugin, event, cb)</text>
         <text x="60" y="288" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Subscribes to native events with retained callback</text>
 
         <!-- Lynx API (right) -->
         <rect x="480" y="130" width="320" height="100" rx="12" fill="white" stroke="#ffc7cd" stroke-width="1"/>
         <text x="500" y="162" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">NativeModules.CapacitorBridge</text>
         <text x="500" y="182" font-family="JetBrains Mono" font-size="12" fill="#4a5568">.handleCall(jsonPayload, callback)</text>
-        <text x="500" y="206" font-family="DM Sans" font-size="11" fill="#8494a7">Single entry point. Native retains callback</text>
-        <text x="500" y="220" font-family="DM Sans" font-size="11" fill="#8494a7">for listener events, invokes once for promises.</text>
+        <text x="500" y="206" font-family="DM Sans" font-size="11" fill="#8494a7">Single entry point. Promises return once;</text>
+        <text x="500" y="220" font-family="DM Sans" font-size="11" fill="#8494a7">listener events use retained native delivery.</text>
 
         <!-- Arrow connections -->
         <defs>
@@ -572,6 +921,44 @@
         <line x1="500" y1="292" x2="540" y2="292" stroke="#ff4154" stroke-width="1.5"/>
         <text x="548" y="296" font-family="DM Sans" font-size="11" fill="#4a5568">Native → JS result/event</text>
       </svg>
+
+      <div class="mobile-architecture" role="img" aria-label="Vertical architecture diagram showing Capacitor JavaScript bridge APIs flowing to the Lynx CapacitorBridge NativeModule">
+        <div class="mobile-architecture-layer capacitor-layer">
+          <span class="mobile-architecture-label">Capacitor JS Bridge</span>
+          <div class="mobile-architecture-stack">
+            <div class="mobile-architecture-card">
+              <code>registerPlugin(name, impl?)</code>
+              <span>Creates a native or web-fallback proxy</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.toNative(plugin, method, opts)</code>
+              <span>Dispatches a call to the native layer</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.fromNative(result)</code>
+              <span>Receives native results and events</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.addListener(plugin, event, cb)</code>
+              <span>Subscribes with a retained callback</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-architecture-flow" aria-hidden="true">
+          <span class="mobile-call">JS → Native</span>
+          <span class="mobile-result">Native → JS</span>
+        </div>
+
+        <div class="mobile-architecture-layer lynx-layer">
+          <span class="mobile-architecture-label">Lynx NativeModule</span>
+          <div class="mobile-architecture-card">
+            <code>NativeModules.CapacitorBridge</code>
+            <code class="bridge-method">.handleCall(jsonPayload, callback)</code>
+            <span>One entry point for promises and retained listener events</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="api-grid">
@@ -591,14 +978,14 @@
       </div>
       <div class="api-card">
         <h4>fromNative()</h4>
-        <p>The callback passed to <code>handleCall</code> invokes this path. Resolves the stored Promise or invokes the retained listener callback with data or error.</p>
+        <p>The native callback or Android <code>GlobalEventEmitter</code> invokes this path. It resolves the stored Promise or invokes the listener with data or an error.</p>
         <div class="mapping">
           Contract: <code>{success, data?, error?, save?}</code>
         </div>
       </div>
       <div class="api-card">
         <h4>addListener()</h4>
-        <p>Calls <code>toNative</code> with method <code>"addListener"</code>. Native retains the callback (save=true) and re-invokes it on each event emission.</p>
+        <p>Calls <code>toNative</code> with method <code>"addListener"</code>. iOS uses retained callback delivery; Android emits retained results through Lynx <code>GlobalEventEmitter</code>.</p>
         <div class="mapping">
           Capacitor: <a href="https://capacitorjs.com/docs/core-apis/event-guide" target="_blank">Event Guide</a>
         </div>
@@ -607,73 +994,54 @@
   </div>
 </section>
 
-<!-- ═══════════════════ PART 2: Plugins ═══════════════════ -->
 <section id="plugins" class="plugin-section">
   <div class="container">
-    <div class="section-label">Part 2</div>
-    <h2>Official Plugins</h2>
+    <h2>Every Plugin</h2>
     <p class="lead">
-      All 35 official Capacitor plugins work out of the box. Install them from npm — the adapter handles the rest. No forks, no patches, no custom builds.
+      All Capacitor plugins work out of the box. Install them from npm and the adapter handles the rest. No forks, no patches, no custom builds.
     </p>
 
-    <div class="plugin-stats">
-      <div class="stat">
-        <span class="stat-number">35</span>
-        <span class="stat-label">Official plugins</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">22</span>
-        <span class="stat-label">Auto-verified on simulator</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">8</span>
-        <span class="stat-label">Interactive (user-triggered)</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">5</span>
-        <span class="stat-label">Credential-gated</span>
-      </div>
-    </div>
+    <p class="lead">
+      We <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank" rel="noopener noreferrer">verified</a> 35 official plugins and 3 Community plugins with our <a href="https://github.com/huxpro/lynx-capacitor/tree/main/demo" target="_blank" rel="noopener noreferrer">demo app</a>.
+    </p>
 
     <div class="plugin-grid" id="plugin-grid"></div>
   </div>
 </section>
 
-<!-- ═══════════════════ Getting Started ═══════════════════ -->
 <section id="start">
   <div class="container">
-    <div class="section-label">Setup</div>
     <h2>Getting Started</h2>
     <p class="lead">Three steps to run any Capacitor plugin on Lynx.</p>
 
     <div class="steps">
       <div class="step">
         <div>
-          <h4>Install packages</h4>
-          <p>Add the adapter and any official plugins you need.</p>
-          <pre><span class="comment"># The adapter + an example plugin</span>
-npm install @lynx-capacitor/core @capacitor/device</pre>
+          <h4>Install the core adapter as an alias</h4>
+          <p>Your plugin imports stay unchanged because npm installs the Lynx adapter at <code>@capacitor/core</code>.</p>
+          <pre>npm install @capacitor/core@npm:@lynx-capacitor/core</pre>
         </div>
       </div>
       <div class="step">
         <div>
-          <h4>Add the build alias</h4>
-          <p>Tell Rspeedy to redirect <code>@capacitor/core</code> to the adapter.</p>
-          <pre><span class="comment">// lynx.config.ts</span>
-<span class="keyword">export default</span> {
-  source: {
-    alias: {
-      <span class="string">'@capacitor/core'</span>: require.resolve(<span class="string">'@lynx-capacitor/core'</span>),
-    },
-  },
-};</pre>
+          <h4>Use a Capacitor plugin as usual</h4>
+          <p>Install any Capacitor plugin directly from npm.</p>
+          <pre>npm install @capacitor/device</pre>
         </div>
       </div>
       <div class="step">
         <div>
-          <h4>Autolink the native side (iOS)</h4>
-          <p>Two Podfile lines. No plugin is named anywhere &mdash; both are resolved from node_modules at <code>pod install</code>.</p>
-          <pre><span class="comment"># Podfile</span>
+          <h4>Autolink the native side</h4>
+          <p>Install the shared native runtime, then configure Autolink once in the host app. Autolink is recommended, but hosts can wire the runtime and plugins manually instead.</p>
+          <pre>npm install @lynx-capacitor/runtime</pre>
+
+          <div class="platform-tabs" role="tablist" aria-label="Native Autolink platform">
+            <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="true" aria-controls="panel-ios" tabindex="0">iOS</button>
+            <button class="platform-tab" id="tab-android" type="button" role="tab" aria-selected="false" aria-controls="panel-android" tabindex="-1">Android</button>
+          </div>
+
+          <div class="platform-panel" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios">
+            <pre><span class="comment"># Podfile</span>
 plugin <span class="string">'cocoapods-lynx-library'</span>
 plugin <span class="string">'cocoapods-lynx-capacitor'</span>
 
@@ -684,6 +1052,31 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
 
 <span class="comment">// In your view controller</span>
 [[LynxGeneratedLibraryRegistry new] setup:config];</pre>
+            <p>After the one-time Podfile setup, adding a plugin is <code>npm install</code> + <code>pod install</code>.</p>
+          </div>
+
+          <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+            <pre><span class="comment">// settings.gradle.kts — point includeBuild at the Gradle plugin source</span>
+pluginManagement {
+  includeBuild(<span class="string">"../plugins/gradle-lynx-capacitor"</span>)
+}
+plugins { id(<span class="string">"org.lynxcapacitor.settings"</span>) }
+lynxCapacitor { nodeModulesPath = <span class="string">"../node_modules"</span> }
+
+<span class="comment">// app/build.gradle.kts</span>
+plugins {
+  id(<span class="string">"com.android.application"</span>)
+  id(<span class="string">"org.lynxcapacitor.autolink"</span>)
+}
+
+<span class="comment">// When creating the LynxView</span>
+<span class="keyword">val</span> builder = LynxViewBuilder()
+LynxGeneratedLibraryRegistry.setup(builder)
+<span class="keyword">val</span> lynxView = builder.build(this)
+setContentView(lynxView)
+LynxCapacitorRuntime.attach(this)</pre>
+            <p>The Gradle plugin is currently consumed from source; the repository's <code>android/Demo</code> is the working reference until a remote artifact is published.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -694,64 +1087,127 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
   <div class="container">
     <p>
       An adapter bridging <a href="https://capacitorjs.com" target="_blank">Capacitor</a> to <a href="https://lynxjs.org" target="_blank">Lynx</a>.
-      All native plugin code is from the official Capacitor project.
+      Capacitor plugin implementations remain in their official packages; this project supplies the Lynx bridge, headless runtime, and platform fallbacks where required.
     </p>
   </div>
 </footer>
 
 <script>
 const plugins = [
-  { name: "Action Sheet", status: "interactive" },
-  { name: "App", status: "full" },
-  { name: "App Launcher", status: "full" },
-  { name: "Background Runner", status: "partial" },
-  { name: "Barcode Scanner", status: "partial" },
-  { name: "Browser", status: "interactive" },
-  { name: "Camera", status: "interactive" },
-  { name: "Clipboard", status: "full" },
-  { name: "Device", status: "full" },
-  { name: "Dialog", status: "interactive" },
-  { name: "File Transfer", status: "full" },
-  { name: "File Viewer", status: "interactive" },
-  { name: "Filesystem", status: "full" },
-  { name: "Geolocation", status: "full" },
-  { name: "Google Maps", status: "partial" },
-  { name: "Haptics", status: "full" },
-  { name: "HTTP", status: "full" },
-  { name: "InAppBrowser", status: "interactive" },
-  { name: "Keyboard", status: "full" },
-  { name: "Local LLM", status: "partial" },
-  { name: "Local Notifications", status: "full" },
-  { name: "Motion", status: "interactive" },
-  { name: "Network", status: "full" },
-  { name: "Preferences", status: "full" },
-  { name: "Privacy Screen", status: "full" },
-  { name: "Push Notifications", status: "partial" },
-  { name: "Screen Orientation", status: "full" },
-  { name: "Screen Reader", status: "full" },
-  { name: "Share", status: "interactive" },
-  { name: "Splash Screen", status: "full" },
-  { name: "Status Bar", status: "full" },
-  { name: "System Bars", status: "full" },
-  { name: "Text Zoom", status: "full" },
-  { name: "Toast", status: "full" },
-  { name: "Cookies", status: "full" }
+  { name: "Action Sheet", source: "official" },
+  { name: "App", source: "official" },
+  { name: "App Launcher", source: "official" },
+  { name: "Background Runner", source: "official" },
+  { name: "Barcode Scanner", source: "official" },
+  { name: "Browser", source: "official" },
+  { name: "Camera", source: "official" },
+  { name: "Clipboard", source: "official" },
+  { name: "Cookies", source: "official" },
+  { name: "Device", source: "official" },
+  { name: "Dialog", source: "official" },
+  { name: "File Transfer", source: "official" },
+  { name: "File Viewer", source: "official" },
+  { name: "Filesystem", source: "official" },
+  { name: "Geolocation", source: "official" },
+  { name: "Google Maps", source: "official" },
+  { name: "Haptics", source: "official" },
+  { name: "HTTP", source: "official" },
+  { name: "InAppBrowser", source: "official" },
+  { name: "Keyboard", source: "official" },
+  { name: "Local LLM", source: "official" },
+  { name: "Local Notifications", source: "official" },
+  { name: "Motion", source: "official" },
+  { name: "Network", source: "official" },
+  { name: "Preferences", source: "official" },
+  { name: "Privacy Screen", source: "official" },
+  { name: "Push Notifications", source: "official" },
+  { name: "Screen Orientation", source: "official" },
+  { name: "Screen Reader", source: "official" },
+  { name: "Share", source: "official" },
+  { name: "Splash Screen", source: "official" },
+  { name: "Status Bar", source: "official" },
+  { name: "System Bars", source: "official" },
+  { name: "Text Zoom", source: "official" },
+  { name: "Toast", source: "official" },
+  { name: "Keep Awake", source: "community" },
+  { name: "Safe Area", source: "community" },
+  { name: "SQLite", source: "community" }
 ];
 
 const grid = document.getElementById('plugin-grid');
 plugins.sort((a, b) => {
-  const order = { full: 0, interactive: 1, partial: 2 };
-  return (order[a.status] ?? 3) - (order[b.status] ?? 3) || a.name.localeCompare(b.name);
+  const order = { official: 0, community: 1 };
+  return order[a.source] - order[b.source] || a.name.localeCompare(b.name);
 });
 
 plugins.forEach(p => {
   const div = document.createElement('div');
   div.className = 'plugin-item';
-  const badgeMap = { full: 'badge-full', interactive: 'badge-interactive', partial: 'badge-partial' };
-  const labelMap = { full: 'works', interactive: 'interactive', partial: 'needs config' };
-  div.innerHTML = `<span>${p.name}</span><span class="badge ${badgeMap[p.status]}">${labelMap[p.status]}</span>`;
+  const labelMap = { official: 'Official', community: 'Community' };
+  div.innerHTML = `<span>${p.name}</span><span class="badge badge-${p.source}">${labelMap[p.source]}</span>`;
   grid.appendChild(div);
 });
+
+const more = document.createElement('div');
+more.className = 'plugin-item plugin-more';
+more.setAttribute('aria-label', 'More Capacitor plugins');
+more.innerHTML = '<span class="ellipsis" aria-hidden="true"><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i></span>';
+grid.appendChild(more);
+
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.getElementById('primary-navigation');
+
+function setNavigationOpen(open) {
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  navLinks.classList.toggle('is-open', open);
+}
+
+navToggle.addEventListener('click', () => {
+  setNavigationOpen(navToggle.getAttribute('aria-expanded') !== 'true');
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => setNavigationOpen(false));
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true') return;
+  setNavigationOpen(false);
+  navToggle.focus();
+});
+
+document.addEventListener('click', event => {
+  if (navToggle.getAttribute('aria-expanded') !== 'true') return;
+  if (navToggle.contains(event.target) || navLinks.contains(event.target)) return;
+  setNavigationOpen(false);
+});
+
+window.matchMedia('(min-width: 641px)').addEventListener('change', event => {
+  if (event.matches) setNavigationOpen(false);
+});
+
+const platformTabs = Array.from(document.querySelectorAll('[role="tab"]'));
+platformTabs.forEach(tab => {
+  tab.addEventListener('click', () => selectPlatformTab(tab));
+  tab.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
+    const nextIndex = (platformTabs.indexOf(tab) + direction + platformTabs.length) % platformTabs.length;
+    selectPlatformTab(platformTabs[nextIndex]);
+    platformTabs[nextIndex].focus();
+  });
+});
+
+function selectPlatformTab(selectedTab) {
+  platformTabs.forEach(tab => {
+    const selected = tab === selectedTab;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+  });
+}
 </script>
 </body>
 </html>

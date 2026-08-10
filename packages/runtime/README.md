@@ -7,7 +7,8 @@ library** so it autolinks out of `node_modules`.
 
 | Path | What it is |
 |------|------------|
-| `lynx.lib.json` | Declares the iOS source dir and podspec to Lynx Autolink |
+| `lynx.lib.json` | Declares Android and iOS native sources to Lynx Autolink |
+| `android/` | Kotlin NativeModule plus the headless Capacitor Android source overlay |
 | `ios/LynxCapacitorRuntime.podspec` | The `LynxCapacitorRuntime` pod |
 | `ios/src/LynxCapacitorBridge.{h,m}` | The single Lynx NativeModule all plugin calls travel through |
 | `ios/src/LynxCapacitorRuntime.swift` | `CAPBridgeProtocol` implementation + plugin discovery |
@@ -33,6 +34,29 @@ pure source marker. The generated `LynxGeneratedLibraryRegistry` then emits:
 
 One annotation covers every Capacitor plugin, because plugins are multiplexed
 over the bridge's `handleCall` rather than exposed as separate Lynx modules.
+
+## Android
+
+The Gradle settings plugin includes this directory as `:lynx-capacitor-runtime`
+and includes the exact `@capacitor/android` source installed in `node_modules`.
+A small, version-pinned patch adds a headless `Bridge` constructor and result
+sink. It deliberately never creates a WebView, while retaining Capacitor's
+official plugin, permission, Activity Result, lifecycle, and serialization code.
+
+Android results use Lynx `GlobalEventEmitter`, including retained listener
+callbacks. The runtime includes a native SensorManager implementation of Motion
+because the official npm package otherwise selects a browser-only Android
+fallback.
+
+The build plugin scans `@CapacitorPlugin` annotations and generates
+`LynxCapacitorPluginRegistry` plus `LynxGeneratedLibraryRegistry`. The runtime's
+auto-init provider installs lifecycle forwarding. The host calls
+`LynxCapacitorRuntime.attach(this)` after `setContentView` and before returning
+from `onCreate`; this gives view-aware plugins a content root while remaining
+early enough for Activity Result launcher registration.
+
+Requirements: compileSdk 36, JDK 21, minSdk 24, Lynx SDK 4.0+. A host may need a
+higher minSdk when an installed plugin requires one.
 
 ## How plugins get registered
 

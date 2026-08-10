@@ -1,11 +1,12 @@
 {
   "name": "@lynx-capacitor/runtime",
   "version": "0.1.0",
-  "description": "Lynx native library that hosts the Capacitor iOS runtime. Autolinked into any Lynx app via lynx.lib.json.",
+  "description": "Lynx native library that hosts the headless Capacitor runtime on Android and iOS.",
   "license": "MIT",
   "files": [
     "lynx.lib.json",
-    "ios"
+    "ios",
+    "android"
   ],
   "keywords": [
     "lynx",
