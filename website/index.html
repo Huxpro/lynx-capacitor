@@ -334,6 +334,26 @@
     .badge-official { background: #e0f2fe; color: #075985; }
     .badge-community { background: #f3e8ff; color: #6b21a8; }
 
+    .plugin-more {
+      min-height: 46px;
+      justify-content: center;
+      border-style: dashed;
+      background: transparent;
+    }
+
+    .plugin-more .ellipsis {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .plugin-more .ellipsis-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+
     /* ── Getting Started ── */
     .steps {
       counter-reset: step;
@@ -598,7 +618,7 @@
     </p>
 
     <p class="lead">
-      The 35 official plugins and 3 Community plugins below are all covered by our verification. <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank">View the Android cloud-device report</a>.
+      We <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank" rel="noopener noreferrer">verified</a> 35 official plugins and 3 Community plugins with our <a href="https://github.com/huxpro/lynx-capacitor/tree/main/demo" target="_blank" rel="noopener noreferrer">demo app</a>.
     </p>
 
     <div class="plugin-grid" id="plugin-grid"></div>
@@ -739,9 +759,16 @@ plugins.sort((a, b) => {
 plugins.forEach(p => {
   const div = document.createElement('div');
   div.className = 'plugin-item';
-  div.innerHTML = `<span>${p.name}</span><span class="badge badge-${p.source}">${p.source}</span>`;
+  const labelMap = { official: 'Official', community: 'Community' };
+  div.innerHTML = `<span>${p.name}</span><span class="badge badge-${p.source}">${labelMap[p.source]}</span>`;
   grid.appendChild(div);
 });
+
+const more = document.createElement('div');
+more.className = 'plugin-item plugin-more';
+more.setAttribute('aria-label', 'More Capacitor plugins');
+more.innerHTML = '<span class="ellipsis" aria-hidden="true"><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i></span>';
+grid.appendChild(more);
 
 const platformTabs = Array.from(document.querySelectorAll('[role="tab"]'));
 platformTabs.forEach(tab => {
