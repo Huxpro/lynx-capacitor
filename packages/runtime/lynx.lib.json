@@ -1,0 +1,8 @@
+{
+  "platforms": {
+    "ios": {
+      "sourceDir": "ios",
+      "podspecPath": "ios/LynxCapacitorRuntime.podspec"
+    }
+  }
+}

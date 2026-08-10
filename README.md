@@ -18,11 +18,13 @@ All 35 official Capacitor plugins from [capacitorjs.com/docs/apis](https://capac
   - `SystemBars` + `SystemBarsStyle` + `SystemBarType` (system bar styling)
 - Works with **any unmodified `@capacitor/*` plugin** from npm — no code changes needed
 
-### Native iOS (CocoaPod `LynxCapacitorRuntime`)
+### Native iOS (npm package `@lynx-capacitor/runtime`, CocoaPod `LynxCapacitorRuntime`)
 
+- Ships as a **Lynx native library** — a `lynx.lib.json` manifest plus an iOS podspec, so [Lynx Autolink](https://lynxjs.org/next/zh/guide/autolink.html?platform=ios) links and registers it from `node_modules`
 - Implements `CAPBridgeProtocol` to be compatible with all official Capacitor iOS plugins
 - Uses the real `@capacitor/ios` framework and official native plugin CocoaPods
 - Bridges Lynx NativeModule JS calls into the official Capacitor plugin infrastructure
+- **Discovers plugins at runtime** — every `CAPPlugin` subclass linked into the app is registered, with no class list to maintain
 - Handles result serialization back to JS
 - Supports native UI presentation (view controllers, action sheets, alerts)
 - Motion plugin provided natively (official npm doesn't ship iOS native yet)
@@ -34,9 +36,9 @@ All 35 official Capacitor plugins from [capacitorjs.com/docs/apis](https://capac
 npm install @capacitor/device @capacitor/preferences @capacitor/filesystem
 ```
 
-2. **Install this adapter:**
+2. **Install this adapter — the JS shim and the native runtime:**
 ```bash
-npm install @lynx-capacitor/core
+npm install @lynx-capacitor/core @lynx-capacitor/runtime
 ```
 
 3. **Add an alias in your Lynx build config:**
@@ -51,33 +53,47 @@ export default defineConfig({
 });
 ```
 
-4. **Add the native dependency to your iOS Podfile:**
+4. **Turn on Lynx Autolink in your Podfile:**
 ```ruby
-pod 'LynxCapacitorRuntime', :path => 'path/to/lynx-capacitor/ios/official'
-# Make sure you also have all the Capacitor plugin pods you need
-pod 'CapacitorDevice'
-pod 'CapacitorPreferences'
-pod 'CapacitorFilesystem'
-# etc...
+plugin 'cocoapods-lynx-library'   # gem 'cocoapods-lynx-library', '~> 4.0'
+
+target 'YourApp' do
+  use_lynx_library!
+
+  # The Capacitor plugin pods you installed above
+  pod 'CapacitorDevice', :path => '../node_modules/@capacitor/device'
+  pod 'CapacitorPreferences', :path => '../node_modules/@capacitor/preferences'
+  pod 'CapacitorFilesystem', :path => '../node_modules/@capacitor/filesystem'
+end
 ```
 
-4. **Add the native dependency to your iOS Podfile:**
-```ruby
-pod 'LynxCapacitorRuntime', :path => 'path/to/lynx-capacitor/ios/official'
-```
+`use_lynx_library!` finds `@lynx-capacitor/runtime` in `node_modules`, adds the
+`LynxCapacitorRuntime` pod, and generates a registry that registers the
+`CapacitorBridge` native module. You never name the bridge class yourself.
 
-That's all you need to do! **CocoaPods automatically includes all official Capacitor plugin pods** because `LynxCapacitorRuntime.podspec` reads from the shared plugin manifest and adds every plugin as a dependency. No need to add each plugin pod manually.
+> Listing each plugin pod by hand is temporary — see [Roadmap](#roadmap).
 
-5. **Register the native module in your Lynx view controller:**
+5. **Invoke the generated registry when you build your `LynxConfig`:**
 ```objc
-#import <Lynx/Lynx.h>
-#import <LynxCapacitorBridge.h>
+#import <LynxLibraryRegistry/LynxGeneratedLibraryRegistry.h>
 
-// ... when setting up Lynx
-[lynxView registerNativeModule:[LynxCapacitorBridge class]];
+LynxConfig *config = [[LynxConfig alloc] initWithProvider:provider];
+[[LynxGeneratedLibraryRegistry new] setup:config];
+[[LynxEnv sharedInstance] prepareConfig:config];
 ```
 
-That's it! Your existing Capacitor plugin code will just work on Lynx.
+That's it! Your existing Capacitor plugin code will just work on Lynx. Adding
+another plugin later is `npm install` + `pod install` — no Swift, ObjC, or
+registration code changes.
+
+### Roadmap
+
+Step 4 still lists every Capacitor plugin pod by hand. A podspec cannot declare
+`:path` dependencies, and most Capacitor 8 plugins are either missing from
+CocoaPods trunk or lag npm badly, so those lines cannot simply move into
+`LynxCapacitorRuntime.podspec`. A companion Podfile plugin,
+`cocoapods-lynx-capacitor`, replaces them with a single `use_capacitor_plugins!`
+that resolves plugin pods straight out of `node_modules`.
 
 ## Requirements
 
@@ -171,7 +187,7 @@ The demo exposes `globalThis.runCapacitorSmokeMatrix()` for DevTool automation. 
 ```
 lynx-capacitor/
 ├── packages/core/          # npm package - drop-in @capacitor/core adapter
-├── ios/official/           # CocoaPod - native iOS bridge + CAPBridgeProtocol impl
+├── packages/runtime/       # npm package - Lynx native library (lynx.lib.json + iOS pod)
 ├── demo/                   # ReactLynx demo gallery of all 35 plugins
 ├── ios/Demo/               # Standalone iOS host (XcodeGen + CocoaPods)
 ├── plugins.json            # Manifest of all official plugin Pods

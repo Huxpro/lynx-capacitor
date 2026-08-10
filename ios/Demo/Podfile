@@ -5,8 +5,15 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '15.0'
 project 'LynxCapacitorDemo.xcodeproj'
 
+plugin 'cocoapods-lynx-library'
+
 repository_root = File.expand_path('../..', __dir__)
 lynx_root = ENV.fetch('LYNX_ROOT', File.expand_path('../lynx', repository_root))
+
+# Autolink scans node_modules for packages shipping lynx.lib.json. `pod install`
+# runs from ios/Demo, whose ancestors do not include demo/node_modules, so point
+# it at the app package explicitly.
+app_package_root = File.join(repository_root, 'demo')
 
 install! 'cocoapods',
          :deterministic_uuids => false,
@@ -15,6 +22,12 @@ install! 'cocoapods',
 
 target 'LynxCapacitorDemo' do
   use_frameworks! :linkage => :static
+
+  # Pulls in @lynx-capacitor/runtime (LynxCapacitorRuntime) and generates the
+  # LynxLibraryRegistry pod that registers the CapacitorBridge native module.
+  use_lynx_library! :root => app_package_root,
+                    :output_dir => File.join(__dir__, 'generated/lynx-library')
+
   socket_rocket_source = File.join(
     lynx_root,
     'explorer/darwin/ios/lynx_explorer/Pods/SocketRocket'
@@ -47,7 +60,8 @@ target 'LynxCapacitorDemo' do
   JSON.parse(File.read(File.join(repository_root, 'plugins.json'))).each do |plugin|
     pod plugin['pod'], :path => File.join(repository_root, 'demo/node_modules/@capacitor', plugin['package'])
   end
-  pod 'LynxCapacitorRuntime', :path => File.join(repository_root, 'ios/official')
+  # LynxCapacitorRuntime is not listed here: use_lynx_library! above adds it
+  # from node_modules/@lynx-capacitor/runtime.
 
   # Community plugins
   pod 'CapacitorCommunityKeepAwake', :path => File.join(repository_root, 'demo/node_modules/@capacitor-community/keep-awake')

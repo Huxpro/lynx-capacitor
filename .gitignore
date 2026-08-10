@@ -5,6 +5,7 @@ demo/node_modules/
 demo/dist/
 ios/Demo/Pods/
 ios/Demo/build/
+ios/Demo/generated/
 ios/Demo/LynxCapacitorDemo.xcodeproj/
 ios/Demo/LynxCapacitorDemo.xcworkspace/
 ios/Demo/Podfile.lock

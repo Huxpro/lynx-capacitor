@@ -125,6 +125,9 @@ importers:
       '@lynx-capacitor/core':
         specifier: workspace:*
         version: link:../packages/core
+      '@lynx-capacitor/runtime':
+        specifier: workspace:*
+        version: link:../packages/runtime
       '@lynx-js/react':
         specifier: 0.121.0
         version: 0.121.0(@lynx-js/types@3.9.0)(@types/react@18.3.31)
@@ -156,6 +159,8 @@ importers:
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
+
+  packages/runtime: {}
 
 packages:
 

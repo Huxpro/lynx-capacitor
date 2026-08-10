@@ -20,8 +20,6 @@ targets:
           - Resource
       - path: LynxCapacitorDemo/Resource/main.lynxbin
         buildPhase: resources
-      - path: ../official/LynxCapacitorBridge.h
-      - path: ../official/LynxCapacitorBridge.m
     info:
       path: LynxCapacitorDemo/Info.plist
       properties:
@@ -41,9 +39,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lynx.capacitordemo
         PRODUCT_NAME: LynxCapacitorDemo
-        HEADER_SEARCH_PATHS:
-          - "$(inherited)"
-          - "$(SRCROOT)/../official"
     dependencies:
       - sdk: UIKit.framework
       - sdk: WebKit.framework
