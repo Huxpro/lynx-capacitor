@@ -4,13 +4,16 @@
 
 Compared against the [official plugin list from capacitorjs.com](https://capacitorjs.com/docs/apis):
 
-✅ **35 Capacitor v8 plugin APIs are integrated**
+✅ **All 37 Capacitor v8 plugin APIs are integrated**
 
 The current official list contains 37 APIs. Calendar and Contacts were added to
-the documentation after this gallery baseline and are not integrated yet.
+the gallery after the original simulator baseline and have now been verified on
+an Android cloud device.
 
-- 35 plugin headers registered at runtime
-- 27 non-interactive smoke tests automatically pass on simulator
+- 37 official APIs available in the gallery
+- Calendar passes a create/find/delete Android round-trip
+- Contacts passes a save/find/remove Android round-trip
+- 27 non-interactive smoke tests passed on the earlier iOS simulator baseline
 - 8 interactive/hardware/credential plugins are available for manual testing
 
 ## Android Cloud-device Matrix
@@ -20,12 +23,14 @@ Environment and full evidence are recorded in
 
 - 29/29 automatic actions passed across 28 gallery entries: 25 official and 3
   Community plugins.
+- A follow-up cloud-device run passed the new Calendar and Contacts CRUD smoke
+  actions. The bridge registered 38 native plugin classes with no WebView.
 - All 8 entries classified as interactive were manually exercised: Dialog,
   Action Sheet, Share, Camera, File Viewer, Browser, InAppBrowser, and Motion.
 - Partial/config-gated entries are not claimed as end-to-end verified; Local LLM
   and Push Notifications received only safe availability/permission probes.
 
-## Automated iOS Simulator Matrix
+## Automated iOS Simulator Baseline
 
 Environment:
 
@@ -34,7 +39,7 @@ Environment:
 - Capacitor core/iOS 8.4.2
 - Lynx SDK 4.1 local checkout
 
-Result:
+Result before Calendar and Contacts were added:
 
 - 35 plugin headers registered
 - 27 non-interactive smoke tests passed
@@ -87,7 +92,7 @@ visible UI, hardware, or credentials:
 
 ## Tool Verification
 
-- Lynx DevTool reported 35 `PluginHeaders`.
+- Lynx DevTool reported 35 `PluginHeaders` in the earlier iOS baseline.
 - Lynx DevTool executed the 27-test safe matrix against the simulator.
 - ReactLynx best-practices scanner reported zero issues for
   `demo/src/App.tsx` and `demo/src/plugins.ts`.

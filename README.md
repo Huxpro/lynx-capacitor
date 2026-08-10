@@ -4,10 +4,9 @@ Run **Capacitor v8 plugins** on Lynx (ReactLynx). The adapter reimplements the
 Capacitor bridge over Lynx's NativeModule API, so existing Capacitor plugin
 packages can keep their JavaScript and native implementations.
 
-This repository currently integrates 35 of the 37 plugin APIs listed in the
-[Capacitor v8 documentation](https://capacitorjs.com/docs/apis). Calendar and
-Contacts are not integrated yet. The other packages use their official Android
-and iOS implementations where available.
+This repository integrates all 37 plugin APIs listed in the
+[Capacitor v8 documentation](https://capacitorjs.com/docs/apis). The packages
+use their official Android and iOS implementations where available.
 
 ## Architecture
 
@@ -215,14 +214,13 @@ LYNX_ROOT=/path/to/lynx pnpm ios:run
 ## Plugin Coverage
 
 The current [Capacitor v8 API list](https://capacitorjs.com/docs/apis) contains
-37 official plugin APIs. This repository integrates 35 of them:
+37 official plugin APIs. This repository integrates all of them:
 
 | Status | Count | Meaning |
 |--------|-------|---------|
-| ✅ Full | 21 | An automatic native smoke path passes |
+| ✅ Full | 23 | An automatic native smoke path passes |
 | 🖱 Device-verified | 8 | The interactive Android path was exercised on a cloud device |
 | 🔑 Partial/config-gated | 6 | Integrated, but full behavior needs host setup, hardware, or a WebView-specific capability |
-| ❌ Not integrated | 2 | Calendar and Contacts |
 
 ### Status Breakdown
 
@@ -234,10 +232,10 @@ The current [Capacitor v8 API list](https://capacitorjs.com/docs/apis) contains
 | Background Runner | 🔑 Partial | Needs registered JS worker |
 | Barcode Scanner | 🔑 Partial | Needs camera hardware |
 | Browser | 🖱 Interactive | Presents Custom Tabs / SFSafariViewController |
-| Calendar | ❌ Not integrated | Listed by the current Capacitor v8 documentation |
+| Calendar | ✅ Full | Android create/find/delete round-trip verified on a cloud device |
 | Camera | 🖱 Interactive | Requires camera/hardware |
 | Clipboard | ✅ Full | |
-| Contacts | ❌ Not integrated | Listed by the current Capacitor v8 documentation |
+| Contacts | ✅ Full | Android save/find/remove round-trip verified on a cloud device |
 | Cookies | ✅ Full | Built into core |
 | Device | ✅ Full | |
 | Dialog | 🖱 Interactive | User interaction |
@@ -274,11 +272,13 @@ pnpm verify:android
 ```
 
 The demo exposes `globalThis.runCapacitorSmokeMatrix()` for DevTool automation.
-On the Android cloud device, 29/29 automatic actions passed across 28 gallery
-entries: 25 official plugins and 3 Community plugins. All eight official
-interactive entries were then exercised manually: Dialog, Action Sheet, Share,
-Camera, File Viewer, Browser, InAppBrowser, and Motion. These results do not
-claim end-to-end coverage for the partial/config-gated entries. See the
+The original Android cloud-device run passed 29/29 automatic actions across 28
+gallery entries: 25 official plugins and 3 Community plugins. A follow-up run
+verified Calendar with a create/find/delete round-trip and Contacts with a
+save/find/remove round-trip. All eight official interactive entries were also
+exercised manually: Dialog, Action Sheet, Share, Camera, File Viewer, Browser,
+InAppBrowser, and Motion. These results do not claim end-to-end coverage for the
+partial/config-gated entries. See the
 [cloud-device verification report](docs/android-verification.md).
 
 ## Project Structure
@@ -289,7 +289,7 @@ lynx-capacitor/
 ├── packages/runtime/       # npm package - Android/iOS Lynx native library
 ├── plugins/                # Gradle Android autolink plugin
 ├── gems/                   # cocoapods-lynx-capacitor - links plugin pods from node_modules
-├── demo/                   # ReactLynx gallery for 35 official + 3 Community plugins
+├── demo/                   # ReactLynx gallery for 37 official + 3 Community plugins
 ├── ios/Demo/               # Standalone iOS host (XcodeGen + CocoaPods)
 ├── android/Demo/           # Standalone Android Lynx host
 ├── plugins.json            # Plugin coverage reference (documentation only)

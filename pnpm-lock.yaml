@@ -47,12 +47,18 @@ importers:
       '@capacitor/browser':
         specifier: ^8.0.4
         version: 8.0.4(@capacitor/core@8.4.2)
+      '@capacitor/calendar':
+        specifier: 1.0.0
+        version: 1.0.0(@capacitor/core@8.4.2)
       '@capacitor/camera':
         specifier: ^8.2.1
         version: 8.2.1(@capacitor/core@8.4.2)
       '@capacitor/clipboard':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.4.2)
+      '@capacitor/contacts':
+        specifier: 1.0.0
+        version: 1.0.0(@capacitor/core@8.4.2)
       '@capacitor/device':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.4.2)
@@ -226,6 +232,11 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
+  '@capacitor/calendar@1.0.0':
+    resolution: {integrity: sha512-B93ZFtFLNuE23sTeIJc9V8eEAZJsS5LDYMLeOzl2rSWnw0DFtxqrrNa9k7g3LpgpeDUygrqEZsn2tPuevsN2lA==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
   '@capacitor/camera@8.2.1':
     resolution: {integrity: sha512-yq4TbVcv9Z91JLr7C5407s3rrXr/Dmk+Pr9FAVRn65s3Jg4iYabjwG4fVKUYlQL5TiUdBbZA3LiNAbUxJNcUkw==}
     peerDependencies:
@@ -233,6 +244,11 @@ packages:
 
   '@capacitor/clipboard@8.0.1':
     resolution: {integrity: sha512-iOlbTi8MojKyLnYE+M27priXid7vHd0PlDwyHohPzkuQ8Rkp6q7ykwZmPEUD+OnU/Ink7Qw/pUOfKgraKmA6Eg==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor/contacts@1.0.0':
+    resolution: {integrity: sha512-7LfiChmUdB7NB5VGUAPpv2HKBbbflRXZnxIS+qLpAFrJONQy2r0R+5k7Ow8PoIMl6Rxzpf8cWx4BvspBbvxvJQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -2699,11 +2715,19 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.4.2
 
+  '@capacitor/calendar@1.0.0(@capacitor/core@8.4.2)':
+    dependencies:
+      '@capacitor/core': 8.4.2
+
   '@capacitor/camera@8.2.1(@capacitor/core@8.4.2)':
     dependencies:
       '@capacitor/core': 8.4.2
 
   '@capacitor/clipboard@8.0.1(@capacitor/core@8.4.2)':
+    dependencies:
+      '@capacitor/core': 8.4.2
+
+  '@capacitor/contacts@1.0.0(@capacitor/core@8.4.2)':
     dependencies:
       '@capacitor/core': 8.4.2
 

@@ -27,6 +27,14 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Test the Capacitor Camera and Barcode Scanner plugins.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Test reading and managing events with the Capacitor Calendar plugin.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Test reading and managing events with the Capacitor Calendar plugin.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Test creating events with the Capacitor Calendar plugin.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Test searching and managing contacts with the Capacitor Contacts plugin.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Test the Capacitor Geolocation and Google Maps plugins.</string>
 	<key>NSMotionUsageDescription</key>
