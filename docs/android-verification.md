@@ -1,13 +1,15 @@
 # Android verification
 
-Verified on 2026-08-10 with a Lynx Sandbox cloud device:
+Verified on 2026-08-10 with Lynx Sandbox cloud devices:
 
 - Device: `aries_10`, Android 10 / API 29, reported as a physical device
-- Headless bridge: `LC_BRIDGE_READY plugins=36 webView=false`
-- Automatic matrix: `LC_SMOKE_DONE passed=29 failed=0 total=29`
+- Headless bridge after adding Calendar and Contacts: `LC_BRIDGE_READY plugins=38 webView=false`
+- Original automatic matrix: `LC_SMOKE_DONE passed=29 failed=0 total=29`
+- Calendar follow-up: `LC_SMOKE PASS Calendar.create + find + delete`
+- Contacts follow-up: `LC_SMOKE PASS Contacts.create + find + delete`
 - Bundle embedded in the APK is byte-identical to `demo/dist/main.lynx.bundle`
-- APK SHA-256: `e52e20c2cef91ac2d67f5766a683be6b4e37104e5f55114d03b70686dae42993`
-- Bundle SHA-256: `efdedd5c6a87bb4acc93819656c4ced3505f5be17200b70f457532560a1db27c`
+- Follow-up APK SHA-256: `29149e6e8e055eba09f760bf88340183a7ba8048fe3b189b2ef4e027e53ffc94`
+- Follow-up bundle SHA-256: `38f1f48c61d56b5a7389e43ff5481ed7725e1657938991c10694caa70da6c016`
 
 The bridge host never constructs a WebView. `InAppBrowser.openInWebView` creates
 its own plugin-owned Activity only when that action is explicitly requested.
@@ -16,6 +18,23 @@ The automatic result counts actions, not distinct plugins. The 29 actions cover
 28 gallery entries: 25 official Capacitor plugins and 3 Community plugins
 (`Keep Awake` contributes two actions). It should not be read as "29 official
 plugins verified end to end."
+
+## Calendar and Contacts follow-up
+
+Both newly added plugins were tested through the same Lynx-to-Capacitor native
+bridge used by the gallery. Runtime permissions were granted on the sandbox
+device before the non-interactive test run.
+
+| Plugin | Native operations | Result |
+|---|---|---|
+| Calendar | `createCalendar` → `createEvent` → `findEvents` → `deleteEvent` → `deleteCalendar` | All five calls returned `success=true`; smoke passed |
+| Contacts | `save` → `find` by returned id → `remove` | All three calls returned `success=true`; smoke passed |
+
+The follow-up app mount ran 31 automatic actions. Calendar and Contacts passed;
+the result was `30 passed / 1 failed` because the existing File Transfer network
+download timed out after 12 seconds on that run. This timeout is unrelated to
+the two targeted provider-backed CRUD checks and does not replace the earlier
+29/29 baseline.
 
 ## Exit-criteria calls
 

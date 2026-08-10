@@ -373,10 +373,13 @@
     .badge-community { background: #f3e8ff; color: #6b21a8; }
 
     .plugin-more {
-      min-height: 46px;
+      grid-column: 1 / -1;
+      min-height: 32px;
       justify-content: center;
-      border-style: dashed;
+      border: 0;
       background: transparent;
+      padding: 8px 0 0;
+      pointer-events: none;
     }
 
     .plugin-more .ellipsis {
@@ -750,8 +753,10 @@
       }
 
       .plugin-more {
+        flex-direction: row;
         align-items: center;
-        min-height: 68px;
+        min-height: 32px;
+        padding: 8px 0 0;
       }
 
       .step {
@@ -1002,7 +1007,7 @@
     </p>
 
     <p class="lead">
-      We <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank" rel="noopener noreferrer">verified</a> 35 official plugins and 3 Community plugins with our <a href="https://github.com/huxpro/lynx-capacitor/tree/main/demo" target="_blank" rel="noopener noreferrer">demo app</a>.
+      We <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank" rel="noopener noreferrer">verified</a> 37 official plugins and 3 Community plugins with our <a href="https://github.com/huxpro/lynx-capacitor/tree/main/demo" target="_blank" rel="noopener noreferrer">demo app</a>.
     </p>
 
     <div class="plugin-grid" id="plugin-grid"></div>
@@ -1100,8 +1105,10 @@ const plugins = [
   { name: "Background Runner", source: "official" },
   { name: "Barcode Scanner", source: "official" },
   { name: "Browser", source: "official" },
+  { name: "Calendar", source: "official" },
   { name: "Camera", source: "official" },
   { name: "Clipboard", source: "official" },
+  { name: "Contacts", source: "official" },
   { name: "Cookies", source: "official" },
   { name: "Device", source: "official" },
   { name: "Dialog", source: "official" },

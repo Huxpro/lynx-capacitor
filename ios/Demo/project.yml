@@ -28,6 +28,10 @@ targets:
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         NSCameraUsageDescription: Test the Capacitor Camera and Barcode Scanner plugins.
+        NSCalendarsFullAccessUsageDescription: Test reading and managing events with the Capacitor Calendar plugin.
+        NSCalendarsUsageDescription: Test reading and managing events with the Capacitor Calendar plugin.
+        NSCalendarsWriteOnlyAccessUsageDescription: Test creating events with the Capacitor Calendar plugin.
+        NSContactsUsageDescription: Test searching and managing contacts with the Capacitor Contacts plugin.
         NSPhotoLibraryUsageDescription: Test the Capacitor Camera plugin.
         NSPhotoLibraryAddUsageDescription: Save photos created by the Capacitor Camera plugin.
         NSLocationWhenInUseUsageDescription: Test the Capacitor Geolocation and Google Maps plugins.
