@@ -10,12 +10,14 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = 'https://github.com/huxpro/lynx-capacitor'
   spec.license = 'MIT'
-  spec.authors = ['Lynx Capacitor Authors']
-  spec.email = ['noreply@example.com']
+  spec.authors = ['Xuan Huang']
+  spec.email = ['5563315+Huxpro@users.noreply.github.com']
 
-  spec.files = Dir['lib/**/*.rb'] + ['README.md']
+  spec.files = Dir['lib/**/*.rb'] + ['README.md', 'LICENSE']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.7'
+
+  spec.add_runtime_dependency 'cocoapods', '>= 1.16', '< 2.0'
 
   spec.metadata = {
     'source_code_uri' => 'https://github.com/huxpro/lynx-capacitor',

@@ -3,6 +3,17 @@
 The native half of [lynx-capacitor](../../README.md), packaged as a **Lynx native
 library** so it autolinks out of `node_modules`.
 
+Install the runtime with the Capacitor package for the native platform you are
+building:
+
+```bash
+# Android
+npm install @lynx-capacitor/runtime @capacitor/android
+
+# iOS
+npm install @lynx-capacitor/runtime @capacitor/ios
+```
+
 ## What's in here
 
 | Path | What it is |

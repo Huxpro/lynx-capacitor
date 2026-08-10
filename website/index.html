@@ -1038,7 +1038,9 @@
         <div>
           <h4>Autolink the native side</h4>
           <p>Install the shared native runtime, then configure Autolink once in the host app. Autolink is recommended, but hosts can wire the runtime and plugins manually instead.</p>
-          <pre>npm install @lynx-capacitor/runtime</pre>
+          <pre><span class="comment"># Install the runtime with your target platform</span>
+npm install @lynx-capacitor/runtime @capacitor/ios
+<span class="comment"># Android: replace @capacitor/ios with @capacitor/android</span></pre>
 
           <div class="platform-tabs" role="tablist" aria-label="Native Autolink platform">
             <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="true" aria-controls="panel-ios" tabindex="0">iOS</button>

@@ -60,9 +60,13 @@ Autolink consumes `runtime`.
 npm install @capacitor/device @capacitor/preferences @capacitor/filesystem
 ```
 
-2. **Install this adapter — the JS shim and the native runtime:**
+2. **Install this adapter — the JS shim, native runtime, and target platform:**
 ```bash
-npm install @lynx-capacitor/core @lynx-capacitor/runtime
+# Android
+npm install @lynx-capacitor/core @lynx-capacitor/runtime @capacitor/android
+
+# iOS
+npm install @lynx-capacitor/core @lynx-capacitor/runtime @capacitor/ios
 ```
 
 3. **Add an alias in your Lynx build config:**
