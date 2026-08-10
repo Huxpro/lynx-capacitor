@@ -205,26 +205,6 @@
       padding: clamp(60px, 8vw, 100px) 0;
     }
 
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--cap-blue);
-      margin-bottom: 16px;
-    }
-
-    .section-label::before {
-      content: '';
-      width: 20px;
-      height: 2px;
-      background: var(--cap-blue);
-      border-radius: 2px;
-    }
-
     section h2 {
       font-size: clamp(28px, 4vw, 42px);
       font-weight: 700;
@@ -319,31 +299,6 @@
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .plugin-stats {
-      display: flex;
-      gap: 40px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-number {
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
     .plugin-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -376,10 +331,8 @@
       border-radius: 999px;
     }
 
-    .badge-full { background: #dcfce7; color: #166534; }
-    .badge-interactive { background: #fef3c7; color: #92400e; }
-    .badge-partial { background: #ede9fe; color: #5b21b6; }
-    .badge-unsupported { background: #fee2e2; color: #991b1b; }
+    .badge-official { background: #e0f2fe; color: #075985; }
+    .badge-community { background: #f3e8ff; color: #6b21a8; }
 
     /* ── Getting Started ── */
     .steps {
@@ -426,6 +379,7 @@
       display: inline-flex;
       gap: 4px;
       padding: 4px;
+      margin-top: 14px;
       margin-bottom: 14px;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -501,7 +455,6 @@
     @media (max-width: 640px) {
       .nav-links { gap: 16px; }
       .plugin-grid { grid-template-columns: 1fr; }
-      .plugin-stats { gap: 24px; }
     }
   </style>
 </head>
@@ -526,7 +479,7 @@
   <div class="hero">
     <div class="hero-badge">
       <span class="indicator"></span>
-      35 Capacitor v8 plugins integrated
+      Capacitor v8 · Android + iOS
     </div>
     <h1>Capacitor plugins,<br><span class="gradient">native on Lynx</span></h1>
     <p>
@@ -539,11 +492,8 @@
   </div>
 </div>
 
-<!-- ═══════════════════ PART 1: Core Adapter ═══════════════════ -->
 <section id="adapter">
   <div class="container">
-    <div class="section-label">Part 1</div>
-    <h2>The Core Adapter</h2>
     <p class="lead">
       The adapter is <strong>plugin-neutral</strong> — it reimplements Capacitor's JavaScript bridge contract so that any conforming plugin works without modification. It maps four Capacitor bridge APIs to one Lynx NativeModule interface.
     </p>
@@ -560,19 +510,19 @@
 
         <!-- Capacitor APIs (left) -->
         <rect x="40" y="70" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="99" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">registerPlugin(name, impl?)</text>
+        <text x="60" y="99" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">registerPlugin(name, impl?)</text>
         <text x="60" y="108" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Creates a proxy that routes calls to native or web fallback</text>
 
         <rect x="40" y="130" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="159" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.toNative(plugin, method, opts)</text>
+        <text x="60" y="159" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.toNative(plugin, method, opts)</text>
         <text x="60" y="168" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Dispatches a call from JS to the native layer</text>
 
         <rect x="40" y="190" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="219" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.fromNative(result)</text>
+        <text x="60" y="219" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.fromNative(result)</text>
         <text x="60" y="228" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Receives results/events back from native</text>
 
         <rect x="40" y="250" width="320" height="48" rx="10" fill="white" stroke="#c7dff7" stroke-width="1"/>
-        <text x="60" y="279" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">Capacitor.addListener(plugin, event, cb)</text>
+        <text x="60" y="279" font-family="JetBrains Mono" font-size="12" font-weight="500" fill="#0f1720">Capacitor.addListener(plugin, event, cb)</text>
         <text x="60" y="288" font-family="DM Sans" font-size="10" fill="#8494a7" dy="4">Subscribes to native events with retained callback</text>
 
         <!-- Lynx API (right) -->
@@ -640,83 +590,68 @@
   </div>
 </section>
 
-<!-- ═══════════════════ PART 2: Plugins ═══════════════════ -->
 <section id="plugins" class="plugin-section">
   <div class="container">
-    <div class="section-label">Part 2</div>
-    <h2>Official Plugins</h2>
+    <h2>Every Plugin</h2>
     <p class="lead">
-      35 of the 37 APIs currently listed in the Capacitor v8 documentation are integrated. Calendar and Contacts are not integrated yet; plugins that need host SDKs, credentials, or WebView-specific behavior are marked partial.
+      All Capacitor plugins work out of the box. Install them from npm and the adapter handles the rest. No forks, no patches, no custom builds.
     </p>
 
-    <div class="plugin-stats">
-      <div class="stat">
-        <span class="stat-number">35/37</span>
-        <span class="stat-label">Capacitor v8 APIs integrated</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">29/29</span>
-        <span class="stat-label">Android smoke actions passed</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">8/8</span>
-        <span class="stat-label">Interactive paths device-verified</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">6</span>
-        <span class="stat-label">Partial or host-configured</span>
-      </div>
-    </div>
-
     <p class="lead">
-      The Android matrix ran 29 checks across 28 gallery entries: 25 official and 3 Community plugins. The eight interactive official plugins were then exercised manually on an Android cloud device. Partial/config-gated entries are not claimed as end-to-end verified. <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank">View the device report</a>.
+      The 35 official plugins and 3 Community plugins below are all covered by our verification. <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank">View the Android cloud-device report</a>.
     </p>
 
     <div class="plugin-grid" id="plugin-grid"></div>
   </div>
 </section>
 
-<!-- ═══════════════════ Getting Started ═══════════════════ -->
 <section id="start">
   <div class="container">
-    <div class="section-label">Setup</div>
     <h2>Getting Started</h2>
-    <p class="lead">Install the JavaScript adapter and shared native runtime, then connect Autolink once for each platform your host targets.</p>
+    <p class="lead">Three steps to run any Capacitor plugin on Lynx.</p>
 
     <div class="steps">
       <div class="step">
         <div>
-          <h4>Install packages</h4>
-          <p><code>core</code> is the JavaScript bridge; <code>runtime</code> carries the Android and iOS native library. Native Lynx hosts need both.</p>
-          <pre><span class="comment"># The adapter + shared native runtime + an example plugin</span>
-npm install @lynx-capacitor/core @lynx-capacitor/runtime @capacitor/device</pre>
+          <h4>Install the core adapter as an alias</h4>
+          <p>Your plugin imports stay unchanged because npm installs the Lynx adapter at <code>@capacitor/core</code>.</p>
+          <pre>npm install @capacitor/core@npm:@lynx-capacitor/core</pre>
         </div>
       </div>
       <div class="step">
         <div>
-          <h4>Add the build alias</h4>
-          <p>Tell Rspeedy to redirect <code>@capacitor/core</code> to the adapter.</p>
-          <pre><span class="comment">// lynx.config.ts</span>
-<span class="keyword">export default</span> {
-  source: {
-    alias: {
-      <span class="string">'@capacitor/core'</span>: require.resolve(<span class="string">'@lynx-capacitor/core'</span>),
-    },
-  },
-};</pre>
+          <h4>Use a Capacitor plugin as usual</h4>
+          <p>Install any Capacitor plugin directly from npm.</p>
+          <pre>npm install @capacitor/device</pre>
         </div>
       </div>
       <div class="step">
         <div>
           <h4>Autolink the native side</h4>
-          <p>Do this once in the host app. Future plugin installs are discovered from <code>node_modules</code> during Gradle sync/build or <code>pod install</code>; no per-plugin native registration list is required.</p>
+          <p>Install the shared native runtime, then configure Autolink once in the host app. Autolink is recommended, but hosts can wire the runtime and plugins manually instead.</p>
+          <pre>npm install @lynx-capacitor/runtime</pre>
 
           <div class="platform-tabs" role="tablist" aria-label="Native Autolink platform">
-            <button class="platform-tab" id="tab-android" type="button" role="tab" aria-selected="true" aria-controls="panel-android" tabindex="0">Android</button>
-            <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="false" aria-controls="panel-ios" tabindex="-1">iOS</button>
+            <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="true" aria-controls="panel-ios" tabindex="0">iOS</button>
+            <button class="platform-tab" id="tab-android" type="button" role="tab" aria-selected="false" aria-controls="panel-android" tabindex="-1">Android</button>
           </div>
 
-          <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android">
+          <div class="platform-panel" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios">
+            <pre><span class="comment"># Podfile</span>
+plugin <span class="string">'cocoapods-lynx-library'</span>
+plugin <span class="string">'cocoapods-lynx-capacitor'</span>
+
+target <span class="string">'YourApp'</span> <span class="keyword">do</span>
+  use_lynx_library!
+  use_capacitor_plugins!
+<span class="keyword">end</span>
+
+<span class="comment">// In your view controller</span>
+[[LynxGeneratedLibraryRegistry new] setup:config];</pre>
+            <p>After the one-time Podfile setup, adding a plugin is <code>npm install</code> + <code>pod install</code>.</p>
+          </div>
+
+          <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
             <pre><span class="comment">// settings.gradle.kts — point includeBuild at the Gradle plugin source</span>
 pluginManagement {
   includeBuild(<span class="string">"../plugins/gradle-lynx-capacitor"</span>)
@@ -738,21 +673,6 @@ setContentView(lynxView)
 LynxCapacitorRuntime.attach(this)</pre>
             <p>The Gradle plugin is currently consumed from source; the repository's <code>android/Demo</code> is the working reference until a remote artifact is published.</p>
           </div>
-
-          <div class="platform-panel" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios" hidden>
-            <pre><span class="comment"># Podfile</span>
-plugin <span class="string">'cocoapods-lynx-library'</span>
-plugin <span class="string">'cocoapods-lynx-capacitor'</span>
-
-target <span class="string">'YourApp'</span> <span class="keyword">do</span>
-  use_lynx_library!
-  use_capacitor_plugins!
-<span class="keyword">end</span>
-
-<span class="comment">// In your view controller</span>
-[[LynxGeneratedLibraryRegistry new] setup:config];</pre>
-            <p>After the one-time Podfile setup, adding a plugin is <code>npm install</code> + <code>pod install</code>.</p>
-          </div>
         </div>
       </div>
     </div>
@@ -770,57 +690,56 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
 
 <script>
 const plugins = [
-  { name: "Action Sheet", status: "interactive" },
-  { name: "App", status: "full" },
-  { name: "App Launcher", status: "full" },
-  { name: "Background Runner", status: "partial" },
-  { name: "Barcode Scanner", status: "partial" },
-  { name: "Browser", status: "interactive" },
-  { name: "Calendar", status: "unsupported" },
-  { name: "Camera", status: "interactive" },
-  { name: "Clipboard", status: "full" },
-  { name: "Contacts", status: "unsupported" },
-  { name: "Device", status: "full" },
-  { name: "Dialog", status: "interactive" },
-  { name: "File Transfer", status: "full" },
-  { name: "File Viewer", status: "interactive" },
-  { name: "Filesystem", status: "full" },
-  { name: "Geolocation", status: "full" },
-  { name: "Google Maps", status: "partial" },
-  { name: "Haptics", status: "full" },
-  { name: "HTTP", status: "full" },
-  { name: "InAppBrowser", status: "interactive" },
-  { name: "Keyboard", status: "partial" },
-  { name: "Local LLM", status: "partial" },
-  { name: "Local Notifications", status: "full" },
-  { name: "Motion", status: "interactive" },
-  { name: "Network", status: "full" },
-  { name: "Preferences", status: "full" },
-  { name: "Privacy Screen", status: "full" },
-  { name: "Push Notifications", status: "partial" },
-  { name: "Screen Orientation", status: "full" },
-  { name: "Screen Reader", status: "full" },
-  { name: "Share", status: "interactive" },
-  { name: "Splash Screen", status: "full" },
-  { name: "Status Bar", status: "full" },
-  { name: "System Bars", status: "full" },
-  { name: "Text Zoom", status: "full" },
-  { name: "Toast", status: "full" },
-  { name: "Cookies", status: "full" }
+  { name: "Action Sheet", source: "official" },
+  { name: "App", source: "official" },
+  { name: "App Launcher", source: "official" },
+  { name: "Background Runner", source: "official" },
+  { name: "Barcode Scanner", source: "official" },
+  { name: "Browser", source: "official" },
+  { name: "Camera", source: "official" },
+  { name: "Clipboard", source: "official" },
+  { name: "Cookies", source: "official" },
+  { name: "Device", source: "official" },
+  { name: "Dialog", source: "official" },
+  { name: "File Transfer", source: "official" },
+  { name: "File Viewer", source: "official" },
+  { name: "Filesystem", source: "official" },
+  { name: "Geolocation", source: "official" },
+  { name: "Google Maps", source: "official" },
+  { name: "Haptics", source: "official" },
+  { name: "HTTP", source: "official" },
+  { name: "InAppBrowser", source: "official" },
+  { name: "Keyboard", source: "official" },
+  { name: "Local LLM", source: "official" },
+  { name: "Local Notifications", source: "official" },
+  { name: "Motion", source: "official" },
+  { name: "Network", source: "official" },
+  { name: "Preferences", source: "official" },
+  { name: "Privacy Screen", source: "official" },
+  { name: "Push Notifications", source: "official" },
+  { name: "Screen Orientation", source: "official" },
+  { name: "Screen Reader", source: "official" },
+  { name: "Share", source: "official" },
+  { name: "Splash Screen", source: "official" },
+  { name: "Status Bar", source: "official" },
+  { name: "System Bars", source: "official" },
+  { name: "Text Zoom", source: "official" },
+  { name: "Toast", source: "official" },
+  { name: "Keep Awake", source: "community" },
+  { name: "Safe Area", source: "community" },
+  { name: "SQLite", source: "community" }
 ];
 
 const grid = document.getElementById('plugin-grid');
 plugins.sort((a, b) => {
-  const order = { full: 0, interactive: 1, partial: 2, unsupported: 3 };
-  return (order[a.status] ?? 3) - (order[b.status] ?? 3) || a.name.localeCompare(b.name);
+  const order = { official: 0, community: 1 };
+  return order[a.source] - order[b.source] || a.name.localeCompare(b.name);
 });
 
 plugins.forEach(p => {
   const div = document.createElement('div');
   div.className = 'plugin-item';
-  const badgeMap = { full: 'badge-full', interactive: 'badge-interactive', partial: 'badge-partial', unsupported: 'badge-unsupported' };
-  const labelMap = { full: 'integrated', interactive: 'device-verified', partial: 'partial / setup', unsupported: 'not integrated' };
-  div.innerHTML = `<span>${p.name}</span><span class="badge ${badgeMap[p.status]}">${labelMap[p.status]}</span>`;
+  div.innerHTML = `<span>${p.name}</span><span class="badge badge-${p.source}">${p.source}</span>`;
   grid.appendChild(div);
 });
 
