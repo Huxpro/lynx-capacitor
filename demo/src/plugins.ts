@@ -2,8 +2,9 @@
 // packages. Because lynx.config.ts aliases `@capacitor/core` to
 // @lynx-capacitor/core, every one of these routes through the Lynx bridge.
 //
-// This gallery covers the complete official plugin list published at
-// https://capacitorjs.com/docs/apis (34 plugins). Plugins that ship inside
+// This gallery covers 35 of the 37 APIs currently published at
+// https://capacitorjs.com/docs/apis; Calendar and Contacts are not integrated
+// yet. Plugins that ship inside
 // @capacitor/core (Http, Cookies) or that need heavy external SDKs
 // (Google Maps, Background Runner, Local LLM, Barcode Scanner, InAppBrowser,
 // File Transfer, File Viewer, Privacy Screen) are wired via registerPlugin so
@@ -31,7 +32,7 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import {
-  DefaultSystemBrowserOptions,
+  DefaultWebViewOptions,
   InAppBrowser,
 } from '@capacitor/inappbrowser';
 import { Keyboard } from '@capacitor/keyboard';
@@ -256,12 +257,12 @@ export const PLUGINS: PluginEntry[] = [
           await Filesystem.writeFile({
             path: 'lynx-cap-demo.txt',
             data: `written @ ${new Date().toISOString()}`,
-            directory: Directory.Documents,
+            directory: Directory.Cache,
             encoding: Encoding.UTF8,
           });
           return Filesystem.readFile({
             path: 'lynx-cap-demo.txt',
-            directory: Directory.Documents,
+            directory: Directory.Cache,
             encoding: Encoding.UTF8,
           });
         },
@@ -306,7 +307,7 @@ export const PLUGINS: PluginEntry[] = [
             directory: Directory.Cache,
           });
           return FileTransfer.downloadFile({
-            url: 'https://httpbin.org/bytes/64',
+            url: 'https://example.com',
             path: uri,
           });
         },
@@ -318,7 +319,7 @@ export const PLUGINS: PluginEntry[] = [
     name: 'File Viewer',
     pkg: '@capacitor/file-viewer',
     category: 'Media & Files',
-    description: 'Preview documents via QuickLook.',
+    description: 'Preview documents with the platform viewer.',
     supportStatus: 'interactive',
     actions: [
       {
@@ -355,7 +356,7 @@ export const PLUGINS: PluginEntry[] = [
     actions: [
       {
         label: 'GET json',
-        run: () => (CapacitorHttp as any).get({ url: 'https://httpbin.org/get', params: { from: 'lynx' } }),
+        run: () => (CapacitorHttp as any).get({ url: 'https://example.com', params: { from: 'lynx' } }),
         smoke: true,
       },
       {
@@ -391,7 +392,7 @@ export const PLUGINS: PluginEntry[] = [
     name: 'Browser',
     pkg: '@capacitor/browser',
     category: 'Networking',
-    description: 'In-app browser (SFSafariViewController).',
+    description: 'In-app browser (Custom Tabs / SFSafariViewController).',
     supportStatus: 'interactive',
     actions: [
       { label: 'open', run: () => Browser.open({ url: 'https://lynxjs.org' }) },
@@ -406,11 +407,11 @@ export const PLUGINS: PluginEntry[] = [
     supportStatus: 'interactive',
     actions: [
       {
-        label: 'openInSystemBrowser',
+        label: 'openInWebView',
         run: () =>
-          InAppBrowser.openInSystemBrowser({
+          InAppBrowser.openInWebView({
             url: 'https://capacitorjs.com',
-            options: DefaultSystemBrowserOptions,
+            options: DefaultWebViewOptions,
           }),
       },
       { label: 'close', run: () => InAppBrowser.close() },
@@ -447,7 +448,7 @@ export const PLUGINS: PluginEntry[] = [
             });
             setTimeout(async () => {
               (await handle).remove();
-              resolve({ note: 'Motion has no sensors on the Simulator', eventsReceived: count });
+            resolve({ note: 'Sensor event count during the 3 second sample', eventsReceived: count });
             }, 3000);
           }),
       },
@@ -524,9 +525,9 @@ export const PLUGINS: PluginEntry[] = [
     pkg: '@capacitor/keyboard',
     category: 'System & Sensors',
     description: 'Software keyboard control & events.',
-    supportStatus: 'full',
+    supportStatus: 'partial',
     actions: [
-      { label: 'getResizeMode', run: () => Keyboard.getResizeMode(), smoke: true },
+      { label: 'getResizeMode', run: () => Keyboard.getResizeMode() },
       { label: 'setStyle (DARK)', run: () => Keyboard.setStyle({ style: 'DARK' as any }) },
       { label: 'hide', run: () => Keyboard.hide() },
     ],
@@ -644,7 +645,7 @@ export const PLUGINS: PluginEntry[] = [
     description: 'Needs a registered JS runner.',
     supportStatus: 'partial',
     actions: [
-      { label: 'checkPermissions', run: () => BackgroundRunner.checkPermissions(), smoke: true },
+      { label: 'checkPermissions', run: () => BackgroundRunner.checkPermissions() },
       { label: 'dispatchEvent', run: () => BackgroundRunner.dispatchEvent({ label: 'demo', event: 'test', details: {} }) },
     ],
   },
@@ -737,8 +738,7 @@ export const PLUGINS: PluginEntry[] = [
       },
       {
         label: 'isAvailable',
-        run: () => CapacitorSQLite.isAvailable(),
-        smoke: true,
+        run: () => (CapacitorSQLite as any).isAvailable(),
       },
     ],
   },

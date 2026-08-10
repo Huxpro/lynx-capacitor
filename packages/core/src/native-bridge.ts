@@ -32,6 +32,16 @@ interface LynxNativeModule {
   getPlatform?: () => string;
 }
 
+interface LynxGlobalEventEmitter {
+  addListener: (eventName: string, listener: (...args: unknown[]) => void) => void;
+}
+
+interface LynxGlobal {
+  getJSModule?: (name: 'GlobalEventEmitter') => LynxGlobalEventEmitter;
+}
+
+const RESULT_EVENT = 'lynx-capacitor-result';
+
 declare const NativeModules: Record<string, LynxNativeModule> | undefined;
 
 function getNativeModule(): LynxNativeModule | undefined {
@@ -43,12 +53,31 @@ function getNativeModule(): LynxNativeModule | undefined {
   }
 }
 
+function getGlobalEventEmitter(): LynxGlobalEventEmitter | undefined {
+  const global = globalThis as typeof globalThis & {
+    lynx?: LynxGlobal;
+    currentAppId?: string;
+    multiApps?: Record<string, { GlobalEventEmitter?: LynxGlobalEventEmitter }>;
+  };
+  const current = global.currentAppId != null
+    ? global.multiApps?.[global.currentAppId]?.GlobalEventEmitter
+    : undefined;
+  if (current) return current;
+  for (const app of Object.values(global.multiApps ?? {})) {
+    if (app.GlobalEventEmitter) return app.GlobalEventEmitter;
+  }
+  return global.lynx?.getJSModule?.('GlobalEventEmitter');
+}
+
 export function initNativeBridge(cap: CapacitorGlobal): void {
   // Randomize so callback ids don't collide across reloads, matching Capacitor.
   let callbackIdCount = Math.floor(Math.random() * 134217728);
   const callbacks = new Map<string, StoredCallback>();
 
   const nativeModule = getNativeModule();
+
+  const parseResult = (raw: PluginResult | string): PluginResult =>
+    typeof raw === 'string' ? JSON.parse(raw) : raw;
 
   // native -> JS. Mirrors Capacitor's returnResult().
   const returnResult = (result: PluginResult): void => {
@@ -90,10 +119,22 @@ export function initNativeBridge(cap: CapacitorGlobal): void {
     delete result.error;
   };
 
-  cap.fromNative = returnResult;
+  const globalEventEmitter = getGlobalEventEmitter();
+  globalEventEmitter?.addListener(RESULT_EVENT, (value: unknown) => {
+    if (value == null) return;
+    try {
+      const unwrapped = Array.isArray(value) && value.length === 1 ? value[0] : value;
+      if (unwrapped == null) return;
+      const resultJson = typeof unwrapped === 'string' ? unwrapped : JSON.stringify(unwrapped);
+      const result = parseResult(resultJson);
+      if (!result || typeof result !== 'object') return;
+      returnResult(result);
+    } catch (e) {
+      console.error('[lynx-capacitor] Failed to parse native event result', e);
+    }
+  });
 
-  const parseResult = (raw: PluginResult | string): PluginResult =>
-    typeof raw === 'string' ? JSON.parse(raw) : raw;
+  cap.fromNative = returnResult;
 
   const postToNative = (data: MessageCallData): void => {
     const mod = nativeModule ?? getNativeModule();
@@ -113,8 +154,9 @@ export function initNativeBridge(cap: CapacitorGlobal): void {
       });
       return;
     }
-    // Native invokes the callback with a JSON-encoded PluginResult. For
-    // listeners/watchers native retains and re-invokes it on each event.
+    // The callback is a compatibility fallback. Lynx NativeModule callbacks
+    // are one-shot, so Android sends normal and retained results through the
+    // GlobalEventEmitter instead.
     mod.handleCall(JSON.stringify(data), (resultJson: string) => {
       try {
         returnResult(parseResult(resultJson));
@@ -173,8 +215,7 @@ export function initNativeBridge(cap: CapacitorGlobal): void {
     callbackId: string,
     _callback: ListenerCallback,
   ): void => {
-    cap.nativeCallback!(pluginName, 'removeListener', { eventName, callbackId }, () => {
-      callbacks.delete(callbackId);
-    });
+    callbacks.delete(callbackId);
+    cap.toNative!(pluginName, 'removeListener', { eventName, callbackId });
   };
 }

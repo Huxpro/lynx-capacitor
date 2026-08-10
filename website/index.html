@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lynx Capacitor — Run Capacitor plugins on Lynx</title>
-  <meta name="description" content="A plugin-neutral adapter that reimplements the Capacitor bridge over Lynx's NativeModule API. All 35 official plugins work out of the box.">
+  <meta name="description" content="A plugin-neutral adapter for running Capacitor v8 plugins on Lynx, with Android and iOS native Autolink support.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -379,6 +379,7 @@
     .badge-full { background: #dcfce7; color: #166534; }
     .badge-interactive { background: #fef3c7; color: #92400e; }
     .badge-partial { background: #ede9fe; color: #5b21b6; }
+    .badge-unsupported { background: #fee2e2; color: #991b1b; }
 
     /* ── Getting Started ── */
     .steps {
@@ -419,6 +420,47 @@
       font-size: 14px;
       color: var(--text-secondary);
       margin-bottom: 12px;
+    }
+
+    .platform-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-dim);
+    }
+
+    .platform-tab {
+      appearance: none;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+    }
+
+    .platform-tab[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(15, 23, 32, 0.12);
+    }
+
+    .platform-tab:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 2px;
+    }
+
+    .platform-panel[hidden] { display: none; }
+
+    .platform-panel > p:last-child {
+      margin-top: 12px;
+      margin-bottom: 0;
     }
 
     pre {
@@ -484,11 +526,11 @@
   <div class="hero">
     <div class="hero-badge">
       <span class="indicator"></span>
-      35 official plugins supported
+      35 Capacitor v8 plugins integrated
     </div>
     <h1>Capacitor plugins,<br><span class="gradient">native on Lynx</span></h1>
     <p>
-      A plugin-neutral adapter that reimplements the Capacitor bridge over Lynx's NativeModule API. Install official plugins from npm, add one alias, done.
+      A plugin-neutral adapter that reimplements the Capacitor bridge over Lynx's NativeModule API. Install plugins from npm, add one alias, and connect native Autolink once.
     </p>
     <div class="hero-actions">
       <a href="#start" class="btn btn-primary">Get Started</a>
@@ -537,8 +579,8 @@
         <rect x="480" y="130" width="320" height="100" rx="12" fill="white" stroke="#ffc7cd" stroke-width="1"/>
         <text x="500" y="162" font-family="JetBrains Mono" font-size="13" font-weight="500" fill="#0f1720">NativeModules.CapacitorBridge</text>
         <text x="500" y="182" font-family="JetBrains Mono" font-size="12" fill="#4a5568">.handleCall(jsonPayload, callback)</text>
-        <text x="500" y="206" font-family="DM Sans" font-size="11" fill="#8494a7">Single entry point. Native retains callback</text>
-        <text x="500" y="220" font-family="DM Sans" font-size="11" fill="#8494a7">for listener events, invokes once for promises.</text>
+        <text x="500" y="206" font-family="DM Sans" font-size="11" fill="#8494a7">Single entry point. Promises return once;</text>
+        <text x="500" y="220" font-family="DM Sans" font-size="11" fill="#8494a7">listener events use retained native delivery.</text>
 
         <!-- Arrow connections -->
         <defs>
@@ -582,14 +624,14 @@
       </div>
       <div class="api-card">
         <h4>fromNative()</h4>
-        <p>The callback passed to <code>handleCall</code> invokes this path. Resolves the stored Promise or invokes the retained listener callback with data or error.</p>
+        <p>The native callback or Android <code>GlobalEventEmitter</code> invokes this path. It resolves the stored Promise or invokes the listener with data or an error.</p>
         <div class="mapping">
           Contract: <code>{success, data?, error?, save?}</code>
         </div>
       </div>
       <div class="api-card">
         <h4>addListener()</h4>
-        <p>Calls <code>toNative</code> with method <code>"addListener"</code>. Native retains the callback (save=true) and re-invokes it on each event emission.</p>
+        <p>Calls <code>toNative</code> with method <code>"addListener"</code>. iOS uses retained callback delivery; Android emits retained results through Lynx <code>GlobalEventEmitter</code>.</p>
         <div class="mapping">
           Capacitor: <a href="https://capacitorjs.com/docs/core-apis/event-guide" target="_blank">Event Guide</a>
         </div>
@@ -604,27 +646,31 @@
     <div class="section-label">Part 2</div>
     <h2>Official Plugins</h2>
     <p class="lead">
-      All 35 official Capacitor plugins work out of the box. Install them from npm — the adapter handles the rest. No forks, no patches, no custom builds.
+      35 of the 37 APIs currently listed in the Capacitor v8 documentation are integrated. Calendar and Contacts are not integrated yet; plugins that need host SDKs, credentials, or WebView-specific behavior are marked partial.
     </p>
 
     <div class="plugin-stats">
       <div class="stat">
-        <span class="stat-number">35</span>
-        <span class="stat-label">Official plugins</span>
+        <span class="stat-number">35/37</span>
+        <span class="stat-label">Capacitor v8 APIs integrated</span>
       </div>
       <div class="stat">
-        <span class="stat-number">22</span>
-        <span class="stat-label">Auto-verified on simulator</span>
+        <span class="stat-number">29/29</span>
+        <span class="stat-label">Android smoke actions passed</span>
       </div>
       <div class="stat">
-        <span class="stat-number">8</span>
-        <span class="stat-label">Interactive (user-triggered)</span>
+        <span class="stat-number">8/8</span>
+        <span class="stat-label">Interactive paths device-verified</span>
       </div>
       <div class="stat">
-        <span class="stat-number">5</span>
-        <span class="stat-label">Credential-gated</span>
+        <span class="stat-number">6</span>
+        <span class="stat-label">Partial or host-configured</span>
       </div>
     </div>
+
+    <p class="lead">
+      The Android matrix ran 29 checks across 28 gallery entries: 25 official and 3 Community plugins. The eight interactive official plugins were then exercised manually on an Android cloud device. Partial/config-gated entries are not claimed as end-to-end verified. <a href="https://github.com/huxpro/lynx-capacitor/blob/main/docs/android-verification.md" target="_blank">View the device report</a>.
+    </p>
 
     <div class="plugin-grid" id="plugin-grid"></div>
   </div>
@@ -635,15 +681,15 @@
   <div class="container">
     <div class="section-label">Setup</div>
     <h2>Getting Started</h2>
-    <p class="lead">Three steps to run any Capacitor plugin on Lynx.</p>
+    <p class="lead">Install the JavaScript adapter and shared native runtime, then connect Autolink once for each platform your host targets.</p>
 
     <div class="steps">
       <div class="step">
         <div>
           <h4>Install packages</h4>
-          <p>Add the adapter and any official plugins you need.</p>
-          <pre><span class="comment"># The adapter + an example plugin</span>
-npm install @lynx-capacitor/core @capacitor/device</pre>
+          <p><code>core</code> is the JavaScript bridge; <code>runtime</code> carries the Android and iOS native library. Native Lynx hosts need both.</p>
+          <pre><span class="comment"># The adapter + shared native runtime + an example plugin</span>
+npm install @lynx-capacitor/core @lynx-capacitor/runtime @capacitor/device</pre>
         </div>
       </div>
       <div class="step">
@@ -662,9 +708,39 @@ npm install @lynx-capacitor/core @capacitor/device</pre>
       </div>
       <div class="step">
         <div>
-          <h4>Autolink the native side (iOS)</h4>
-          <p>Two Podfile lines. No plugin is named anywhere &mdash; both are resolved from node_modules at <code>pod install</code>.</p>
-          <pre><span class="comment"># Podfile</span>
+          <h4>Autolink the native side</h4>
+          <p>Do this once in the host app. Future plugin installs are discovered from <code>node_modules</code> during Gradle sync/build or <code>pod install</code>; no per-plugin native registration list is required.</p>
+
+          <div class="platform-tabs" role="tablist" aria-label="Native Autolink platform">
+            <button class="platform-tab" id="tab-android" type="button" role="tab" aria-selected="true" aria-controls="panel-android" tabindex="0">Android</button>
+            <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="false" aria-controls="panel-ios" tabindex="-1">iOS</button>
+          </div>
+
+          <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android">
+            <pre><span class="comment">// settings.gradle.kts — point includeBuild at the Gradle plugin source</span>
+pluginManagement {
+  includeBuild(<span class="string">"../plugins/gradle-lynx-capacitor"</span>)
+}
+plugins { id(<span class="string">"org.lynxcapacitor.settings"</span>) }
+lynxCapacitor { nodeModulesPath = <span class="string">"../node_modules"</span> }
+
+<span class="comment">// app/build.gradle.kts</span>
+plugins {
+  id(<span class="string">"com.android.application"</span>)
+  id(<span class="string">"org.lynxcapacitor.autolink"</span>)
+}
+
+<span class="comment">// When creating the LynxView</span>
+<span class="keyword">val</span> builder = LynxViewBuilder()
+LynxGeneratedLibraryRegistry.setup(builder)
+<span class="keyword">val</span> lynxView = builder.build(this)
+setContentView(lynxView)
+LynxCapacitorRuntime.attach(this)</pre>
+            <p>The Gradle plugin is currently consumed from source; the repository's <code>android/Demo</code> is the working reference until a remote artifact is published.</p>
+          </div>
+
+          <div class="platform-panel" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios" hidden>
+            <pre><span class="comment"># Podfile</span>
 plugin <span class="string">'cocoapods-lynx-library'</span>
 plugin <span class="string">'cocoapods-lynx-capacitor'</span>
 
@@ -675,6 +751,8 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
 
 <span class="comment">// In your view controller</span>
 [[LynxGeneratedLibraryRegistry new] setup:config];</pre>
+            <p>After the one-time Podfile setup, adding a plugin is <code>npm install</code> + <code>pod install</code>.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -685,7 +763,7 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
   <div class="container">
     <p>
       An adapter bridging <a href="https://capacitorjs.com" target="_blank">Capacitor</a> to <a href="https://lynxjs.org" target="_blank">Lynx</a>.
-      All native plugin code is from the official Capacitor project.
+      Capacitor plugin implementations remain in their official packages; this project supplies the Lynx bridge, headless runtime, and platform fallbacks where required.
     </p>
   </div>
 </footer>
@@ -698,8 +776,10 @@ const plugins = [
   { name: "Background Runner", status: "partial" },
   { name: "Barcode Scanner", status: "partial" },
   { name: "Browser", status: "interactive" },
+  { name: "Calendar", status: "unsupported" },
   { name: "Camera", status: "interactive" },
   { name: "Clipboard", status: "full" },
+  { name: "Contacts", status: "unsupported" },
   { name: "Device", status: "full" },
   { name: "Dialog", status: "interactive" },
   { name: "File Transfer", status: "full" },
@@ -710,7 +790,7 @@ const plugins = [
   { name: "Haptics", status: "full" },
   { name: "HTTP", status: "full" },
   { name: "InAppBrowser", status: "interactive" },
-  { name: "Keyboard", status: "full" },
+  { name: "Keyboard", status: "partial" },
   { name: "Local LLM", status: "partial" },
   { name: "Local Notifications", status: "full" },
   { name: "Motion", status: "interactive" },
@@ -731,18 +811,40 @@ const plugins = [
 
 const grid = document.getElementById('plugin-grid');
 plugins.sort((a, b) => {
-  const order = { full: 0, interactive: 1, partial: 2 };
+  const order = { full: 0, interactive: 1, partial: 2, unsupported: 3 };
   return (order[a.status] ?? 3) - (order[b.status] ?? 3) || a.name.localeCompare(b.name);
 });
 
 plugins.forEach(p => {
   const div = document.createElement('div');
   div.className = 'plugin-item';
-  const badgeMap = { full: 'badge-full', interactive: 'badge-interactive', partial: 'badge-partial' };
-  const labelMap = { full: 'works', interactive: 'interactive', partial: 'needs config' };
+  const badgeMap = { full: 'badge-full', interactive: 'badge-interactive', partial: 'badge-partial', unsupported: 'badge-unsupported' };
+  const labelMap = { full: 'integrated', interactive: 'device-verified', partial: 'partial / setup', unsupported: 'not integrated' };
   div.innerHTML = `<span>${p.name}</span><span class="badge ${badgeMap[p.status]}">${labelMap[p.status]}</span>`;
   grid.appendChild(div);
 });
+
+const platformTabs = Array.from(document.querySelectorAll('[role="tab"]'));
+platformTabs.forEach(tab => {
+  tab.addEventListener('click', () => selectPlatformTab(tab));
+  tab.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowRight' ? 1 : -1;
+    const nextIndex = (platformTabs.indexOf(tab) + direction + platformTabs.length) % platformTabs.length;
+    selectPlatformTab(platformTabs[nextIndex]);
+    platformTabs[nextIndex].focus();
+  });
+});
+
+function selectPlatformTab(selectedTab) {
+  platformTabs.forEach(tab => {
+    const selected = tab === selectedTab;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+  });
+}
 </script>
 </body>
 </html>

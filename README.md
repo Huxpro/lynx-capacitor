@@ -1,8 +1,13 @@
 # Lynx Capacitor
 
-Run **all official Capacitor 8 plugins** on Lynx (ReactLynx). An adapter that reimplements the Capacitor bridge over Lynx's NativeModule API, so **unmodified npm packages from @capacitor work without changes**.
+Run **Capacitor v8 plugins** on Lynx (ReactLynx). The adapter reimplements the
+Capacitor bridge over Lynx's NativeModule API, so existing Capacitor plugin
+packages can keep their JavaScript and native implementations.
 
-All 35 official Capacitor plugins from [capacitorjs.com/docs/apis](https://capacitorjs.com/docs/apis) are included and wired through the official native iOS implementations.
+This repository currently integrates 35 of the 37 plugin APIs listed in the
+[Capacitor v8 documentation](https://capacitorjs.com/docs/apis). Calendar and
+Contacts are not integrated yet. The other packages use their official Android
+and iOS implementations where available.
 
 ## Architecture
 
@@ -16,12 +21,12 @@ All 35 official Capacitor plugins from [capacitorjs.com/docs/apis](https://capac
   - `CapacitorHttp` (native HTTP client)
   - `CapacitorCookies` (cookie access)
   - `SystemBars` + `SystemBarsStyle` + `SystemBarType` (system bar styling)
-- Works with **any unmodified `@capacitor/*` plugin** from npm — no code changes needed
+- Routes unmodified `@capacitor/*` packages from npm — no plugin JS fork needed
 
 ### Native iOS (npm package `@lynx-capacitor/runtime`, CocoaPod `LynxCapacitorRuntime`)
 
 - Ships as a **Lynx native library** — a `lynx.lib.json` manifest plus an iOS podspec, so [Lynx Autolink](https://lynxjs.org/next/zh/guide/autolink.html?platform=ios) links and registers it from `node_modules`
-- Implements `CAPBridgeProtocol` to be compatible with all official Capacitor iOS plugins
+- Implements `CAPBridgeProtocol` for installed Capacitor iOS plugin implementations
 - Uses the real `@capacitor/ios` framework and official native plugin CocoaPods
 - Bridges Lynx NativeModule JS calls into the official Capacitor plugin infrastructure
 - **Discovers plugins at runtime** — every `CAPPlugin` subclass linked into the app is registered, with no class list to maintain
@@ -29,7 +34,27 @@ All 35 official Capacitor plugins from [capacitorjs.com/docs/apis](https://capac
 - Supports native UI presentation (view controllers, action sheets, alerts)
 - Motion plugin provided natively (official npm doesn't ship iOS native yet)
 
-### Usage in your Lynx app
+### Native Android (`@lynx-capacitor/runtime` + Gradle autolink)
+
+- Hosts Capacitor 8.4.2 without constructing a WebView; plugin calls and results use Lynx NativeModule callbacks
+- Keeps an `AppCompatActivity` for Activity Result and runtime-permission dispatch, so Camera and other UI plugins use their unchanged Android implementations
+- Scans `node_modules` packages containing `capacitor.android`, includes their Gradle projects, and generates both plugin and Lynx-module registries
+- Supports pnpm symlinks plus explicit include/exclude filters
+- Delivers retained listener results through Lynx `GlobalEventEmitter`; Motion
+  uses the runtime's native Android SensorManager implementation
+
+### Why there are two adapter packages
+
+| Package | Used by | Contains |
+|---|---|---|
+| `@lynx-capacitor/core` | The ReactLynx JavaScript bundle | The drop-in `@capacitor/core` API and Lynx bridge protocol |
+| `@lynx-capacitor/runtime` | Android Gradle and iOS CocoaPods/Autolink | `lynx.lib.json`, Kotlin/Java, Objective-C/Swift, and the headless native bridge |
+
+The runtime is shared by both Android and iOS; it is not Android-specific. A
+native Lynx host installs both packages: Rspeedy bundles `core`, while native
+Autolink consumes `runtime`.
+
+### JavaScript setup
 
 1. **Install the official Capacitor plugins you want:**
 ```bash
@@ -52,6 +77,58 @@ export default defineConfig({
   },
 });
 ```
+
+The host app performs the native Autolink setup once per target platform. After
+that, Android refreshes installed plugins during Gradle sync/build and iOS does
+so during `pod install`; there is no per-plugin Java/Kotlin, Swift/Objective-C,
+Gradle dependency, or Podfile registration list to maintain.
+
+### Android host setup
+
+Apply the settings plugin and point it at the app's `node_modules`. The Gradle
+plugin is currently consumed from source; replace the example path with its
+location in your checkout:
+
+```kotlin
+// settings.gradle.kts
+pluginManagement {
+  includeBuild("../plugins/gradle-lynx-capacitor")
+}
+plugins { id("org.lynxcapacitor.settings") }
+
+include(":app")
+lynxCapacitor { nodeModulesPath = "../node_modules" }
+```
+
+Apply autolink to the Android application:
+
+```kotlin
+// app/build.gradle.kts
+plugins {
+  id("com.android.application")
+  id("org.lynxcapacitor.autolink")
+}
+```
+
+Register the generated Lynx module before building the view:
+
+```kotlin
+val builder = LynxViewBuilder()
+LynxGeneratedLibraryRegistry.setup(builder)
+val lynxView = builder.build(this)
+setContentView(lynxView)
+LynxCapacitorRuntime.attach(this)
+```
+
+The complete source-based host is in [`android/Demo`](android/Demo). Installed Capacitor
+packages are the only plugin list; no manual Java/Kotlin registration is
+needed. Adding a plugin later is `npm install` + Gradle sync/build. The Demo uses
+minSdk 28 because its installed `@capacitor/local-llm` package requires it,
+while the runtime itself supports minSdk 24. A remote Gradle plugin artifact is
+still pending; until it is published, Android consumers need the plugin source
+available to `includeBuild`.
+
+### iOS host setup
 
 4. **Turn on both autolink plugins in your Podfile:**
 ```ruby
@@ -98,6 +175,7 @@ behind your back.
 
 - Node.js 18+
 - pnpm or npm
+- Android Studio / Android SDK 36, JDK 21 (Android runtime minSdk 24)
 - Xcode 15+
 - iOS 15+ deployment target (required by Capacitor 8)
 - Lynx SDK 4.1+
@@ -107,6 +185,18 @@ behind your back.
 
 ```bash
 pnpm install
+pnpm android:run
+```
+
+Use a specific device:
+
+```bash
+ANDROID_SERIAL=emulator-5554 pnpm android:run
+```
+
+For iOS:
+
+```bash
 pnpm ios:run
 ```
 
@@ -124,14 +214,15 @@ LYNX_ROOT=/path/to/lynx pnpm ios:run
 
 ## Plugin Coverage
 
-✅ **All 35 official Capacitor plugins from the documentation are covered:**
+The current [Capacitor v8 API list](https://capacitorjs.com/docs/apis) contains
+37 official plugin APIs. This repository integrates 35 of them:
 
 | Status | Count | Meaning |
 |--------|-------|---------|
-| ✅ Full | 27 | Automatic smoke tests pass, fully functional |
-| 🖱 Interactive | 8 | Works but requires user interaction/UI |
-| 🔑 Partial | 4 | Requires external API key, SDK, or hardware |
-| ❌ Unsupported | 0 | All plugins covered |
+| ✅ Full | 21 | An automatic native smoke path passes |
+| 🖱 Device-verified | 8 | The interactive Android path was exercised on a cloud device |
+| 🔑 Partial/config-gated | 6 | Integrated, but full behavior needs host setup, hardware, or a WebView-specific capability |
+| ❌ Not integrated | 2 | Calendar and Contacts |
 
 ### Status Breakdown
 
@@ -142,28 +233,30 @@ LYNX_ROOT=/path/to/lynx pnpm ios:run
 | App | ✅ Full | |
 | Background Runner | 🔑 Partial | Needs registered JS worker |
 | Barcode Scanner | 🔑 Partial | Needs camera hardware |
-| Browser | 🖱 Interactive | Presents SFSafariViewController |
+| Browser | 🖱 Interactive | Presents Custom Tabs / SFSafariViewController |
+| Calendar | ❌ Not integrated | Listed by the current Capacitor v8 documentation |
 | Camera | 🖱 Interactive | Requires camera/hardware |
 | Clipboard | ✅ Full | |
+| Contacts | ❌ Not integrated | Listed by the current Capacitor v8 documentation |
 | Cookies | ✅ Full | Built into core |
 | Device | ✅ Full | |
 | Dialog | 🖱 Interactive | User interaction |
 | Filesystem | ✅ Full | |
 | File Transfer | ✅ Full | |
-| File Viewer | 🖱 Interactive | Presents QuickLook |
+| File Viewer | 🖱 Interactive | Presents the platform document viewer |
 | Geolocation | ✅ Full | |
 | Google Maps | 🔑 Partial | Needs Google Maps SDK + API key |
 | Haptics | ✅ Full | |
 | HTTP | ✅ Full | Built into core |
 | InAppBrowser | 🖱 Interactive | Presents browser |
-| Keyboard | ✅ Full | |
-| Local LLM 🧪 | 🔑 Partial | Needs on-device LLM support |
+| Keyboard | 🔑 Partial | Some methods depend on a WebView-backed host |
+| Local LLM 🧪 | 🔑 Partial | Availability probe passes; model use needs on-device LLM support |
 | Local Notifications | ✅ Full | |
-| Motion | 🖱 Interactive | Simulator has no accelerometer |
+| Motion | 🖱 Interactive | Native SensorManager on Android |
 | Network | ✅ Full | |
 | Preferences | ✅ Full | |
 | Privacy Screen | ✅ Full | |
-| Push Notifications | 🔑 Partial | Needs APNs configuration |
+| Push Notifications | 🔑 Partial | Permission probe passes; delivery needs APNs/FCM configuration |
 | Screen Orientation | ✅ Full | |
 | Screen Reader | ✅ Full | |
 | Share | 🖱 Interactive | Shows system share sheet |
@@ -177,19 +270,28 @@ LYNX_ROOT=/path/to/lynx pnpm ios:run
 
 ```bash
 pnpm verify
+pnpm verify:android
 ```
 
-The demo exposes `globalThis.runCapacitorSmokeMatrix()` for DevTool automation. All 27 non-interactive automatic tests pass.
+The demo exposes `globalThis.runCapacitorSmokeMatrix()` for DevTool automation.
+On the Android cloud device, 29/29 automatic actions passed across 28 gallery
+entries: 25 official plugins and 3 Community plugins. All eight official
+interactive entries were then exercised manually: Dialog, Action Sheet, Share,
+Camera, File Viewer, Browser, InAppBrowser, and Motion. These results do not
+claim end-to-end coverage for the partial/config-gated entries. See the
+[cloud-device verification report](docs/android-verification.md).
 
 ## Project Structure
 
 ```
 lynx-capacitor/
 ├── packages/core/          # npm package - drop-in @capacitor/core adapter
-├── packages/runtime/       # npm package - Lynx native library (lynx.lib.json + iOS pod)
+├── packages/runtime/       # npm package - Android/iOS Lynx native library
+├── plugins/                # Gradle Android autolink plugin
 ├── gems/                   # cocoapods-lynx-capacitor - links plugin pods from node_modules
-├── demo/                   # ReactLynx demo gallery of all 35 plugins
+├── demo/                   # ReactLynx gallery for 35 official + 3 Community plugins
 ├── ios/Demo/               # Standalone iOS host (XcodeGen + CocoaPods)
+├── android/Demo/           # Standalone Android Lynx host
 ├── plugins.json            # Plugin coverage reference (documentation only)
 ├── scripts/                # Build/run/generate scripts
 └── VERIFICATION.md         # Detailed plugin-by-plugin verification

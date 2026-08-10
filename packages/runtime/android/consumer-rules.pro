@@ -1,0 +1,3 @@
+-keep class org.lynxcapacitor.runtime.** { *; }
+-keep class com.lynxcapacitor.generated.LynxCapacitorPluginRegistry { *; }
+-keep @com.getcapacitor.annotation.CapacitorPlugin class * extends com.getcapacitor.Plugin { *; }

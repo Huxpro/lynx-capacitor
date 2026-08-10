@@ -1,0 +1,10 @@
+{
+  "appId": "org.lynxcapacitor.demo",
+  "appName": "Lynx Capacitor Demo",
+  "webDir": "unused",
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "disable"
+    }
+  }
+}
