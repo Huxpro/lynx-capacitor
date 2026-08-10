@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Lynx Capacitor — Run Capacitor plugins on Lynx</title>
   <meta name="description" content="A plugin-neutral adapter for running Capacitor v8 plugins on Lynx, with Android and iOS native Autolink support.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,6 +57,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
     }
 
     .nav-brand {
@@ -102,6 +103,43 @@
     }
 
     .nav-links .btn-nav:hover { opacity: 0.85; }
+
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-toggle-line {
+      width: 18px;
+      height: 1.5px;
+      border-radius: 999px;
+      background: currentColor;
+      transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 120ms ease;
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-line:first-child {
+      transform: translateY(3.25px) rotate(45deg);
+    }
+
+    .nav-toggle[aria-expanded="true"] .nav-toggle-line:last-child {
+      transform: translateY(-3.25px) rotate(-45deg);
+    }
+
+    .nav-toggle:focus-visible,
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 3px;
+    }
 
     /* ── Hero ── */
     .hero {
@@ -203,6 +241,7 @@
     /* ── Section ── */
     section {
       padding: clamp(60px, 8vw, 100px) 0;
+      scroll-margin-top: 80px;
     }
 
     section h2 {
@@ -237,16 +276,14 @@
       height: auto;
     }
 
+    .mobile-architecture { display: none; }
+
     /* ── API Cards ── */
     .api-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
       margin-top: 48px;
-    }
-
-    @media (max-width: 768px) {
-      .api-grid { grid-template-columns: 1fr; }
     }
 
     .api-card {
@@ -446,6 +483,10 @@
       font-size: 13px;
       line-height: 1.7;
       overflow-x: auto;
+      max-width: 100%;
+      min-width: 0;
+      overscroll-behavior-inline: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     pre .comment { color: #64748b; }
@@ -473,8 +514,311 @@
 
     /* ── Responsive ── */
     @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
-      .plugin-grid { grid-template-columns: 1fr; }
+      body {
+        overflow-x: hidden;
+        overflow-x: clip;
+      }
+
+      .container { padding-inline: 16px; }
+
+      nav {
+        padding-top: max(9px, env(safe-area-inset-top));
+        padding-bottom: 9px;
+      }
+
+      .nav-brand {
+        gap: 8px;
+        font-size: 16px;
+      }
+
+      .nav-toggle { display: flex; }
+
+      .nav-links {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2px;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        box-shadow: 0 18px 44px rgba(15, 23, 32, 0.14);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transform-origin: top center;
+        transition: opacity 160ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 200ms;
+      }
+
+      .nav-links.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition-delay: 0s;
+      }
+
+      .nav-links a,
+      .nav-links .btn-nav {
+        display: flex;
+        min-height: 44px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 15px;
+      }
+
+      .nav-links a:not(.btn-nav):active { background: var(--surface-dim); }
+
+      .nav-links .btn-nav {
+        margin-top: 4px;
+        justify-content: center;
+      }
+
+      .hero { padding: 64px 0 56px; }
+
+      section { padding: 56px 0; }
+
+      section .lead { margin-bottom: 32px; }
+
+      .diagram-wrapper {
+        padding: 12px;
+        margin-bottom: 32px;
+        overflow: hidden;
+      }
+
+      .diagram-desktop { display: none !important; }
+
+      .mobile-architecture {
+        display: block;
+        width: 100%;
+      }
+
+      .mobile-architecture-layer {
+        padding: 16px;
+        border: 1px dashed;
+        border-radius: 14px;
+      }
+
+      .mobile-architecture-layer.capacitor-layer {
+        border-color: var(--cap-blue);
+        background: #f0f7ff;
+      }
+
+      .mobile-architecture-layer.lynx-layer {
+        border-color: var(--lynx-red);
+        background: #fff5f5;
+      }
+
+      .mobile-architecture-label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .capacitor-layer .mobile-architecture-label { color: #0874bd; }
+      .lynx-layer .mobile-architecture-label { color: #c52639; }
+
+      .mobile-architecture-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mobile-architecture-card {
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid #c7dff7;
+        border-radius: 9px;
+        background: var(--surface);
+      }
+
+      .lynx-layer .mobile-architecture-card { border-color: #ffc7cd; }
+
+      .mobile-architecture-card code {
+        display: block;
+        overflow: hidden;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .mobile-architecture-card span {
+        display: block;
+        margin-top: 3px;
+        color: var(--text-tertiary);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .mobile-architecture-card .bridge-method {
+        margin-top: 5px;
+        color: var(--text-secondary);
+      }
+
+      .mobile-architecture-flow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        width: min(240px, 80%);
+        min-height: 72px;
+        margin: 0 auto;
+      }
+
+      .mobile-architecture-flow span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .mobile-architecture-flow span::after {
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .mobile-call { color: #0874bd; }
+      .mobile-call::after { content: '↓'; }
+      .mobile-result { color: #c52639; }
+      .mobile-result::after { content: '↑'; }
+
+      .api-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 32px;
+      }
+
+      .api-card {
+        min-width: 0;
+        padding: 14px;
+      }
+
+      .api-card h4 {
+        font-size: 11.5px;
+        letter-spacing: -0.02em;
+      }
+
+      .api-card p {
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+
+      .api-card .mapping {
+        margin-top: 10px;
+        padding-top: 10px;
+        font-size: 9.5px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+
+      .plugin-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .plugin-item {
+        min-width: 0;
+        min-height: 68px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px 11px;
+      }
+
+      .plugin-item span {
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
+      .plugin-item .badge {
+        font-size: 9px;
+        padding: 2px 6px;
+      }
+
+      .plugin-more {
+        align-items: center;
+        min-height: 68px;
+      }
+
+      .step {
+        grid-template-columns: 36px minmax(0, 1fr);
+        column-gap: 12px;
+        row-gap: 14px;
+        margin-bottom: 48px;
+      }
+
+      .step::before {
+        grid-column: 1;
+        grid-row: 1;
+        width: 36px;
+        height: 36px;
+      }
+
+      .step > div { display: contents; }
+
+      .step h4 {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+        margin-bottom: 0;
+        font-size: 16px;
+        line-height: 1.35;
+      }
+
+      .step > div > p {
+        grid-column: 2;
+        grid-row: 2;
+        margin-bottom: 0;
+        font-size: 13px;
+      }
+
+      .step > div > pre,
+      .step > div > .platform-tabs,
+      .step > div > .platform-panel {
+        grid-column: 1 / -1;
+      }
+
+      .step > div > pre,
+      .platform-panel pre {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 11.5px;
+        line-height: 1.65;
+      }
+
+      .platform-tabs {
+        justify-self: start;
+        margin: 0;
+      }
+
+      .platform-panel { min-width: 0; }
+
+      .platform-panel > p:last-child {
+        margin-top: 10px;
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -486,7 +830,11 @@
       <span class="dot"></span>
       lynx-capacitor
     </a>
-    <div class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+      <span class="nav-toggle-line" aria-hidden="true"></span>
+      <span class="nav-toggle-line" aria-hidden="true"></span>
+    </button>
+    <div class="nav-links" id="primary-navigation">
       <a href="#adapter">Core Adapter</a>
       <a href="#plugins">Plugins</a>
       <a href="#start">Get Started</a>
@@ -519,7 +867,7 @@
     </p>
 
     <div class="diagram-wrapper">
-      <svg viewBox="0 0 840 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram showing how Capacitor bridge APIs map to Lynx NativeModule">
+      <svg class="diagram-desktop" viewBox="0 0 840 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram showing how Capacitor bridge APIs map to Lynx NativeModule">
         <!-- Background regions -->
         <rect x="20" y="20" width="360" height="300" rx="16" fill="#f0f7ff" stroke="#119eff" stroke-width="1.5" stroke-dasharray="4 3"/>
         <rect x="460" y="20" width="360" height="300" rx="16" fill="#fff5f5" stroke="#ff4154" stroke-width="1.5" stroke-dasharray="4 3"/>
@@ -575,6 +923,44 @@
         <line x1="500" y1="292" x2="540" y2="292" stroke="#ff4154" stroke-width="1.5"/>
         <text x="548" y="296" font-family="DM Sans" font-size="11" fill="#4a5568">Native → JS result/event</text>
       </svg>
+
+      <div class="mobile-architecture" role="img" aria-label="Vertical architecture diagram showing Capacitor JavaScript bridge APIs flowing to the Lynx CapacitorBridge NativeModule">
+        <div class="mobile-architecture-layer capacitor-layer">
+          <span class="mobile-architecture-label">Capacitor JS Bridge</span>
+          <div class="mobile-architecture-stack">
+            <div class="mobile-architecture-card">
+              <code>registerPlugin(name, impl?)</code>
+              <span>Creates a native or web-fallback proxy</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.toNative(plugin, method, opts)</code>
+              <span>Dispatches a call to the native layer</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.fromNative(result)</code>
+              <span>Receives native results and events</span>
+            </div>
+            <div class="mobile-architecture-card">
+              <code>Capacitor.addListener(plugin, event, cb)</code>
+              <span>Subscribes with a retained callback</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-architecture-flow" aria-hidden="true">
+          <span class="mobile-call">JS → Native</span>
+          <span class="mobile-result">Native → JS</span>
+        </div>
+
+        <div class="mobile-architecture-layer lynx-layer">
+          <span class="mobile-architecture-label">Lynx NativeModule</span>
+          <div class="mobile-architecture-card">
+            <code>NativeModules.CapacitorBridge</code>
+            <code class="bridge-method">.handleCall(jsonPayload, callback)</code>
+            <span>One entry point for promises and retained listener events</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="api-grid">
@@ -769,6 +1155,39 @@ more.className = 'plugin-item plugin-more';
 more.setAttribute('aria-label', 'More Capacitor plugins');
 more.innerHTML = '<span class="ellipsis" aria-hidden="true"><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i><i class="ellipsis-dot"></i></span>';
 grid.appendChild(more);
+
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.getElementById('primary-navigation');
+
+function setNavigationOpen(open) {
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  navLinks.classList.toggle('is-open', open);
+}
+
+navToggle.addEventListener('click', () => {
+  setNavigationOpen(navToggle.getAttribute('aria-expanded') !== 'true');
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => setNavigationOpen(false));
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true') return;
+  setNavigationOpen(false);
+  navToggle.focus();
+});
+
+document.addEventListener('click', event => {
+  if (navToggle.getAttribute('aria-expanded') !== 'true') return;
+  if (navToggle.contains(event.target) || navLinks.contains(event.target)) return;
+  setNavigationOpen(false);
+});
+
+window.matchMedia('(min-width: 641px)').addEventListener('change', event => {
+  if (event.matches) setNavigationOpen(false);
+});
 
 const platformTabs = Array.from(document.querySelectorAll('[role="tab"]'));
 platformTabs.forEach(tab => {
