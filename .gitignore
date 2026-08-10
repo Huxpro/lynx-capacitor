@@ -12,3 +12,6 @@ ios/Demo/Podfile.lock
 ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
 *.xcuserstate
 .DS_Store
+ios/Demo/.bundle/
+ios/Demo/vendor/
+ios/Demo/Gemfile.lock
