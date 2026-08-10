@@ -1,0 +1,1 @@
+require 'capacitor/lynx/autolink'
