@@ -20,13 +20,6 @@ jobs:
       - name: Check out Lynx Capacitor
         uses: actions/checkout@v4
 
-      - name: Check out Lynx
-        uses: actions/checkout@v4
-        with:
-          repository: lynx-family/lynx
-          path: lynx-source
-          fetch-depth: 1
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -41,6 +34,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
+
+      - name: Select Xcode 26
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app
+          xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -92,7 +90,6 @@ jobs:
       - name: Generate and install iOS dependencies
         env:
           LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-consumer
-          LYNX_ROOT: ${{ github.workspace }}/lynx-source/lynx
         working-directory: ios/Demo
         run: |
           git config --global url."https://github.com/".insteadOf "git@github.com:"
@@ -103,7 +100,6 @@ jobs:
       - name: Build iOS simulator app
         env:
           LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-consumer
-          LYNX_ROOT: ${{ github.workspace }}/lynx-source/lynx
         run: |
           xcodebuild \
             -workspace ios/Demo/LynxCapacitorDemo.xcworkspace \
