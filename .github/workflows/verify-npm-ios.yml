@@ -85,6 +85,7 @@ jobs:
         run: |
           pnpm build:core
           pnpm build:demo
+          mkdir -p ios/Demo/LynxCapacitorDemo/Resource
           install -m 0644 demo/dist/main.lynx.bundle \
             ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
 
