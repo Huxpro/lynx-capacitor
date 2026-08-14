@@ -1,7 +1,6 @@
 #import "LynxDemoViewController.h"
 #import "LynxDemoTemplateProvider.h"
 #import <LynxLibraryRegistry/LynxGeneratedLibraryRegistry.h>
-#import <Lynx/DevToolSettings.h>
 #import <Lynx/LynxConfig.h>
 #import <Lynx/LynxEnv.h>
 #import <Lynx/LynxService.h>
@@ -19,7 +18,6 @@
   [super viewDidLoad];
   self.view.backgroundColor = UIColor.systemBackgroundColor;
 
-  [[DevToolSettings sharedInstance].bootstrap applyDevelopmentDefaultsIfUnset];
   [LynxService(LynxServiceDevToolProtocol) enableAllSessions];
 
   LynxConfig *globalConfig =
