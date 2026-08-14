@@ -50,8 +50,8 @@ jobs:
 
       - name: Install the packed runtime and Capacitor plugins
         env:
-          CONSUMER_ROOT: \${{ runner.temp }}/lynx-capacitor-consumer
-          RUNTIME_TARBALL: \${{ github.workspace }}/.ci/lynx-capacitor-runtime-0.1.1.tgz
+          CONSUMER_ROOT: ${{ runner.temp }}/lynx-capacitor-consumer
+          RUNTIME_TARBALL: ${{ github.workspace }}/.ci/lynx-capacitor-runtime-0.1.1.tgz
         run: |
           mkdir -p "$CONSUMER_ROOT"
           node <<'NODE'
@@ -90,8 +90,8 @@ jobs:
 
       - name: Generate and install iOS dependencies
         env:
-          LYNX_CAPACITOR_APP_ROOT: \${{ runner.temp }}/lynx-capacitor-consumer
-          LYNX_ROOT: \${{ github.workspace }}/lynx-source/lynx
+          LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-consumer
+          LYNX_ROOT: ${{ github.workspace }}/lynx-source/lynx
         working-directory: ios/Demo
         run: |
           git config --global url."https://github.com/".insteadOf "git@github.com:"
@@ -101,8 +101,8 @@ jobs:
 
       - name: Build iOS simulator app
         env:
-          LYNX_CAPACITOR_APP_ROOT: \${{ runner.temp }}/lynx-capacitor-consumer
-          LYNX_ROOT: \${{ github.workspace }}/lynx-source/lynx
+          LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-consumer
+          LYNX_ROOT: ${{ github.workspace }}/lynx-source/lynx
         run: |
           xcodebuild \
             -workspace ios/Demo/LynxCapacitorDemo.xcworkspace \
