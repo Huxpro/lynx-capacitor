@@ -13,7 +13,10 @@ lynx_root = ENV.fetch('LYNX_ROOT', File.expand_path('../lynx', repository_root))
 # Both autolink plugins scan node_modules by walking up from a starting
 # directory. `pod install` runs in ios/Demo, whose ancestors do not include
 # demo/node_modules, so point them at the app package explicitly.
-app_package_root = File.join(repository_root, 'demo')
+app_package_root = ENV.fetch(
+  'LYNX_CAPACITOR_APP_ROOT',
+  File.join(repository_root, 'demo')
+)
 
 install! 'cocoapods',
          :deterministic_uuids => false,
@@ -36,7 +39,7 @@ target 'LynxCapacitorDemo' do
   FileUtils.cp(socket_rocket_spec, File.join(socket_rocket_source, 'SocketRocket.podspec'))
   pod 'SocketRocket', :path => socket_rocket_source
 
-  capacitor_ios = File.join(repository_root, 'node_modules/@capacitor/ios')
+  capacitor_ios = File.join(app_package_root, 'node_modules/@capacitor/ios')
   cordova_spec = File.join(capacitor_ios, 'CapacitorCordova.podspec')
   # @capacitor/ios ships `s.exclude_files = "...AppDelegate.{h,m}"`, written for
   # a stock `npx cap add ios` app whose own delegate is also named AppDelegate.
