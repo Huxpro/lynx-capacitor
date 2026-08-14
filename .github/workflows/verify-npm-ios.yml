@@ -109,4 +109,6 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             -derivedDataPath ios/Demo/build \
             CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
             build
