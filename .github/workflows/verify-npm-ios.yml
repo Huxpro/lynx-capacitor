@@ -11,7 +11,7 @@ permissions:
 jobs:
   ios:
     name: iOS published-package smoke
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
     env:
       LANG: en_US.UTF-8
