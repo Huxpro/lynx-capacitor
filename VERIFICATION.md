@@ -16,6 +16,25 @@ an Android cloud device.
 - 27 non-interactive smoke tests passed on the earlier iOS simulator baseline
 - 8 interactive/hardware/credential plugins are available for manual testing
 
+## Release-artifact Build Verification
+
+On 2026-08-14, the release candidates were packed exactly as npm would publish
+them: `@lynx-capacitor/core@8.4.2` and
+`@lynx-capacitor/runtime@0.1.1`. The packed runtime contains the Android and iOS
+native sources plus the included Android Gradle autolink build.
+
+- A clean npm consumer installed both tarballs and all 40 demo entries without
+  workspace links. The Android demo then completed `:app:assembleDebug` using
+  the Gradle plugin and native projects exclusively from that consumer's
+  `node_modules`.
+- The full iOS simulator app built on Xcode 26.3 with all demo plugins, the
+  packed runtime, CocoaPods Lynx 4.0.1, and the published
+  `cocoapods-lynx-capacitor@0.1.0` RubyGem. The successful clean-host run is
+  recorded in [GitHub Actions run 31834841692](https://github.com/Huxpro/lynx-capacitor/actions/runs/31834841692).
+
+Registry installation is repeated after npm publication so this tarball-level
+check and the registry-level check cover the same bytes and dependency graph.
+
 ## Android Cloud-device Matrix
 
 Environment and full evidence are recorded in

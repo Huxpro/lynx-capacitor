@@ -1,6 +1,6 @@
 {
   "name": "@lynx-capacitor/runtime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lynx native library that hosts the headless Capacitor runtime on Android and iOS.",
   "license": "MIT",
   "repository": {
@@ -19,6 +19,10 @@
     "lynx.lib.json",
     "README.md",
     "LICENSE",
+    "gradle-plugin/README.md",
+    "gradle-plugin/build.gradle.kts",
+    "gradle-plugin/settings.gradle.kts",
+    "gradle-plugin/src/main",
     "ios/LynxCapacitorRuntime.podspec",
     "ios/src",
     "android/build.gradle.kts",

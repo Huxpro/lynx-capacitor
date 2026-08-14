@@ -13,6 +13,7 @@ cd "$ROOT"
 pnpm install
 pnpm build:core
 pnpm build:demo
+mkdir -p ios/Demo/LynxCapacitorDemo/Resource
 cp demo/dist/main.lynx.bundle ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
 
 cd "$IOS_DIR"

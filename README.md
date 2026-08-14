@@ -88,16 +88,17 @@ Gradle dependency, or Podfile registration list to maintain.
 
 ### Android host setup
 
-Apply the settings plugin and point it at the app's `node_modules`. The Gradle
-plugin is currently consumed from source; replace the example path with its
-location in your checkout:
+Load the settings plugin included in `@lynx-capacitor/runtime` and point it at
+the app's `node_modules`:
 
 ```kotlin
 // settings.gradle.kts
 pluginManagement {
-  includeBuild("../plugins/gradle-lynx-capacitor")
+  includeBuild("../node_modules/@lynx-capacitor/runtime/gradle-plugin")
 }
-plugins { id("org.lynxcapacitor.settings") }
+plugins {
+  id("org.lynxcapacitor.settings")
+}
 
 include(":app")
 lynxCapacitor { nodeModulesPath = "../node_modules" }
@@ -123,13 +124,11 @@ setContentView(lynxView)
 LynxCapacitorRuntime.attach(this)
 ```
 
-The complete source-based host is in [`android/Demo`](android/Demo). Installed Capacitor
+The complete host is in [`android/Demo`](android/Demo). Installed Capacitor
 packages are the only plugin list; no manual Java/Kotlin registration is
 needed. Adding a plugin later is `npm install` + Gradle sync/build. The Demo uses
 minSdk 28 because its installed `@capacitor/local-llm` package requires it,
-while the runtime itself supports minSdk 24. A remote Gradle plugin artifact is
-still pending; until it is published, Android consumers need the plugin source
-available to `includeBuild`.
+while the runtime itself supports minSdk 24.
 
 ### iOS host setup
 
@@ -290,8 +289,7 @@ partial/config-gated entries. See the
 ```
 lynx-capacitor/
 ├── packages/core/          # npm package - drop-in @capacitor/core adapter
-├── packages/runtime/       # npm package - Android/iOS Lynx native library
-├── plugins/                # Gradle Android autolink plugin
+├── packages/runtime/       # Native runtime + included Gradle Android autolink plugin
 ├── gems/                   # cocoapods-lynx-capacitor - links plugin pods from node_modules
 ├── demo/                   # ReactLynx gallery for 37 official + 3 Community plugins
 ├── ios/Demo/               # Standalone iOS host (XcodeGen + CocoaPods)

@@ -1,6 +1,6 @@
 {
   "name": "@lynx-capacitor/core",
-  "version": "0.1.0",
+  "version": "8.4.2",
   "description": "Capacitor bridge reimplemented over the Lynx NativeModule API. Drop-in replacement for @capacitor/core so unmodified @capacitor/* plugins run on Lynx.",
   "license": "MIT",
   "repository": {

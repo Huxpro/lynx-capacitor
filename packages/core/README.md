@@ -4,6 +4,9 @@ The JavaScript half of [Lynx Capacitor](https://github.com/Huxpro/lynx-capacitor
 a drop-in `@capacitor/core` adapter that transports Capacitor plugin calls over
 the Lynx NativeModule API.
 
+Its major and minor version track the compatible Capacitor release so npm can
+resolve plugin peer dependencies without overrides.
+
 Install it at the package name expected by Capacitor plugins:
 
 ```bash

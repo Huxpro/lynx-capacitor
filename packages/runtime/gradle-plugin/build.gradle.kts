@@ -1,10 +1,9 @@
 plugins {
     `java-gradle-plugin`
-    `maven-publish`
 }
 
 group = "org.lynxcapacitor"
-version = "0.1.0"
+version = "0.1.1"
 
 repositories {
     mavenCentral()

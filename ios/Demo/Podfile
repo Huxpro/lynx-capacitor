@@ -9,11 +9,15 @@ plugin 'cocoapods-lynx-capacitor'
 
 repository_root = File.expand_path('../..', __dir__)
 lynx_root = ENV.fetch('LYNX_ROOT', File.expand_path('../lynx', repository_root))
+use_published_dependencies = ENV['LYNX_CAPACITOR_USE_PUBLISHED'] == 'true'
 
 # Both autolink plugins scan node_modules by walking up from a starting
 # directory. `pod install` runs in ios/Demo, whose ancestors do not include
 # demo/node_modules, so point them at the app package explicitly.
-app_package_root = File.join(repository_root, 'demo')
+app_package_root = ENV.fetch(
+  'LYNX_CAPACITOR_APP_ROOT',
+  File.join(repository_root, 'demo')
+)
 
 install! 'cocoapods',
          :deterministic_uuids => false,
@@ -28,15 +32,7 @@ target 'LynxCapacitorDemo' do
   use_lynx_library! :root => app_package_root,
                     :output_dir => File.join(__dir__, 'generated/lynx-library')
 
-  socket_rocket_source = File.join(
-    lynx_root,
-    'explorer/darwin/ios/lynx_explorer/Pods/SocketRocket'
-  )
-  socket_rocket_spec = File.join(__dir__, 'Config/SocketRocket.podspec')
-  FileUtils.cp(socket_rocket_spec, File.join(socket_rocket_source, 'SocketRocket.podspec'))
-  pod 'SocketRocket', :path => socket_rocket_source
-
-  capacitor_ios = File.join(repository_root, 'node_modules/@capacitor/ios')
+  capacitor_ios = File.join(app_package_root, 'node_modules/@capacitor/ios')
   cordova_spec = File.join(capacitor_ios, 'CapacitorCordova.podspec')
   # @capacitor/ios ships `s.exclude_files = "...AppDelegate.{h,m}"`, written for
   # a stock `npx cap add ios` app whose own delegate is also named AppDelegate.
@@ -74,15 +70,30 @@ target 'LynxCapacitorDemo' do
   # from node_modules/@lynx-capacitor/runtime.
   use_capacitor_plugins! :root => app_package_root
 
-  pod 'Lynx', :path => lynx_root, :subspecs => ['Framework']
-  pod 'LynxBase', :path => lynx_root, :subspecs => ['Framework']
-  pod 'LynxDevtool', :path => lynx_root, :subspecs => ['Framework']
-  pod 'BaseDevtool', :path => lynx_root
-  pod 'LynxService', :path => lynx_root, :subspecs => ['Log', 'Devtool', 'Http']
-  pod 'LynxServiceAPI', :path => lynx_root, :subspecs => ['Core']
-  pod 'PrimJS', '4.0.1-alpha.4', :subspecs => ['quickjs', 'napi']
-  pod 'DebugRouter', '5.0.15'
-  pod 'DebugRouter/MessageTransceiverEnable', '5.0.15'
+  if use_published_dependencies
+    # A release consumer should not depend on a prepared Lynx source checkout.
+    # Lynx/Framework pulls its matching LynxBase, LynxServiceAPI, and PrimJS
+    # artifacts from CocoaPods.
+    pod 'Lynx', '4.0.1', :subspecs => ['Framework']
+  else
+    socket_rocket_source = File.join(
+      lynx_root,
+      'explorer/darwin/ios/lynx_explorer/Pods/SocketRocket'
+    )
+    socket_rocket_spec = File.join(__dir__, 'Config/SocketRocket.podspec')
+    FileUtils.cp(socket_rocket_spec, File.join(socket_rocket_source, 'SocketRocket.podspec'))
+    pod 'SocketRocket', :path => socket_rocket_source
+
+    pod 'Lynx', :path => lynx_root, :subspecs => ['Framework']
+    pod 'LynxBase', :path => lynx_root, :subspecs => ['Framework']
+    pod 'LynxDevtool', :path => lynx_root, :subspecs => ['Framework']
+    pod 'BaseDevtool', :path => lynx_root
+    pod 'LynxService', :path => lynx_root, :subspecs => ['Log', 'Devtool', 'Http']
+    pod 'LynxServiceAPI', :path => lynx_root, :subspecs => ['Core']
+    pod 'PrimJS', '4.0.1-alpha.4', :subspecs => ['quickjs', 'napi']
+    pod 'DebugRouter', '5.0.15'
+    pod 'DebugRouter/MessageTransceiverEnable', '5.0.15'
+  end
 end
 
 post_install do |installer|

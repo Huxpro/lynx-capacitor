@@ -1063,11 +1063,13 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
           </div>
 
           <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
-            <pre><span class="comment">// settings.gradle.kts — point includeBuild at the Gradle plugin source</span>
+            <pre><span class="comment">// settings.gradle.kts</span>
 pluginManagement {
-  includeBuild(<span class="string">"../plugins/gradle-lynx-capacitor"</span>)
+  includeBuild(<span class="string">"../node_modules/@lynx-capacitor/runtime/gradle-plugin"</span>)
 }
-plugins { id(<span class="string">"org.lynxcapacitor.settings"</span>) }
+plugins {
+  id(<span class="string">"org.lynxcapacitor.settings"</span>)
+}
 lynxCapacitor { nodeModulesPath = <span class="string">"../node_modules"</span> }
 
 <span class="comment">// app/build.gradle.kts</span>
@@ -1082,7 +1084,7 @@ LynxGeneratedLibraryRegistry.setup(builder)
 <span class="keyword">val</span> lynxView = builder.build(this)
 setContentView(lynxView)
 LynxCapacitorRuntime.attach(this)</pre>
-            <p>The Gradle plugin is currently consumed from source; the repository's <code>android/Demo</code> is the working reference until a remote artifact is published.</p>
+            <p>After the one-time Gradle setup, adding a plugin is <code>npm install</code> + Gradle sync/build.</p>
           </div>
         </div>
       </div>

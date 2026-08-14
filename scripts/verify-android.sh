@@ -13,7 +13,7 @@ cmp "$ROOT/demo/dist/main.lynx.bundle" \
   "$ANDROID_DIR/app/src/main/assets/main.lynx.bundle"
 
 "$ANDROID_DIR/gradlew" \
-  -p "$ROOT/plugins/gradle-lynx-capacitor" \
+  -p "$ROOT/packages/runtime/gradle-plugin" \
   test
 
 echo "Android verification passed."
