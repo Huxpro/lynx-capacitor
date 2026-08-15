@@ -156,6 +156,14 @@
       text-align: center;
     }
 
+    .release-meta {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 28px;
+    }
+
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -167,7 +175,14 @@
       font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
-      margin-bottom: 28px;
+      text-decoration: none;
+      transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+    }
+
+    .hero-badge:hover {
+      border-color: color-mix(in srgb, var(--cap-blue) 55%, var(--border));
+      background: color-mix(in srgb, var(--cap-blue) 6%, var(--surface));
+      color: var(--text-primary);
     }
 
     .hero-badge .indicator {
@@ -176,6 +191,36 @@
       border-radius: 50%;
       background: #22c55e;
       animation: pulse 2s infinite;
+    }
+
+    .release-versions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 18px;
+      color: var(--text-tertiary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .release-versions a {
+      color: var(--text-secondary);
+      text-decoration-color: transparent;
+      text-underline-offset: 3px;
+      transition: color 150ms ease, text-decoration-color 150ms ease;
+    }
+
+    .release-versions a:hover {
+      color: var(--cap-blue);
+      text-decoration-color: currentColor;
+    }
+
+    .hero-badge:focus-visible,
+    .release-versions a:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 3px;
     }
 
     @keyframes pulse {
@@ -851,9 +896,16 @@
 
 <div class="container">
   <div class="hero">
-    <div class="hero-badge">
-      <span class="indicator"></span>
-      Capacitor v8 · Android + iOS
+    <div class="release-meta">
+      <a class="hero-badge" href="https://github.com/Huxpro/lynx-capacitor/releases/tag/v0.1.0" aria-label="View Lynx Capacitor v0.1.0 release notes">
+        <span class="indicator" aria-hidden="true"></span>
+        v0.1.0 released · Android + iOS
+      </a>
+      <div class="release-versions" aria-label="Published npm package versions">
+        <a href="https://www.npmjs.com/package/@lynx-capacitor/core/v/8.4.2">core 8.4.2</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.npmjs.com/package/@lynx-capacitor/runtime/v/0.1.2">runtime 0.1.2</a>
+      </div>
     </div>
     <h1>Capacitor plugins,<br><span class="gradient">native on Lynx</span></h1>
     <div class="hero-actions">
