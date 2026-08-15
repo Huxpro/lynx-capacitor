@@ -1,0 +1,81 @@
+name: Publish npm packages
+
+on:
+  push:
+    branches:
+      - huxcx/publish-npm-20260815
+    paths:
+      - .github/workflows/publish-npm.yml
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish fixed npm versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out release commit
+        uses: actions/checkout@v4
+
+      - name: Set up Node and npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.30.3"
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Use current npm CLI
+        run: |
+          npm install --global npm@11.17.0
+          npm --version
+
+      - name: Confirm npm identity
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami
+
+      - name: Publish core 8.4.2
+        working-directory: packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if npm view @lynx-capacitor/core@8.4.2 version >/dev/null 2>&1; then
+            echo "@lynx-capacitor/core@8.4.2 already exists; skipping"
+          else
+            npm publish --access public --tag latest
+          fi
+
+      - name: Publish runtime 0.1.1
+        working-directory: packages/runtime
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if npm view @lynx-capacitor/runtime@0.1.1 version >/dev/null 2>&1; then
+            echo "@lynx-capacitor/runtime@0.1.1 already exists; skipping"
+          else
+            npm publish --access public --tag latest
+          fi
+
+      - name: Verify registry visibility
+        run: |
+          for attempt in {1..12}; do
+            core_version="$(npm view @lynx-capacitor/core@8.4.2 version 2>/dev/null || true)"
+            runtime_version="$(npm view @lynx-capacitor/runtime@0.1.1 version 2>/dev/null || true)"
+            if [ "$core_version" = "8.4.2" ] && [ "$runtime_version" = "0.1.1" ]; then
+              npm view @lynx-capacitor/core@8.4.2 version dist.shasum dist.integrity
+              npm view @lynx-capacitor/runtime@0.1.1 version dist.shasum dist.integrity
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Published versions did not become visible in time" >&2
+          exit 1
