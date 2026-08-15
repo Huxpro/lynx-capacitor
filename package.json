@@ -4,7 +4,7 @@
   "private": true,
   "description": "Run Capacitor plugins on Lynx through NativeModule bridges for Android and iOS.",
   "license": "MIT",
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@11.4.0",
   "scripts": {
     "build:core": "pnpm --filter @lynx-capacitor/core build",
     "dev:demo": "pnpm --filter @lynx-capacitor/demo dev",
@@ -15,14 +15,19 @@
     "android:build": "bash scripts/android-build.sh",
     "android:run": "bash scripts/android-run.sh",
     "verify:android": "bash scripts/verify-android.sh",
-    "verify": "bash scripts/verify.sh"
+    "verify": "bash scripts/verify.sh",
+    "changeset": "changeset",
+    "version-packages": "changeset version && node scripts/check-core-version-policy.mjs && node scripts/sync-release-metadata.mjs",
+    "release": "node scripts/check-core-version-policy.mjs && pnpm build:core && changeset publish"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22.11"
   },
   "devDependencies": {
     "@capacitor/android": "8.4.2",
     "@capacitor/core": "^8.4.2",
-    "@capacitor/ios": "^8.4.2"
+    "@capacitor/ios": "^8.4.2",
+    "@changesets/changelog-github": "1.0.0",
+    "@changesets/cli": "3.0.0"
   }
 }
