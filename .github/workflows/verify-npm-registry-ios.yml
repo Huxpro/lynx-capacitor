@@ -1,0 +1,116 @@
+name: Verify published npm artifacts on iOS
+
+on:
+  push:
+    branches:
+      - huxcx/verify-npm-registry-ios
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    name: iOS registry-package smoke
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      LANG: en_US.UTF-8
+      LYNX_CAPACITOR_USE_PUBLISHED: "true"
+    steps:
+      - name: Check out Lynx Capacitor
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.30.3"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Select Xcode 26
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Install demo build dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Capacitor entirely from the npm registry
+        env:
+          CONSUMER_ROOT: ${{ runner.temp }}/lynx-capacitor-registry-consumer
+        run: |
+          mkdir -p "$CONSUMER_ROOT"
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const demo = JSON.parse(fs.readFileSync('demo/package.json', 'utf8'));
+          const dependencies = Object.fromEntries(
+            Object.entries(demo.dependencies).filter(([name]) =>
+              name.startsWith('@capacitor/') || name.startsWith('@capacitor-community/')
+            )
+          );
+          dependencies['@capacitor/core'] = 'npm:@lynx-capacitor/core@8.4.2';
+          dependencies['@capacitor/ios'] = '8.4.2';
+          dependencies['@lynx-capacitor/runtime'] = '0.1.2';
+          fs.writeFileSync(
+            path.join(process.env.CONSUMER_ROOT, 'package.json'),
+            JSON.stringify({
+              name: 'lynx-capacitor-registry-ios-smoke',
+              version: '0.0.0',
+              private: true,
+              dependencies,
+            }, null, 2)
+          );
+          NODE
+          npm install --prefix "$CONSUMER_ROOT" --ignore-scripts
+          test ! -L "$CONSUMER_ROOT/node_modules/@capacitor/core"
+          test ! -L "$CONSUMER_ROOT/node_modules/@lynx-capacitor/runtime"
+          test -f "$CONSUMER_ROOT/node_modules/@lynx-capacitor/runtime/ios/LynxCapacitorRuntime.podspec"
+          node -e "const p=require(process.env.CONSUMER_ROOT+'/node_modules/@capacitor/core/package.json'); if(p.name!=='@lynx-capacitor/core'||p.version!=='8.4.2') throw new Error(JSON.stringify(p))"
+          node -e "const p=require(process.env.CONSUMER_ROOT+'/node_modules/@lynx-capacitor/runtime/package.json'); if(p.version!=='0.1.2') throw new Error(JSON.stringify(p))"
+
+      - name: Build the Lynx bundle
+        run: |
+          pnpm build:core
+          pnpm build:demo
+          mkdir -p ios/Demo/LynxCapacitorDemo/Resource
+          install -m 0644 demo/dist/main.lynx.bundle \
+            ios/Demo/LynxCapacitorDemo/Resource/main.lynxbin
+
+      - name: Generate and install published iOS dependencies
+        env:
+          LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-registry-consumer
+        working-directory: ios/Demo
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          xcodegen generate
+          bundle install
+          bundle exec pod install
+
+      - name: Build iOS simulator app
+        env:
+          LYNX_CAPACITOR_APP_ROOT: ${{ runner.temp }}/lynx-capacitor-registry-consumer
+        run: |
+          xcodebuild \
+            -workspace ios/Demo/LynxCapacitorDemo.xcworkspace \
+            -scheme LynxCapacitorDemo \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath ios/Demo/build \
+            CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            build
