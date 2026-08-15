@@ -1,0 +1,66 @@
+name: Version Packages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: 1
+  NPM_CONFIG_PROVENANCE: true
+
+jobs:
+  release:
+    name: Version Packages
+    if: github.repository == 'Huxpro/lynx-capacitor'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ff378ebe6b225b0680b81c1ad4498ae0d1d3a5e3 # v6.0.10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify publishable packages
+        run: |
+          node scripts/check-core-version-policy.mjs
+          pnpm --filter @lynx-capacitor/core typecheck
+          pnpm build:core
+
+      - name: Open Version Packages PR or publish
+        id: changesets
+        uses: changesets/action@72b60a2c449090fd1871c5578768a32a76011a9d # v2.1.0
+        with:
+          publish-script: pnpm release
+          version-script: pnpm version-packages
+          commit-message: "chore: Version Packages"
+          pr-title: "chore: Version Packages"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

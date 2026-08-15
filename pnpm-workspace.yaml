@@ -1,3 +1,7 @@
 packages:
   - "packages/*"
   - "demo"
+allowBuilds:
+  '@capacitor/background-runner': true
+  core-js: false
+  esbuild: true
