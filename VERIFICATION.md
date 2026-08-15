@@ -16,24 +16,29 @@ an Android cloud device.
 - 27 non-interactive smoke tests passed on the earlier iOS simulator baseline
 - 8 interactive/hardware/credential plugins are available for manual testing
 
-## Release-artifact Build Verification
+## Published-artifact Build Verification
 
-On 2026-08-15, the release candidates were packed exactly as npm would publish
-them: `@lynx-capacitor/core@8.4.2` and
-`@lynx-capacitor/runtime@0.1.2`. The packed runtime contains the Android and iOS
-native sources plus the included Android Gradle autolink build.
+On 2026-08-15, the demo was rebuilt in clean consumer directories using the
+public releases `@lynx-capacitor/core@8.4.2` and
+`@lynx-capacitor/runtime@0.1.2`. The consumer lockfile contained no workspace,
+file, or link dependencies, and the installed adapter packages were regular
+registry directories rather than monorepo symlinks.
 
-- A clean npm consumer installed both tarballs and all 40 demo entries without
-  workspace links. The Android demo then completed `:app:assembleDebug` using
-  the Gradle plugin and native projects exclusively from that consumer's
-  `node_modules`.
-- The full iOS simulator app built on Xcode 26.3 with all demo plugins, the
-  packed runtime, CocoaPods Lynx 4.0.1, and the published
-  `cocoapods-lynx-capacitor@0.1.0` RubyGem. The successful clean-host run is
-  recorded in [GitHub Actions run 31834841692](https://github.com/Huxpro/lynx-capacitor/actions/runs/31834841692).
+- The ReactLynx TypeScript check and production bundle build passed using
+  `@capacitor/core` as an npm alias of the published core adapter.
+- The Android demo installed all 40 gallery entries and completed a clean
+  `:app:assembleDebug` with 783 executed tasks. Its autolink Gradle build,
+  runtime, and native plugin projects all came from the consumer's
+  `node_modules`; no Maven publication was used.
+- The full iOS simulator app installed the same gallery from npm and linked the
+  runtime and plugins through the published
+  `cocoapods-lynx-capacitor@0.1.0` RubyGem and CocoaPods Lynx 4.0.1. The Xcode
+  26.3 registry-consumer build is recorded in
+  [GitHub Actions run 31869647254](https://github.com/Huxpro/lynx-capacitor/actions/runs/31869647254).
 
-Registry installation is repeated after npm publication so this tarball-level
-check and the registry-level check cover the same bytes and dependency graph.
+Before publication, the same dependency graph was also exercised from packed
+npm tarballs. That full iOS build is retained as independent evidence in
+[GitHub Actions run 31834841692](https://github.com/Huxpro/lynx-capacitor/actions/runs/31834841692).
 
 ## Android Cloud-device Matrix
 
