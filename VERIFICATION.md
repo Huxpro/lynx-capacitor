@@ -18,9 +18,9 @@ an Android cloud device.
 
 ## Release-artifact Build Verification
 
-On 2026-08-14, the release candidates were packed exactly as npm would publish
+On 2026-08-15, the release candidates were packed exactly as npm would publish
 them: `@lynx-capacitor/core@8.4.2` and
-`@lynx-capacitor/runtime@0.1.1`. The packed runtime contains the Android and iOS
+`@lynx-capacitor/runtime@0.1.2`. The packed runtime contains the Android and iOS
 native sources plus the included Android Gradle autolink build.
 
 - A clean npm consumer installed both tarballs and all 40 demo entries without
