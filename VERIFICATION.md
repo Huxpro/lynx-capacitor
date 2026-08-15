@@ -16,6 +16,30 @@ an Android cloud device.
 - 27 non-interactive smoke tests passed on the earlier iOS simulator baseline
 - 8 interactive/hardware/credential plugins are available for manual testing
 
+## Published-artifact Build Verification
+
+On 2026-08-15, the demo was rebuilt in clean consumer directories using the
+public releases `@lynx-capacitor/core@8.4.2` and
+`@lynx-capacitor/runtime@0.1.2`. The consumer lockfile contained no workspace,
+file, or link dependencies, and the installed adapter packages were regular
+registry directories rather than monorepo symlinks.
+
+- The ReactLynx TypeScript check and production bundle build passed using
+  `@capacitor/core` as an npm alias of the published core adapter.
+- The Android demo installed all 40 gallery entries and completed a clean
+  `:app:assembleDebug` with 783 executed tasks. Its autolink Gradle build,
+  runtime, and native plugin projects all came from the consumer's
+  `node_modules`; no Maven publication was used.
+- The full iOS simulator app installed the same gallery from npm and linked the
+  runtime and plugins through the published
+  `cocoapods-lynx-capacitor@0.1.0` RubyGem and CocoaPods Lynx 4.0.1. The Xcode
+  26.3 registry-consumer build is recorded in
+  [GitHub Actions run 31869647254](https://github.com/Huxpro/lynx-capacitor/actions/runs/31869647254).
+
+Before publication, the same dependency graph was also exercised from packed
+npm tarballs. That full iOS build is retained as independent evidence in
+[GitHub Actions run 31834841692](https://github.com/Huxpro/lynx-capacitor/actions/runs/31834841692).
+
 ## Android Cloud-device Matrix
 
 Environment and full evidence are recorded in

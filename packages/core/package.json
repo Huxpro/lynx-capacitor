@@ -1,8 +1,20 @@
 {
   "name": "@lynx-capacitor/core",
-  "version": "0.1.0",
+  "version": "8.4.2",
   "description": "Capacitor bridge reimplemented over the Lynx NativeModule API. Drop-in replacement for @capacitor/core so unmodified @capacitor/* plugins run on Lynx.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Huxpro/lynx-capacitor.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/Huxpro/lynx-capacitor#readme",
+  "bugs": {
+    "url": "https://github.com/Huxpro/lynx-capacitor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -16,11 +28,14 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "prepack": "pnpm run build",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
@@ -30,6 +45,9 @@
     "native-module",
     "bridge"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "tsup": "^8.3.0",
     "typescript": "~5.9.3"

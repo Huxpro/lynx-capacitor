@@ -6,8 +6,12 @@ gem 'cocoapods', '~> 1.16'
 # `use_lynx_library!`, without which `pod install` cannot resolve the Podfile.
 gem 'cocoapods-lynx-library', '~> 4.0'
 
-# Its Capacitor counterpart, developed in this repo. Provides
-# `use_capacitor_plugins!`.
-gem 'cocoapods-lynx-capacitor', :path => '../../gems/cocoapods-lynx-capacitor'
+# Its Capacitor counterpart. Published verification deliberately resolves the
+# RubyGem, while day-to-day development keeps using the checkout.
+if ENV['LYNX_CAPACITOR_USE_PUBLISHED'] == 'true'
+  gem 'cocoapods-lynx-capacitor', '0.1.0'
+else
+  gem 'cocoapods-lynx-capacitor', :path => '../../gems/cocoapods-lynx-capacitor'
+end
 
 # XcodeGen consumes project.yml; installed separately (brew install xcodegen).

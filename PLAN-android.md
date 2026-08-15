@@ -81,7 +81,7 @@ A Gradle settings/project plugin that:
 
 ### Tasks
 
-- [x] Create `plugins/gradle-lynx-capacitor/` with a convention plugin
+- [x] Create `packages/runtime/gradle-plugin/` with a convention plugin
 - [x] Implement node_modules scanner (reuse logic from the Ruby gem, port to Kotlin DSL)
 - [x] Auto-include discovered plugin modules in `settings.gradle.kts`
 - [x] Auto-add `implementation project(':capacitor-device')` etc. to the app module
@@ -89,9 +89,11 @@ A Gradle settings/project plugin that:
 - [x] Handle include/exclude filtering (`:include`, `:exclude` options)
 - [x] Handle missing/skipped plugins with warnings (like iOS gem does for `@capacitor/motion`)
 - [x] Write tests (build a fixture node_modules, assert correct includes)
-- [x] Publish to Maven local for demo use; document future mavenCentral path
+- [x] Ship the included Gradle build inside `@lynx-capacitor/runtime` on npm
 
-**Exit criteria:** A clean Android app with only `apply plugin: 'lynx-capacitor-autolink'` and the correct plugins appear as dependencies.
+**Exit criteria:** A clean Android app loads the settings and app plugins from
+`node_modules/@lynx-capacitor/runtime/gradle-plugin`, and the installed
+Capacitor packages appear as dependencies without a Maven publication.
 
 ---
 
@@ -117,7 +119,7 @@ An Android app equivalent to `ios/Demo/` that uses the same JS bundle.
 
 - [x] Update root `README.md` with Android usage section (mirror iOS steps)
 - [x] Add `packages/runtime/README.md` Android section
-- [x] Create `plugins/gradle-lynx-capacitor/README.md`
+- [x] Create `packages/runtime/gradle-plugin/README.md`
 - [x] Update plugin coverage table if any plugins differ on Android
 - [x] Add `pnpm verify:android` script
 

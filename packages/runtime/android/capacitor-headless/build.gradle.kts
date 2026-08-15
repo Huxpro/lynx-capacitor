@@ -2,14 +2,15 @@ plugins {
     id("com.android.library")
 }
 
-val capacitorRoot = rootProject.layout.projectDirectory
-    .dir("../../node_modules/@capacitor/android/capacitor")
-    .asFile
+val nodeModules = gradle.extensions.extraProperties
+    .get("lynxCapacitorNodeModules") as File
+val capacitorRoot = nodeModules
+    .resolve("@capacitor/android/capacitor")
     .canonicalFile
 
 if (!capacitorRoot.isDirectory) {
     throw GradleException(
-        "@capacitor/android is not installed. Run pnpm install from the repository root.",
+        "@capacitor/android is not installed under the configured node_modules: $nodeModules",
     )
 }
 

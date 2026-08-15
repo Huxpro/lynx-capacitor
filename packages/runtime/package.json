@@ -1,12 +1,36 @@
 {
   "name": "@lynx-capacitor/runtime",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Lynx native library that hosts the headless Capacitor runtime on Android and iOS.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Huxpro/lynx-capacitor.git",
+    "directory": "packages/runtime"
+  },
+  "homepage": "https://github.com/Huxpro/lynx-capacitor#readme",
+  "bugs": {
+    "url": "https://github.com/Huxpro/lynx-capacitor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "lynx.lib.json",
-    "ios",
-    "android"
+    "README.md",
+    "LICENSE",
+    "gradle-plugin/README.md",
+    "gradle-plugin/build.gradle.kts",
+    "gradle-plugin/settings.gradle.kts",
+    "gradle-plugin/src/main",
+    "ios/LynxCapacitorRuntime.podspec",
+    "ios/src",
+    "android/build.gradle.kts",
+    "android/consumer-rules.pro",
+    "android/src",
+    "android/capacitor-headless/build.gradle.kts",
+    "android/capacitor-headless/headless-capacitor.patch",
+    "android/capacitor-headless/src"
   ],
   "keywords": [
     "lynx",
@@ -15,5 +39,17 @@
   ],
   "engines": {
     "node": ">=18"
+  },
+  "peerDependencies": {
+    "@capacitor/android": "8.4.2",
+    "@capacitor/ios": "8.4.2"
+  },
+  "peerDependenciesMeta": {
+    "@capacitor/android": {
+      "optional": true
+    },
+    "@capacitor/ios": {
+      "optional": true
+    }
   }
 }

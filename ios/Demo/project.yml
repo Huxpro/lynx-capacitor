@@ -11,9 +11,6 @@ targets:
   LynxCapacitorDemo:
     type: application
     platform: iOS
-    configFiles:
-      Debug: Pods/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo.debug.xcconfig
-      Release: Pods/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo.release.xcconfig
     sources:
       - path: LynxCapacitorDemo
         excludes:

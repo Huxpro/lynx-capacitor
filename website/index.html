@@ -156,6 +156,14 @@
       text-align: center;
     }
 
+    .release-meta {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 28px;
+    }
+
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -167,7 +175,14 @@
       font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
-      margin-bottom: 28px;
+      text-decoration: none;
+      transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+    }
+
+    .hero-badge:hover {
+      border-color: color-mix(in srgb, var(--cap-blue) 55%, var(--border));
+      background: color-mix(in srgb, var(--cap-blue) 6%, var(--surface));
+      color: var(--text-primary);
     }
 
     .hero-badge .indicator {
@@ -176,6 +191,36 @@
       border-radius: 50%;
       background: #22c55e;
       animation: pulse 2s infinite;
+    }
+
+    .release-versions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 18px;
+      color: var(--text-tertiary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .release-versions a {
+      color: var(--text-secondary);
+      text-decoration-color: transparent;
+      text-underline-offset: 3px;
+      transition: color 150ms ease, text-decoration-color 150ms ease;
+    }
+
+    .release-versions a:hover {
+      color: var(--cap-blue);
+      text-decoration-color: currentColor;
+    }
+
+    .hero-badge:focus-visible,
+    .release-versions a:focus-visible {
+      outline: 2px solid var(--cap-blue);
+      outline-offset: 3px;
     }
 
     @keyframes pulse {
@@ -851,9 +896,16 @@
 
 <div class="container">
   <div class="hero">
-    <div class="hero-badge">
-      <span class="indicator"></span>
-      Capacitor v8 · Android + iOS
+    <div class="release-meta">
+      <a class="hero-badge" href="https://github.com/Huxpro/lynx-capacitor/releases/tag/v0.1.0" aria-label="View Lynx Capacitor v0.1.0 release notes">
+        <span class="indicator" aria-hidden="true"></span>
+        v0.1.0 released · Android + iOS
+      </a>
+      <div class="release-versions" aria-label="Published npm package versions">
+        <a href="https://www.npmjs.com/package/@lynx-capacitor/core/v/8.4.2">core 8.4.2</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.npmjs.com/package/@lynx-capacitor/runtime/v/0.1.2">runtime 0.1.2</a>
+      </div>
     </div>
     <h1>Capacitor plugins,<br><span class="gradient">native on Lynx</span></h1>
     <div class="hero-actions">
@@ -1038,7 +1090,9 @@
         <div>
           <h4>Autolink the native side</h4>
           <p>Install the shared native runtime, then configure Autolink once in the host app. Autolink is recommended, but hosts can wire the runtime and plugins manually instead.</p>
-          <pre>npm install @lynx-capacitor/runtime</pre>
+          <pre><span class="comment"># Install the runtime with your target platform</span>
+npm install @lynx-capacitor/runtime @capacitor/ios
+<span class="comment"># Android: replace @capacitor/ios with @capacitor/android</span></pre>
 
           <div class="platform-tabs" role="tablist" aria-label="Native Autolink platform">
             <button class="platform-tab" id="tab-ios" type="button" role="tab" aria-selected="true" aria-controls="panel-ios" tabindex="0">iOS</button>
@@ -1061,11 +1115,13 @@ target <span class="string">'YourApp'</span> <span class="keyword">do</span>
           </div>
 
           <div class="platform-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android" hidden>
-            <pre><span class="comment">// settings.gradle.kts — point includeBuild at the Gradle plugin source</span>
+            <pre><span class="comment">// settings.gradle.kts</span>
 pluginManagement {
-  includeBuild(<span class="string">"../plugins/gradle-lynx-capacitor"</span>)
+  includeBuild(<span class="string">"../node_modules/@lynx-capacitor/runtime/gradle-plugin"</span>)
 }
-plugins { id(<span class="string">"org.lynxcapacitor.settings"</span>) }
+plugins {
+  id(<span class="string">"org.lynxcapacitor.settings"</span>)
+}
 lynxCapacitor { nodeModulesPath = <span class="string">"../node_modules"</span> }
 
 <span class="comment">// app/build.gradle.kts</span>
@@ -1080,7 +1136,7 @@ LynxGeneratedLibraryRegistry.setup(builder)
 <span class="keyword">val</span> lynxView = builder.build(this)
 setContentView(lynxView)
 LynxCapacitorRuntime.attach(this)</pre>
-            <p>The Gradle plugin is currently consumed from source; the repository's <code>android/Demo</code> is the working reference until a remote artifact is published.</p>
+            <p>After the one-time Gradle setup, adding a plugin is <code>npm install</code> + Gradle sync/build.</p>
           </div>
         </div>
       </div>

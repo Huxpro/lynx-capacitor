@@ -1,5 +1,11 @@
 pluginManagement {
-    includeBuild("../../plugins/gradle-lynx-capacitor")
+    if (providers.gradleProperty("lynxCapacitorUsePublished").orNull == "true") {
+        val nodeModules = providers.gradleProperty("lynxCapacitor.nodeModules")
+            .getOrElse("../../demo/node_modules")
+        includeBuild("$nodeModules/@lynx-capacitor/runtime/gradle-plugin")
+    } else {
+        includeBuild("../../packages/runtime/gradle-plugin")
+    }
     repositories {
         google()
         mavenCentral()

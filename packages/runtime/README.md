@@ -3,11 +3,23 @@
 The native half of [lynx-capacitor](../../README.md), packaged as a **Lynx native
 library** so it autolinks out of `node_modules`.
 
+Install the runtime with the Capacitor package for the native platform you are
+building:
+
+```bash
+# Android
+npm install @lynx-capacitor/runtime @capacitor/android
+
+# iOS
+npm install @lynx-capacitor/runtime @capacitor/ios
+```
+
 ## What's in here
 
 | Path | What it is |
 |------|------------|
 | `lynx.lib.json` | Declares Android and iOS native sources to Lynx Autolink |
+| `gradle-plugin/` | Included Gradle build that autolinks the Android runtime and installed plugins |
 | `android/` | Kotlin NativeModule plus the headless Capacitor Android source overlay |
 | `ios/LynxCapacitorRuntime.podspec` | The `LynxCapacitorRuntime` pod |
 | `ios/src/LynxCapacitorBridge.{h,m}` | The single Lynx NativeModule all plugin calls travel through |

@@ -222,7 +222,7 @@ export function App(): JSX.Element {
           <view className="section">
             <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Adapter</text>
             <view className={dark ? 'info-card info-card-dark' : 'info-card'}>
-              <InfoRow label="@lynx-capacitor/core" value="1.0.0" dark={dark} />
+              <InfoRow label="@lynx-capacitor/core" value="8.4.2" dark={dark} />
               <InfoRow label="@capacitor/core compat" value="8.x" last dark={dark} />
             </view>
           </view>

@@ -7,14 +7,19 @@ This build supplies two Gradle plugins:
 - `org.lynxcapacitor.autolink` adds those projects to an Android app and
   generates the Capacitor plugin and Lynx NativeModule registries.
 
-## Use from source
+This included build ships inside the `@lynx-capacitor/runtime` npm package. It
+does not require a Maven publication.
+
+## Use from npm
 
 ```kotlin
 // settings.gradle.kts
 pluginManagement {
-  includeBuild("../node_modules/@lynx-capacitor/gradle-lynx-capacitor")
+  includeBuild("../node_modules/@lynx-capacitor/runtime/gradle-plugin")
 }
-plugins { id("org.lynxcapacitor.settings") }
+plugins {
+  id("org.lynxcapacitor.settings")
+}
 
 include(":app")
 lynxCapacitor {
@@ -36,12 +41,12 @@ Paths are canonicalized, so pnpm's symlinked package layout is supported. A
 package without Android sources is skipped. Bundled AARs under a plugin's
 `android/src/main/libs` are exposed through a flat directory repository.
 
-## Build and publish locally
+## Verify the included build
 
 ```bash
-./gradlew test publishToMavenLocal
+./gradlew test
 ```
 
-The current coordinate is
-`org.lynxcapacitor:gradle-lynx-capacitor:0.1.0`. The Android Demo uses an
-included build so local development always tests the current source.
+The repository's Android Demo includes this directory directly during local
+development. Published-artifact verification points the same `includeBuild`
+at `node_modules/@lynx-capacitor/runtime/gradle-plugin`.
