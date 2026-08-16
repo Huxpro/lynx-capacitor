@@ -1,8 +1,10 @@
 #import "LynxCapacitorBridge.h"
+#import <Lynx/LynxContext.h>
 #import <LynxCapacitorRuntime/LynxCapacitorRuntime-Swift.h>
 
 @interface LynxCapacitorBridge ()
 @property(nonatomic, strong) LynxCapacitorRuntime *runtime;
+@property(nonatomic, weak) LynxContext *lynxContext;
 @end
 
 @implementation LynxCapacitorBridge
@@ -32,8 +34,19 @@
   return self;
 }
 
-- (instancetype)initWithParam:(id)param {
-  return [self init];
+- (instancetype)initWithLynxContext:(LynxContext *)context {
+  if (self = [self init]) {
+    self.lynxContext = context;
+    __weak typeof(self) weakSelf = self;
+    [self.runtime setResultHandler:^(NSString *resultJson) {
+      LynxContext *strongContext = weakSelf.lynxContext;
+      if (strongContext == nil) {
+        return;
+      }
+      [strongContext sendGlobalEvent:@"lynx-capacitor-result" withParams:@[ resultJson ]];
+    }];
+  }
+  return self;
 }
 
 - (NSString *)getPlatform {
