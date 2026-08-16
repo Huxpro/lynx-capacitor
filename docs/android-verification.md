@@ -94,12 +94,13 @@ been delivered to currently running top-most instance`) and logged both the
 native handoff and the Lynx callback:
 
 ```text
-LC_DEEP_LINK android url=lynxcapacitor://demo/warm-explicit?source=sandbox
+LC_DEEP_LINK android delivered
 LC_DEEP_LINK source=warm event url=lynxcapacitor://demo/warm-explicit?source=sandbox
 ```
 
 Run `scripts/verify-deep-links-android.sh <adb-serial>` after building the APK
-to repeat both assertions.
+to repeat both assertions. The script resolves both URLs through the manifest
+intent filter instead of naming `MainActivity` directly.
 
 ## Screenshots
 

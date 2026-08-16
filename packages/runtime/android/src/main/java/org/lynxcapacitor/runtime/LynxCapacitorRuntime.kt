@@ -131,7 +131,7 @@ object LynxCapacitorRuntime : Application.ActivityLifecycleCallbacks, HeadlessRe
         }
         bridgeActivity?.intent = intent
         current.onNewIntent(intent)
-        Log.i(TAG, "LC_DEEP_LINK android url=${intent.dataString.orEmpty()}")
+        Log.i(TAG, "LC_DEEP_LINK android delivered")
     }
 
     @Suppress("UNCHECKED_CAST")

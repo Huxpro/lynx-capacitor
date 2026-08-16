@@ -204,6 +204,12 @@ export function App(): JSX.Element {
 
   const officialCount = PLUGINS.filter(p => p.category !== 'Community').length;
   const communityCount = PLUGINS.filter(p => p.category === 'Community').length;
+  const deepLinkStatus = deepLink
+    ? deepLink.source === 'cold start'
+      ? 'Opened at launch'
+      : 'Received while running'
+    : 'Listening';
+  const deepLinkContext = deepLink ? 'Latest link' : 'Custom scheme';
 
   return (
     <view className={dark ? 'page page-dark' : 'page'}>
@@ -218,11 +224,17 @@ export function App(): JSX.Element {
         <scroll-view scroll-orientation="vertical" className="scroll">
           <view className="section">
             <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Deep Link</text>
-            <view className={dark ? 'deep-link-card deep-link-card-dark' : 'deep-link-card'}>
-              <text className={dark ? 'deep-link-source deep-link-source-dark' : 'deep-link-source'}>
-                {deepLink ? deepLink.source : 'ready'}
-              </text>
-              <text className={dark ? 'deep-link-url deep-link-url-dark' : 'deep-link-url'}>
+            <view className={dark ? 'deep-link-panel deep-link-panel-dark' : 'deep-link-panel'}>
+              <view className={dark ? 'deep-link-meta deep-link-meta-dark' : 'deep-link-meta'}>
+                <view className={deepLink ? 'deep-link-indicator deep-link-indicator-active' : 'deep-link-indicator'} />
+                <text className={dark ? 'deep-link-status deep-link-status-dark' : 'deep-link-status'}>
+                  {deepLinkStatus}
+                </text>
+                <text className={dark ? 'deep-link-context deep-link-context-dark' : 'deep-link-context'}>
+                  {deepLinkContext}
+                </text>
+              </view>
+              <text className={dark ? 'deep-link-value deep-link-value-dark' : 'deep-link-value'}>
                 {deepLink?.url ?? 'Open lynxcapacitor://demo/path'}
               </text>
             </view>

@@ -76,28 +76,52 @@
 }
 
 /* ── Deep Link verification ── */
-.deep-link-card {
+.deep-link-panel {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background-color: #eaf6ff;
-  border-radius: 10px;
-  padding: 12px 16px;
-  border-left-width: 3px;
-  border-left-color: var(--cap-blue);
+  background-color: var(--surface);
+  border-radius: 12px;
+  padding: 14px 16px 15px;
 }
 
-.deep-link-source {
+.deep-link-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 11px;
+  border-bottom-width: 0.5px;
+  border-bottom-color: var(--separator);
+}
+
+.deep-link-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 4px;
+  margin-right: 8px;
+  background-color: var(--text-tertiary);
+}
+
+.deep-link-indicator-active {
+  background-color: var(--success);
+}
+
+.deep-link-status {
   font-size: 12px;
   font-weight: 600;
-  color: #0878bd;
+  color: var(--text-primary);
 }
 
-.deep-link-url {
-  font-family: Menlo;
+.deep-link-context {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.deep-link-value {
   font-size: 12px;
-  line-height: 17px;
-  color: var(--text-primary);
+  line-height: 18px;
+  color: var(--text-secondary);
 }
 
 /* ── Plugin Cards ── */
@@ -374,16 +398,24 @@
   background-color: #1c1c1e;
 }
 
-.deep-link-card-dark {
-  background-color: rgba(17, 158, 255, 0.16);
+.deep-link-panel-dark {
+  background-color: #1c1c1e;
 }
 
-.deep-link-source-dark {
-  color: #64c5ff;
+.deep-link-meta-dark {
+  border-bottom-color: rgba(235, 235, 245, 0.14);
 }
 
-.deep-link-url-dark {
-  color: #ffffff;
+.deep-link-status-dark {
+  color: #f2f2f7;
+}
+
+.deep-link-context-dark {
+  color: #8e8e93;
+}
+
+.deep-link-value-dark {
+  color: #c7c7cc;
 }
 
 .status-full-dark {

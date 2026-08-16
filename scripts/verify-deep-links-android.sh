@@ -5,7 +5,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SERIAL="${1:?Usage: scripts/verify-deep-links-android.sh <adb-serial>}"
 APK="$ROOT/android/Demo/app/build/outputs/apk/debug/app-debug.apk"
 PACKAGE="org.lynxcapacitor.demo"
-ACTIVITY="$PACKAGE/.MainActivity"
 COLD_URL="lynxcapacitor://demo/cold?source=verify-script"
 WARM_URL="lynxcapacitor://demo/warm?source=verify-script"
 
@@ -38,16 +37,18 @@ adb -s "$SERIAL" logcat -c
 adb -s "$SERIAL" shell am force-stop "$PACKAGE"
 adb -s "$SERIAL" shell am start -W \
   -a android.intent.action.VIEW \
+  -c android.intent.category.BROWSABLE \
   -d "$COLD_URL" \
-  -n "$ACTIVITY"
+  -p "$PACKAGE"
 wait_for_log "LC_DEEP_LINK source=cold start url=$COLD_URL"
 echo "PASS cold start: App.getLaunchUrl() returned $COLD_URL"
 
 adb -s "$SERIAL" logcat -c
 adb -s "$SERIAL" shell am start -W \
   -a android.intent.action.VIEW \
+  -c android.intent.category.BROWSABLE \
   -d "$WARM_URL" \
-  -n "$ACTIVITY"
-wait_for_log "LC_DEEP_LINK android url=$WARM_URL"
+  -p "$PACKAGE"
+wait_for_log "LC_DEEP_LINK android delivered"
 wait_for_log "LC_DEEP_LINK source=warm event url=$WARM_URL"
 echo "PASS warm start: appUrlOpen emitted $WARM_URL"
