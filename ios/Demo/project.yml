@@ -84,6 +84,7 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.lynx.capacitordemo.tests
+        SWIFT_OBJC_BRIDGING_HEADER: LynxCapacitorDemoTests/LynxCapacitorDemoTests-Bridging-Header.h
     dependencies:
       - target: LynxCapacitorDemo
 schemes:
