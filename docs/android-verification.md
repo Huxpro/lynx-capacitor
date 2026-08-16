@@ -104,11 +104,23 @@ intent filter instead of naming `MainActivity` directly.
 
 ## Screenshots
 
-### Deep Link cold and warm lifecycle
+### Cross-platform demo
 
-![Android Deep Link cold start](assets/android-deep-link-cold.png)
+The iOS host uses the same ReactLynx gallery and unmodified Capacitor plugin
+packages as the Android build:
 
-![Android Deep Link warm event](assets/android-deep-link-warm.png)
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/ios-deep-link-warm.png" alt="iOS Simulator showing a warm Deep Link delivered to the demo" width="330">
+      <br><sub>iOS 26.2 · second warm Deep Link in the same process</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/ios-runtime-info.png" alt="iOS Simulator showing the connected native bridge and plugin coverage" width="330">
+      <br><sub>iOS native bridge, adapter versions, and plugin coverage</sub>
+    </td>
+  </tr>
+</table>
 
 ### Device and smoke results
 
