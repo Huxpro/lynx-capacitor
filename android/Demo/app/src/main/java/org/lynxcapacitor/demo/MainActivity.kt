@@ -1,5 +1,6 @@
 package org.lynxcapacitor.demo
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lynx.tasm.LynxView
@@ -33,5 +34,10 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         lynxView.destroy()
         super.onDestroy()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        LynxCapacitorRuntime.onNewIntent(intent)
     }
 }

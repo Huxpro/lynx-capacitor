@@ -130,6 +130,17 @@ needed. Adding a plugin later is `npm install` + Gradle sync/build. The Demo use
 minSdk 28 because its installed `@capacitor/local-llm` package requires it,
 while the runtime itself supports minSdk 24.
 
+For Deep Links, add the usual Android `VIEW` intent filter and forward warm
+intents from your Activity. The cold-start URL is available through
+`App.getLaunchUrl()`; warm links emit `appUrlOpen`:
+
+```kotlin
+override fun onNewIntent(intent: Intent) {
+  super.onNewIntent(intent)
+  LynxCapacitorRuntime.onNewIntent(intent)
+}
+```
+
 ### iOS host setup
 
 4. **Turn on both autolink plugins in your Podfile:**
@@ -156,6 +167,28 @@ package with a `capacitor` key in its `package.json` and adds its pod.
 LynxConfig *config = [[LynxConfig alloc] initWithProvider:provider];
 [[LynxGeneratedLibraryRegistry new] setup:config];
 [[LynxEnv sharedInstance] prepareConfig:config];
+```
+
+Deep Links also keep Capacitor's usual App API. Forward both AppDelegate URL
+entry points to the runtime (and keep the normal URL scheme / Associated
+Domains configuration in your host):
+
+```objc
+#import <LynxCapacitorRuntime/LynxCapacitorRuntime-Swift.h>
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+  return [LynxCapacitorRuntime handleOpenURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application
+    continueUserActivity:(NSUserActivity *)activity
+      restorationHandler:
+          (void (^)(NSArray<id<UIUserActivityRestoring>> *))handler {
+  return [LynxCapacitorRuntime handleContinueUserActivity:activity
+                                       restorationHandler:handler];
+}
 ```
 
 That's it! Your existing Capacitor plugin code will just work on Lynx. Adding
@@ -272,6 +305,7 @@ The current [Capacitor v8 API list](https://capacitorjs.com/docs/apis) contains
 ```bash
 pnpm verify
 pnpm verify:android
+pnpm ios:test
 ```
 
 The demo exposes `globalThis.runCapacitorSmokeMatrix()` for DevTool automation.

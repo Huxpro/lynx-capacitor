@@ -75,6 +75,31 @@
   margin: 24px 0 6px 16px;
 }
 
+/* ── Deep Link verification ── */
+.deep-link-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #eaf6ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  border-left-width: 3px;
+  border-left-color: var(--cap-blue);
+}
+
+.deep-link-source {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0878bd;
+}
+
+.deep-link-url {
+  font-family: Menlo;
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--text-primary);
+}
+
 /* ── Plugin Cards ── */
 .card {
   background-color: var(--surface);
@@ -347,6 +372,18 @@
 
 .info-card-dark {
   background-color: #1c1c1e;
+}
+
+.deep-link-card-dark {
+  background-color: rgba(17, 158, 255, 0.16);
+}
+
+.deep-link-source-dark {
+  color: #64c5ff;
+}
+
+.deep-link-url-dark {
+  color: #ffffff;
 }
 
 .status-full-dark {

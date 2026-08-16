@@ -28,6 +28,33 @@ public final class LynxCapacitorRuntime: NSObject {
     public func setResultHandler(_ handler: @escaping (String) -> Void) {
         runtime.resultHandler = handler
     }
+
+    /// Forward UIApplicationDelegate.openURL so Capacitor plugins receive the
+    /// same notification they would under CAPBridgeViewController.
+    @objc(handleOpenURL:options:)
+    public static func handleOpenURL(
+        _ url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any]
+    ) -> Bool {
+        ApplicationDelegateProxy.shared.application(
+            UIApplication.shared,
+            open: url,
+            options: options
+        )
+    }
+
+    /// Forward UIApplicationDelegate.continueUserActivity for Universal Links.
+    @objc(handleContinueUserActivity:restorationHandler:)
+    public static func handleContinueUserActivity(
+        _ userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        ApplicationDelegateProxy.shared.application(
+            UIApplication.shared,
+            continue: userActivity,
+            restorationHandler: restorationHandler
+        )
+    }
 }
 
 private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {

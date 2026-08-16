@@ -2,6 +2,7 @@ package org.lynxcapacitor.runtime
 
 import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -113,6 +114,24 @@ object LynxCapacitorRuntime : Application.ActivityLifecycleCallbacks, HeadlessRe
         bridgeActivity = activity
         bridge = Bridge(activity, discoverPluginClasses(), null, this)
         Log.i(TAG, "LC_BRIDGE_READY plugins=${bridge?.plugins?.size ?: 0} webView=false")
+    }
+
+    /**
+     * Forwards a warm-start intent to Capacitor plugins.
+     *
+     * Hosts using a singleTask/singleTop Activity must call this from their
+     * Activity.onNewIntent override. Cold-start URLs are captured directly
+     * from the Activity intent when the bridge is attached.
+     */
+    fun onNewIntent(intent: Intent) {
+        val current = bridge
+        if (current == null) {
+            Log.w(TAG, "Ignoring onNewIntent before a Capacitor bridge is attached")
+            return
+        }
+        bridgeActivity?.intent = intent
+        current.onNewIntent(intent)
+        Log.i(TAG, "LC_DEEP_LINK android url=${intent.dataString.orEmpty()}")
     }
 
     @Suppress("UNCHECKED_CAST")

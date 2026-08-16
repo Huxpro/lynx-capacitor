@@ -21,6 +21,10 @@ targets:
       path: LynxCapacitorDemo/Info.plist
       properties:
         CFBundleDisplayName: Lynx Capacitor
+        CFBundleURLTypes:
+          - CFBundleURLName: org.lynxcapacitor.demo
+            CFBundleURLSchemes:
+              - lynxcapacitor
         UILaunchStoryboardName: LaunchScreen
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
@@ -71,3 +75,22 @@ targets:
         script: |
           "${PODS_ROOT}/Target Support Files/Pods-LynxCapacitorDemo/Pods-LynxCapacitorDemo-resources.sh"
         basedOnDependencyAnalysis: false
+  LynxCapacitorDemoTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: LynxCapacitorDemoTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lynx.capacitordemo.tests
+    dependencies:
+      - target: LynxCapacitorDemo
+schemes:
+  LynxCapacitorDemo:
+    build:
+      targets:
+        LynxCapacitorDemo: all
+        LynxCapacitorDemoTests: [test]
+    test:
+      targets:
+        - LynxCapacitorDemoTests

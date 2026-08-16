@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useInitData } from '@lynx-js/react';
 import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 import {
   PLUGINS,
   CATEGORY_ORDER,
@@ -19,6 +20,15 @@ interface RunResult {
   ok: boolean;
   text: string;
 }
+
+interface DeepLinkResult {
+  source: 'cold start' | 'warm event';
+  url: string;
+}
+
+type DeepLinkGlobal = typeof globalThis & {
+  __lastCapacitorDeepLink?: DeepLinkResult;
+};
 
 function stringify(value: unknown): string {
   if (value === undefined) return 'undefined';
@@ -96,6 +106,7 @@ export function App(): JSX.Element {
   const [results, setResults] = useState<Record<string, RunResult>>({});
   const [tab, setTab] = useState<Tab>('plugins');
   const [dark, setDark] = useState(false);
+  const [deepLink, setDeepLink] = useState<DeepLinkResult>();
   const platform = Capacitor.getPlatform();
   const initData = useInitData() as { safeArea?: { top: number; bottom: number } };
   const safeTop = initData?.safeArea?.top ?? 59;
@@ -154,6 +165,35 @@ export function App(): JSX.Element {
     });
   }, [runAction]);
 
+  useEffect(() => {
+    let active = true;
+    let removeListener: (() => Promise<void>) | undefined;
+
+    const recordDeepLink = (source: DeepLinkResult['source'], url: string) => {
+      const result = { source, url };
+      (globalThis as DeepLinkGlobal).__lastCapacitorDeepLink = result;
+      console.info(`LC_DEEP_LINK source=${source} url=${url}`);
+      if (active) setDeepLink(result);
+    };
+
+    void CapacitorApp.addListener('appUrlOpen', event => {
+      recordDeepLink('warm event', event.url);
+    }).then(handle => {
+      if (!active) {
+        return handle.remove();
+      }
+      removeListener = () => handle.remove();
+      return CapacitorApp.getLaunchUrl().then(launch => {
+        if (launch?.url) recordDeepLink('cold start', launch.url);
+      });
+    });
+
+    return () => {
+      active = false;
+      void removeListener?.();
+    };
+  }, []);
+
   const total = PLUGINS.length;
   const smokeTotal = PLUGINS.reduce(
     (count, plugin) => count + plugin.actions.filter(action => action.smoke).length,
@@ -176,6 +216,17 @@ export function App(): JSX.Element {
 
       {tab === 'plugins' ? (
         <scroll-view scroll-orientation="vertical" className="scroll">
+          <view className="section">
+            <text className={dark ? 'section-title section-title-dark' : 'section-title'}>Deep Link</text>
+            <view className={dark ? 'deep-link-card deep-link-card-dark' : 'deep-link-card'}>
+              <text className={dark ? 'deep-link-source deep-link-source-dark' : 'deep-link-source'}>
+                {deepLink ? deepLink.source : 'ready'}
+              </text>
+              <text className={dark ? 'deep-link-url deep-link-url-dark' : 'deep-link-url'}>
+                {deepLink?.url ?? 'Open lynxcapacitor://demo/path'}
+              </text>
+            </view>
+          </view>
           {CATEGORY_ORDER.map(category => {
             const entries = PLUGINS.filter(p => p.category === category);
             if (entries.length === 0) return null;

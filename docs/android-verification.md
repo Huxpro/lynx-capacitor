@@ -78,7 +78,36 @@ The Motion check is also evidence for retained Capacitor callbacks: Android
 results travel through Lynx `GlobalEventEmitter`, because a Lynx NativeModule
 `Callback` is intentionally one-shot.
 
+## Deep Link lifecycle
+
+Reverified on 2026-08-16 on the same `aries_10` / Android 10 class of Lynx
+Sandbox cloud device. Both paths used the installed `@capacitor/app` package;
+the demo did not parse the Activity Intent directly in JavaScript.
+
+| App state | Native entry | JavaScript evidence |
+|---|---|---|
+| Cold process start | Bridge captured the Activity's launch Intent | `App.getLaunchUrl()` returned `lynxcapacitor://demo/cold-final?source=sandbox` |
+| Warm, running Activity | `MainActivity.onNewIntent` → `LynxCapacitorRuntime.onNewIntent` | `appUrlOpen` emitted `lynxcapacitor://demo/warm-explicit?source=sandbox` |
+
+The warm case retained the existing Activity (`Activity not started, intent has
+been delivered to currently running top-most instance`) and logged both the
+native handoff and the Lynx callback:
+
+```text
+LC_DEEP_LINK android url=lynxcapacitor://demo/warm-explicit?source=sandbox
+LC_DEEP_LINK source=warm event url=lynxcapacitor://demo/warm-explicit?source=sandbox
+```
+
+Run `scripts/verify-deep-links-android.sh <adb-serial>` after building the APK
+to repeat both assertions.
+
 ## Screenshots
+
+### Deep Link cold and warm lifecycle
+
+![Android Deep Link cold start](assets/android-deep-link-cold.png)
+
+![Android Deep Link warm event](assets/android-deep-link-warm.png)
 
 ### Device and smoke results
 
