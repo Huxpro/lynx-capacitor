@@ -82,6 +82,7 @@ targets:
       - path: LynxCapacitorDemoTests
     settings:
       base:
+        GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.lynx.capacitordemo.tests
     dependencies:
       - target: LynxCapacitorDemo
