@@ -24,12 +24,17 @@ public final class LynxCapacitorRuntime: NSObject {
     public func handleCall(_ payload: String, callback: @escaping (Any?) -> Void) {
         runtime.handleCall(payload, callback: callback)
     }
+
+    public func setResultHandler(_ handler: @escaping (String) -> Void) {
+        runtime.resultHandler = handler
+    }
 }
 
 private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
     private var plugins: [String: CAPPlugin] = [:]
     private var storedCalls: [String: CAPPluginCall] = [:]
     private let lock = NSLock()
+    var resultHandler: ((String) -> Void)?
 
     public let config: InstanceConfiguration
     public let notificationRouter = NotificationRouter()
@@ -219,13 +224,13 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
             let data = payload.data(using: .utf8),
             let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else {
-            callback(Self.resultJSON(
+            sendResult(Self.resultJSON(
                 callbackId: "-1",
                 pluginId: "",
                 methodName: "",
                 success: false,
                 error: ["message": "Invalid Capacitor call payload", "code": "INVALID_ARGUMENT"]
-            ))
+            ), fallback: callback)
             return
         }
 
@@ -235,13 +240,13 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
         let options = message["options"] as? [String: Any] ?? [:]
 
         guard let plugin = plugins[pluginId], let bridged = plugin as? CAPBridgedPlugin else {
-            callback(Self.resultJSON(
+            sendResult(Self.resultJSON(
                 callbackId: callbackId,
                 pluginId: pluginId,
                 methodName: methodName,
                 success: false,
                 error: ["message": "Plugin \"\(pluginId)\" is not registered", "code": "UNIMPLEMENTED"]
-            ))
+            ), fallback: callback)
             return
         }
 
@@ -251,24 +256,24 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
         } else if let method = bridged.pluginMethods.first(where: { $0.name == methodName }) {
             selector = method.selector
         } else {
-            callback(Self.resultJSON(
+            sendResult(Self.resultJSON(
                 callbackId: callbackId,
                 pluginId: pluginId,
                 methodName: methodName,
                 success: false,
                 error: ["message": "Method \"\(methodName)\" is not registered on \"\(pluginId)\"", "code": "UNIMPLEMENTED"]
-            ))
+            ), fallback: callback)
             return
         }
 
         guard plugin.responds(to: selector) else {
-            callback(Self.resultJSON(
+            sendResult(Self.resultJSON(
                 callbackId: callbackId,
                 pluginId: pluginId,
                 methodName: methodName,
                 success: false,
                 error: ["message": "Plugin \"\(pluginId)\" does not respond to \"\(methodName)\"", "code": "UNIMPLEMENTED"]
-            ))
+            ), fallback: callback)
             return
         }
 
@@ -283,19 +288,22 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
                 guard let self else {
                     return
                 }
-                callback(Self.resultJSON(
+                self.sendResult(Self.resultJSON(
                     callbackId: callbackId,
                     pluginId: pluginId,
                     methodName: methodName,
                     success: true,
                     data: result?.data ?? [:],
                     save: call?.keepAlive ?? false
-                ))
+                ), fallback: callback)
                 if call?.keepAlive == true, let call {
                     self.saveCall(call)
                 }
             },
-            error: { error in
+            error: { [weak self] error in
+                guard let self else {
+                    return
+                }
                 var errorPayload: [String: Any] = [
                     "message": error?.message ?? "",
                     "errorMessage": error?.message ?? ""
@@ -306,22 +314,22 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
                 if let data = error?.data {
                     errorPayload.merge(data) { current, _ in current }
                 }
-                callback(Self.resultJSON(
+                self.sendResult(Self.resultJSON(
                     callbackId: callbackId,
                     pluginId: pluginId,
                     methodName: methodName,
                     success: false,
                     error: errorPayload
-                ))
+                ), fallback: callback)
             }
         ) else {
-            callback(Self.resultJSON(
+            sendResult(Self.resultJSON(
                 callbackId: callbackId,
                 pluginId: pluginId,
                 methodName: methodName,
                 success: false,
                 error: ["message": "Unable to create native plugin call", "code": "NATIVE_EXCEPTION"]
-            ))
+            ), fallback: callback)
             return
         }
 
@@ -330,6 +338,14 @@ private final class CapacitorRuntime: NSObject, CAPBridgeProtocol {
             if call.keepAlive {
                 self.saveCall(call)
             }
+        }
+    }
+
+    private func sendResult(_ result: String, fallback: @escaping (Any?) -> Void) {
+        if let resultHandler {
+            resultHandler(result)
+        } else {
+            fallback(result)
         }
     }
 

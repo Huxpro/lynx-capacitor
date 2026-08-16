@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <Lynx/LynxModule.h>
+#import <Lynx/LynxContextModule.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// `[config registerModule:... withName:@"CapacitorBridge"]` into the
 /// generated LynxGeneratedLibraryRegistry.
 @LynxNativeModule("CapacitorBridge")
-@interface LynxCapacitorBridge : NSObject <LynxModule>
+@interface LynxCapacitorBridge : NSObject <LynxContextModule>
 @end
 
 NS_ASSUME_NONNULL_END
