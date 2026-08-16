@@ -11,6 +11,7 @@
     "build:demo": "pnpm --filter @lynx-capacitor/demo build",
     "ios:generate": "bash scripts/ios-generate.sh",
     "ios:build": "bash scripts/ios-build.sh",
+    "ios:test": "bash scripts/ios-test.sh",
     "ios:run": "bash scripts/ios-run.sh",
     "android:build": "bash scripts/android-build.sh",
     "android:run": "bash scripts/android-run.sh",

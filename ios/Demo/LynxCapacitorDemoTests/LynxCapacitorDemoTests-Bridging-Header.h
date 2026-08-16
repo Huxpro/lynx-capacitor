@@ -1,0 +1,1 @@
+#import "../LynxCapacitorDemo/AppDelegate.h"

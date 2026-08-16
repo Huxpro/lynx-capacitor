@@ -94,6 +94,10 @@ target 'LynxCapacitorDemo' do
     pod 'DebugRouter', '5.0.15'
     pod 'DebugRouter/MessageTransceiverEnable', '5.0.15'
   end
+
+  target 'LynxCapacitorDemoTests' do
+    inherit! :search_paths
+  end
 end
 
 post_install do |installer|

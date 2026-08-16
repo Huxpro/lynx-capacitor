@@ -78,7 +78,49 @@ The Motion check is also evidence for retained Capacitor callbacks: Android
 results travel through Lynx `GlobalEventEmitter`, because a Lynx NativeModule
 `Callback` is intentionally one-shot.
 
+## Deep Link lifecycle
+
+Reverified on 2026-08-16 on the same `aries_10` / Android 10 class of Lynx
+Sandbox cloud device. Both paths used the installed `@capacitor/app` package;
+the demo did not parse the Activity Intent directly in JavaScript.
+
+| App state | Native entry | JavaScript evidence |
+|---|---|---|
+| Cold process start | Bridge captured the Activity's launch Intent | `App.getLaunchUrl()` returned `lynxcapacitor://demo/cold-final?source=sandbox` |
+| Warm, running Activity | `MainActivity.onNewIntent` → `LynxCapacitorRuntime.onNewIntent` | `appUrlOpen` emitted `lynxcapacitor://demo/warm-explicit?source=sandbox` |
+
+The warm case retained the existing Activity (`Activity not started, intent has
+been delivered to currently running top-most instance`) and logged both the
+native handoff and the Lynx callback:
+
+```text
+LC_DEEP_LINK android delivered
+LC_DEEP_LINK source=warm event url=lynxcapacitor://demo/warm-explicit?source=sandbox
+```
+
+Run `scripts/verify-deep-links-android.sh <adb-serial>` after building the APK
+to repeat both assertions. The script resolves both URLs through the manifest
+intent filter instead of naming `MainActivity` directly.
+
 ## Screenshots
+
+### Cross-platform demo
+
+The iOS host uses the same ReactLynx gallery and unmodified Capacitor plugin
+packages as the Android build:
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/ios-deep-link-warm.png" alt="iOS Simulator showing a warm Deep Link delivered to the demo" width="330">
+      <br><sub>iOS 26.2 · second warm Deep Link in the same process</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/ios-runtime-info.png" alt="iOS Simulator showing the connected native bridge and plugin coverage" width="330">
+      <br><sub>iOS native bridge, adapter versions, and plugin coverage</sub>
+    </td>
+  </tr>
+</table>
 
 ### Device and smoke results
 

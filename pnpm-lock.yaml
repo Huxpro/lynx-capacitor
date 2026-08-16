@@ -38,6 +38,9 @@ importers:
       '@capacitor/action-sheet':
         specifier: ^8.1.1
         version: 8.1.1(@capacitor/core@8.4.2)
+      '@capacitor/android':
+        specifier: ^8.4.2
+        version: 8.4.2(@capacitor/core@8.4.2)
       '@capacitor/app':
         specifier: ^8.1.1
         version: 8.1.1(@capacitor/core@8.4.2)
@@ -92,6 +95,9 @@ importers:
       '@capacitor/inappbrowser':
         specifier: ^4.0.1
         version: 4.0.1(@capacitor/core@8.4.2)
+      '@capacitor/ios':
+        specifier: ^8.4.2
+        version: 8.4.2(@capacitor/core@8.4.2)
       '@capacitor/keyboard':
         specifier: ^8.0.5
         version: 8.0.5(@capacitor/core@8.4.2)

@@ -11,4 +11,4 @@ pnpm build:demo
 
 ruby gems/cocoapods-lynx-capacitor/spec/autolink_spec.rb
 
-"$ROOT/scripts/ios-build.sh"
+"$ROOT/scripts/ios-test.sh"

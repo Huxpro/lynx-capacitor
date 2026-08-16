@@ -4,11 +4,31 @@ A ReactLynx plugin gallery that runs unmodified Capacitor plugins through the
 Lynx Capacitor adapter. The app includes all 37 official Capacitor v8 APIs and
 3 Community plugins, with executable actions and native results shown inline.
 
-<p align="center">
-  <img src="../docs/assets/android-device-smoke.png" alt="Lynx Capacitor demo running on an Android cloud device" width="360">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="../docs/assets/ios-deep-link-warm.png" alt="iOS Simulator showing a warm Deep Link delivered to the Lynx Capacitor demo" width="330">
+      <br><sub>iOS 26.2 · warm Deep Link delivered through <code>@capacitor/app</code></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="../docs/assets/android-device-smoke.png" alt="Android cloud device running the Lynx Capacitor automatic smoke checks" width="330">
+      <br><sub>Android 10 cloud device · automatic native smoke checks</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="../docs/assets/ios-runtime-info.png" alt="iOS Simulator showing the connected Lynx native bridge and plugin coverage" width="330">
+      <br><sub>iOS runtime, adapter versions, and 40-plugin coverage</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="../docs/assets/android-action-sheet.png" alt="Android cloud device showing a native Capacitor Action Sheet" width="330">
+      <br><sub>Unmodified Capacitor plugin presenting native Android UI</sub>
+    </td>
+  </tr>
+</table>
 
-<p align="center"><sub>Android 10 cloud-device build running the automatic native smoke checks.</sub></p>
+These are native Simulator and cloud-device captures. The same ReactLynx
+gallery exercises the official Capacitor packages on both platforms.
 
 ## Prerequisites
 

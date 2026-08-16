@@ -67,6 +67,20 @@ auto-init provider installs lifecycle forwarding. The host calls
 from `onCreate`; this gives view-aware plugins a content root while remaining
 early enough for Activity Result launcher registration.
 
+Deep Links need the same host lifecycle hook as a regular Capacitor Activity.
+Cold-start URLs are captured when `attach` creates the bridge. For a warm link,
+use `singleTask` (or `singleTop`) and forward the new intent:
+
+```kotlin
+override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    LynxCapacitorRuntime.onNewIntent(intent)
+}
+```
+
+Your Activity still owns the normal Android `VIEW` intent filters for custom
+schemes or verified App Links.
+
 Requirements: compileSdk 36, JDK 21, minSdk 24, Lynx SDK 4.0+. A host may need a
 higher minSdk when an installed plugin requires one.
 
@@ -84,6 +98,35 @@ higher minSdk when an installed plugin requires one.
 
 Classes that only make sense with a `WKWebView` host (`CAPConsolePlugin`,
 `CAPWebViewPlugin`) and `CAPInstancePlugin` subclasses are skipped.
+
+## iOS application lifecycle
+
+Forward custom URL schemes and Universal Links from the host AppDelegate. The
+runtime delegates to Capacitor's `ApplicationDelegateProxy`, so
+`App.getLaunchUrl()` and `App.addListener("appUrlOpen", ...)` keep their normal
+Capacitor semantics:
+
+```objc
+#import <LynxCapacitorRuntime/LynxCapacitorRuntime-Swift.h>
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+  return [LynxCapacitorRuntime handleOpenURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application
+    continueUserActivity:(NSUserActivity *)userActivity
+      restorationHandler:
+          (void (^)(NSArray<id<UIUserActivityRestoring>> *))restorationHandler {
+  return [LynxCapacitorRuntime
+      handleContinueUserActivity:userActivity
+              restorationHandler:restorationHandler];
+}
+```
+
+The host still configures `CFBundleURLTypes` for custom schemes and Associated
+Domains plus the `apple-app-site-association` file for Universal Links.
 
 ## Requirements
 
